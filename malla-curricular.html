@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Malla Curricular Interactiva</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #004080;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .contenedor {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .anio {
+      margin-bottom: 30px;
+    }
+
+    .anio h2 {
+      border-bottom: 2px solid #004080;
+      padding-bottom: 5px;
+      color: #004080;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #e9f1ff;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    li .correlativas {
+      font-size: 0.85em;
+      color: #555;
+      margin-top: 5px;
+    }
+
+    li.aprobada {
+      background-color: #c8e6c9;
+      text-decoration: line-through green;
+    }
+
+    li.bloqueada {
+      background-color: #ddd;
+      text-decoration: line-through black;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #004080;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Malla Curricular Interactiva</h1>
+    <p>Contador Público</p>
+  </header>
+
+  <div class="contenedor">
+
+    <div class="anio">
+      <h2>1º Año</h2>
+      <h3>1er Semestre</h3>
+      <ul>
+        <li data-id="cont1">
+          Contabilidad
+        </li>
+        <li data-id="mat">
+          Administración
+        </li>
+        <li data-id="der-civ">
+          Historia de la Cultura
+        </li>
+      </ul>
+
+      <h3>2do Semestre</h3>
+      <ul>
+        <li data-id="cont1">
+          Matemática I
+        </li>
+        <li data-id="mat">
+          Derecho Púbñico
+        </li>
+        <li data-id="der-civ">
+          Introducción a la Economía
+        </li>
+      </ul>
+    </div>
+
+    <div class="anio">
+      <h2>2º Año</h2>
+      <h3>1er Semestre</h3>
+      <ul>
+        <li data-id="cont2" data-correlativas="cont1">
+          Metodología de la Investigación
+        </li>
+        <li data-id="est" data-correlativas="mat">
+          Derecho Privado
+        </li>
+        <li data-id="der-com" data-correlativas="der-civ">
+          Contabilidad Superior
+          <div class="correlativas">Correlativas: Contabilidad</div>
+        </li>
+        <li data-id="der-com" data-correlativas="der-civ">
+          Teoría de la Organización
+          <div class="correlativas">Correlativas: Administración</div>
+        </li>
+      </ul>
+
+      <h3>2do Semestre</h3>
+      <ul>
+        <li data-id="cont2" data-correlativas="cont1">
+          Estadística
+          <div class="correlativas">Correlativas: Matemática I</div>
+        </li>
+        <li data-id="est" data-correlativas="mat">
+          Historia Económica
+          <div class="correlativas">Correlativas: Historia de la Cultura</div>
+        </li>
+        <li data-id="der-com" data-correlativas="der-civ">
+          Microeconómia
+          <div class="correlativas">Correlativas: Matemática I, Introducción a la Economía</div>
+        </li>
+        <li data-id="der-com" data-correlativas="der-civ">
+          Filosofía
+          <div class="correlativas">Correlativas: Historia de la Cultura</div>
+        </li>
+        <li data-id="der-com" data-correlativas="der-civ">
+          Matemática II
+          <div class="correlativas">Correlativas: Matemática I</div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="anio">
+      <h2>3º Año</h2>
+      <ul>
+        <li data-id="costos" data-correlativas="cont2">
+          Contabilidad de Costos
+          <div class="correlativas">Correlativas: Auditoría</div>
+        </li>
+        <li data-id="macro">
+          Macroeconomía
+          <div class="correlativas">Correlativas: Evaluación de Proyectos</div>
+        </li>
+        <li data-id="laboral" data-correlativas="der-com">
+          Derecho Laboral
+          <div class="correlativas">Correlativas: Trabajo Final</div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="anio">
+      <h2>4º Año</h2>
+      <ul>
+        <li data-id="auditoria" data-correlativas="cont2,est,costos">
+          Auditoría
+          <div class="correlativas">Correlativas: Trabajo Final</div>
+        </li>
+        <li data-id="proy" data-correlativas="macro">
+          Evaluación de Proyectos
+          <div class="correlativas">Correlativas: Trabajo Final</div>
+        </li>
+        <li data-id="tf" data-correlativas="laboral,auditoria,proy">
+          Trabajo Final
+          <div class="correlativas">Correlativas: -</div>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2025 URIEL PEREYRA | APP ESCOLAR
+  </footer>
+
+  <script>
+    const materias = document.querySelectorAll("li");
+    let aprobadas = new Set(JSON.parse(localStorage.getItem("materiasAprobadas")) || []);
+
+    function guardarProgreso() {
+      localStorage.setItem("materiasAprobadas", JSON.stringify([...aprobadas]));
+    }
+
+    function actualizarEstados() {
+      materias.forEach(materia => {
+        const id = materia.dataset.id;
+        const correlativas = materia.dataset.correlativas?.split(",") || [];
+        const todasAprobadas = correlativas.every(correl => aprobadas.has(correl));
+
+        materia.classList.remove("aprobada", "bloqueada");
+
+        if (aprobadas.has(id)) {
+          materia.classList.add("aprobada");
+        } else if (!todasAprobadas && correlativas.length > 0) {
+          materia.classList.add("bloqueada");
+        }
+      });
+    }
+
+    materias.forEach(materia => {
+      materia.addEventListener("click", () => {
+        if (materia.classList.contains("bloqueada")) return;
+
+        const id = materia.dataset.id;
+        if (aprobadas.has(id)) {
+          aprobadas.delete(id);
+        } else {
+          aprobadas.add(id);
+        }
+
+        guardarProgreso();
+        actualizarEstados();
+      });
+    });
+
+    actualizarEstados();
+  </script>
+
+</body>
+</html>
