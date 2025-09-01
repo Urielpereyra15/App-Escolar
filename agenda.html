@@ -1,302 +1,291 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Escolar</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1c1c1c;
-            color: white;
-            margin: 0;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 600px;
-            margin: auto;
-        }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background-color: #1657a2;
-            border-radius: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .header h1 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-        
-        .icon {
-            font-size: 1.2em;
-            cursor: pointer;
-        }
-        
-        .calendar-section {
-            background-color: #1a2b3c;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .month-year-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            font-size: 1.2em;
-            margin-bottom: 15px;
-        }
-        
-        .month-year-nav .month, .month-year-nav .year {
-            background-color: #004080;
-            padding: 8px 15px;
-            border-radius: 20px;
-        }
-        
-        /* ESTILO NUEVO */
-        .month-year-nav .month-and-year {
-            background-color: #1657a2;
-            padding: 8px 15px;
-            border-radius: 20px;
-            display: flex; /* Añadido para que mes y año estén uno al lado del otro */
-            gap: 5px; /* Espacio entre el mes y el año */
-        }
-        
-        /* FIN DE ESTILO NUEVO */
-        .days-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-        }
-        
-        .day-header {
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-        
-        .day {
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #1657a2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .day.weekend {
-            background-color: #15202b;
-        }
-        
-        .day.current-day {
-            background: transparent;
-            border: 2px solid #0056b3;
-            border-radius: 25%;
-            color: white;
-            padding: 8px;
-        }
-        
-        .day.has-event::after {
-            content: '';
-            position: absolute;
-            bottom: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 6px;
-            height: 6px;
-            background-color: #f0c300;
-            border-radius: 50%;
-        }
-        
-        .agenda-section {
-            background-color: #1a2b3c;
-            padding: 20px;
-            border-radius: 15px;
-        }
-        
-        .agenda-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .agenda-header h2 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-        
-        .agenda-item {
-            background-color: #004080;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .agenda-item .date-label {
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-        
-        .agenda-item .event-title {
-            margin-top: 5px;
-            font-size: 1.1em;
-        }
-        
-        .icon-pencil, .icon-plus {
-            font-family: 'Arial', sans-serif;
-            font-size: 24px;
-        }  
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Escolar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #334455;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #223344;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .icon {
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        .calendar-section {
+            background-color: #1a2b3c;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .month-year-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .month-year-nav .month, .month-year-nav .year {
+            background-color: #004080;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        .day-header {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .day {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #223344;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .day.weekend {
+            background-color: #15202b;
+        }
+        .day.current-day {
+            background: transparent;
+            border: 2px solid #0056b3;
+            border-radius: 50%;
+            color: white;
+            padding: 8px;
+        }
+        .day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background-color: #f0c300;
+            border-radius: 50%;
+        }
+        .agenda-section {
+            background-color: #1a2b3c;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .agenda-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .agenda-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .agenda-item {
+            background-color: #004080;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .agenda-item .date-label {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .agenda-item .event-title {
+            margin-top: 5px;
+            font-size: 1.1em;
+        }
+        .icon-pencil, .icon-plus {
+            font-family: 'Arial', sans-serif;
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
+
 <div class="container">
-    <div class="header">
-        <h1>Agenda</h1>
-    </div>
-    <div class="calendar-section">
-        <div class="month-year-nav">
-            <button id="prevBtn" style="background:none; border:none; color:white; font-size:1.5em; cursor:pointer;">&lt;</button>
-            <div id="month-year-display" class="month-and-year">
-                <span id="monthDisplay"></span>
-                <span id="yearDisplay"></span>
-            </div>
-            <button id="nextBtn" style="background:none; border:none; color:white; font-size:1.5em; cursor:pointer;">&gt;</button>
-        </div>
-        <div class="days-grid" id="daysGrid"></div>
-    </div>
-    <div class="agenda-section">
-        <div class="agenda-header">
-            <h2>Agenda</h2>
-            <span class="icon icon-plus">+</span>
-        </div>
-        <div id="eventsList"></div>
-    </div>
+    <div class="header">
+        <span class="icon icon-pencil">&#9999;</span>
+        <h1>Agenda</h1>
+        <span class="icon icon-pencil">&#9999;</span>
+    </div>
+
+    <div class="calendar-section">
+        <div class="month-year-nav">
+            <button id="prevBtn" style="background:none; border:none; color:white; font-size:1.5em; cursor:pointer;">&lt;</button>
+            <div id="monthDisplay" class="month"></div>
+            <div id="yearDisplay" class="year"></div>
+            <button id="nextBtn" style="background:none; border:none; color:white; font-size:1.5em; cursor:pointer;">&gt;</button>
+        </div>
+        <div class="days-grid" id="daysGrid"></div>
+    </div>
+
+    <div class="agenda-section">
+        <div class="agenda-header">
+            <h2>Agenda</h2>
+            <span class="icon icon-plus">+</span>
+        </div>
+        <div id="eventsList"></div>
+    </div>
 </div>
+
 <script>
-    const monthDisplay = document.getElementById('monthDisplay');
-    const yearDisplay = document.getElementById('yearDisplay');
-    const daysGrid = document.getElementById('daysGrid');
-    const eventsList = document.getElementById('eventsList');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const months = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
-    const weekDays = ["LU", "MA", "MI", "JU", "VI", "SA", "DO"];
-    let currentDate = new Date();
-    const events = [
-      { id: 1, date: new Date(2025, 8, 1), description: "Parcial de contabilidad", type: "parcial" },
-      { id: 2, date: new Date(2025, 8, 2), description: "Foro de contabilidad", type: "foro" },
-      { id: 3, date: new Date(2025, 8, 10), description: "Presentación de Lenguaje", type: "proyecto" },
-      { id: 4, date: new Date(2025, 9, 3), description: "Prueba de Física", type: "evaluacion" },
-    ];
+    const monthDisplay = document.getElementById('monthDisplay');
+    const yearDisplay = document.getElementById('yearDisplay');
+    const daysGrid = document.getElementById('daysGrid');
+    const eventsList = document.getElementById('eventsList');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
 
-    function renderCalendar() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        monthDisplay.textContent = months[month];
-        yearDisplay.textContent = year;
-        daysGrid.innerHTML = '';
+    const months = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+    const weekDays = ["LU", "MA", "MI", "JU", "VI", "SA", "DO"];
 
-        // Add weekday headers
-        weekDays.forEach(day => {
-            const headerEl = document.createElement('div');
-            headerEl.classList.add('day-header');
-            headerEl.textContent = day;
-            daysGrid.appendChild(headerEl);
-        });
+    let currentDate = new Date();
 
-        const firstDayOfMonth = new Date(year, month, 1).getDay();
-        const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
-        const firstDayIndex = (firstDayOfMonth + 6) % 7;
-        // Add empty days
-        for (let i = 0; i < firstDayIndex; i++) {
-            const emptyDay = document.createElement('div');
-            daysGrid.appendChild(emptyDay);
-        }
+    const events = [
+      { id: 1, date: new Date(2025, 8, 1), description: "Parcial de contabilidad", type: "parcial" },
+      { id: 2, date: new Date(2025, 8, 2), description: "Foro de contabilidad", type: "foro" },
+      { id: 3, date: new Date(2025, 8, 10), description: "Presentación de Lenguaje", type: "proyecto" },
+      { id: 4, date: new Date(2025, 9, 3), description: "Prueba de Física", type: "evaluacion" },
+    ];
 
-        // Add actual days
-        for (let day = 1; day <= lastDayOfMonth; day++) {
-            const dayEl = document.createElement('div');
-            dayEl.classList.add('day');
-            dayEl.textContent = day;
-            const dayOfWeek = (firstDayIndex + day - 1) % 7;
-            if (dayOfWeek >= 5) { // Sábado (5) y Domingo (6)
-                dayEl.classList.add('weekend');
-            }
+    function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
 
-            const today = new Date();
-            if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                dayEl.classList.add('current-day');
-            const dayEvents = events.filter(event => 
-                event.date.getFullYear() === year && 
-                event.date.getMonth() === month && 
-                event.date.getDate() === day
-            );
-            if (dayEvents.length > 0) {
-                dayEl.classList.add('has-event');
-            }
-            daysGrid.appendChild(dayEl);
-        }
-        renderEvents();
-    }
-  
-    function renderEvents() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        eventsList.innerHTML = '';
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-        const monthlyEvents = events.filter(event => 
-            event.date.getFullYear() === year && 
-            event.date.getMonth() === month
-        ).sort((a, b) => a.date - b.date);
-        if (monthlyEvents.length > 0) {
-            monthlyEvents.forEach(event => {
-                const item = document.createElement('div');
-                item.classList.add('agenda-item');
-                let dateLabel = '';
-                if (event.date.getDate() === today.getDate() && event.date.getMonth() === today.getMonth() && event.date.getFullYear() === today.getFullYear()) {
-                    dateLabel = 'Hoy';
-                } else if (event.date.getDate() === tomorrow.getDate() && event.date.getMonth() === tomorrow.getMonth() && event.date.getFullYear() === tomorrow.getFullYear()) {
-                    dateLabel = 'Mañana';
-                } else {
-                    dateLabel = `${event.date.getDate()} de ${months[event.date.getMonth()]}`;
-                }
-                item.innerHTML = `
-                    <div class="date-label">${dateLabel}</div>
-                    <div class="event-title">${event.description}</div>
-                `;
-                eventsList.appendChild(item);
-            });
+        monthDisplay.textContent = months[month];
+        yearDisplay.textContent = year;
+        daysGrid.innerHTML = '';
 
-        } else {
-            const item = document.createElement('div');
-            item.classList.add('agenda-item');
-            item.innerHTML = `<div class="event-title" style="text-align:center;">No hay eventos para este mes.</div>`;
-            eventsList.appendChild(item);
-        }
-    }
-  
-    prevBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
-    });
+        // Add weekday headers
+        weekDays.forEach(day => {
+            const headerEl = document.createElement('div');
+            headerEl.classList.add('day-header');
+            headerEl.textContent = day;
+            daysGrid.appendChild(headerEl);
+        });
 
-    nextBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
-    });
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
+        const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+        const firstDayIndex = (firstDayOfMonth + 6) % 7;
 
-    renderCalendar();
+        // Add empty days
+        for (let i = 0; i < firstDayIndex; i++) {
+            const emptyDay = document.createElement('div');
+            daysGrid.appendChild(emptyDay);
+        }
+
+        // Add actual days
+        for (let day = 1; day <= lastDayOfMonth; day++) {
+            const dayEl = document.createElement('div');
+            dayEl.classList.add('day');
+            dayEl.textContent = day;
+
+            const dayOfWeek = (firstDayIndex + day - 1) % 7;
+            if (dayOfWeek >= 5) { // Sábado (5) y Domingo (6)
+                dayEl.classList.add('weekend');
+            }
+
+            const today = new Date();
+            if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                dayEl.classList.add('current-day');
+            }
+
+            const dayEvents = events.filter(event => 
+                event.date.getFullYear() === year && 
+                event.date.getMonth() === month && 
+                event.date.getDate() === day
+            );
+            if (dayEvents.length > 0) {
+                dayEl.classList.add('has-event');
+            }
+
+            daysGrid.appendChild(dayEl);
+        }
+
+        renderEvents();
+    }
+
+    function renderEvents() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        eventsList.innerHTML = '';
+
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        const monthlyEvents = events.filter(event => 
+            event.date.getFullYear() === year && 
+            event.date.getMonth() === month
+        ).sort((a, b) => a.date - b.date);
+
+        if (monthlyEvents.length > 0) {
+            monthlyEvents.forEach(event => {
+                const item = document.createElement('div');
+                item.classList.add('agenda-item');
+                let dateLabel = '';
+
+                if (event.date.getDate() === today.getDate() && event.date.getMonth() === today.getMonth() && event.date.getFullYear() === today.getFullYear()) {
+                    dateLabel = 'Hoy';
+                } else if (event.date.getDate() === tomorrow.getDate() && event.date.getMonth() === tomorrow.getMonth() && event.date.getFullYear() === tomorrow.getFullYear()) {
+                    dateLabel = 'Mañana';
+                } else {
+                    dateLabel = `${event.date.getDate()} de ${months[event.date.getMonth()]}`;
+                }
+
+                item.innerHTML = `
+                    <div class="date-label">${dateLabel}</div>
+                    <div class="event-title">${event.description}</div>
+                `;
+                eventsList.appendChild(item);
+            });
+        } else {
+            const item = document.createElement('div');
+            item.classList.add('agenda-item');
+            item.innerHTML = `<div class="event-title" style="text-align:center;">No hay eventos para este mes.</div>`;
+            eventsList.appendChild(item);
+        }
+    }
+
+    prevBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    });
+
+    renderCalendar();
 </script>
+
 </body>
 </html>
