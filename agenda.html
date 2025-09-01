@@ -1,216 +1,404 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Escolar</title>
-<style>
-    body { font-family: Arial, sans-serif; background-color: #334455; color: white; margin:0; padding:20px;}
-    .container { max-width:600px; margin:auto; }
-    .header { display:flex; justify-content:space-between; align-items:center; padding:15px; background-color:#1657a2; border-radius:15px; margin-bottom:20px;}
-    .header h1 { margin:0; font-size:1.5em; }
-    .icon { font-size:1.2em; cursor:pointer; }
-    .calendar-section { background-color:#1a2b3c; padding:20px; border-radius:15px; text-align:center; margin-bottom:20px; }
-    .month-year-nav { display:flex; justify-content:space-between; align-items:center; font-weight:bold; font-size:1.2em; margin-bottom:15px; }
-    .month-year-nav .month, .month-year-nav .year { background-color:#004080; padding:8px 15px; border-radius:20px; }
-    .days-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:10px; }
-    .day-header { font-weight:bold; font-size:0.9em; }
-    .day { padding:10px; border-radius:5px; background-color:#1657a2; display:flex; align-items:center; justify-content:center; position:relative; }
-    .day.weekend { background-color:#15202b; }
-    .day.current-day { background:transparent; border:2px solid #0056b3; border-radius:50%; color:white; padding:8px; }
-    .day.has-event::after { content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%); width:6px; height:6px; background-color:#f0c300; border-radius:50%; }
-    .agenda-section { background-color:#1a2b3c; padding:20px; border-radius:15px; }
-    .agenda-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
-    .agenda-header h2 { margin:0; font-size:1.5em; }
-    .agenda-item { background-color:#004080; padding:15px; border-radius:10px; margin-bottom:10px; position:relative; }
-    .agenda-item .date-label { font-weight:bold; font-size:0.9em; }
-    .agenda-item .event-title { margin-top:5px; font-size:1.1em; }
-    .icon-plus { font-family:'Arial',sans-serif; font-size:24px; cursor:pointer; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda Escolar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #334455;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background-color: #1657a2;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+
+    .icon {
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    .calendar-section {
+      background-color: #1a2b3c;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .month-year-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 15px;
+    }
+
+    .month-year-nav .month, .month-year-nav .year {
+      background-color: #004080;
+      padding: 8px 15px;
+      border-radius: 20px;
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .day-header {
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    .day {
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #1657a2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .day.weekend {
+      background-color: #15202b;
+    }
+
+    .day.current-day {
+      background: transparent;
+      border: 2px solid #0056b3;
+      border-radius: 50%;
+      color: white;
+      padding: 8px;
+    }
+
+    .day.has-event::after {
+      content: '';
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      background-color: #f0c300;
+      border-radius: 50%;
+    }
+
+    .agenda-section {
+      background-color: #1a2b3c;
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    .agenda-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .agenda-header h2 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+
+    .agenda-item {
+      background-color: #004080;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .agenda-item .date-label {
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    .agenda-item .event-title {
+      margin-top: 5px;
+      font-size: 1.1em;
+    }
+
+    .icon-plus {
+      font-family: 'Arial', sans-serif;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
     /* Modal */
-    #eventModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; }
-    #eventModal div { background:#1a2b3c; padding:20px; border-radius:15px; width:90%; max-width:400px; color:white; }
-    #eventModal input { width:100%; padding:8px; margin:5px 0; border-radius:5px; border:none; }
-    #eventModal button { padding:10px 20px; border:none; border-radius:10px; cursor:pointer; margin:5px; }
+    #eventModal {
+      display:none; 
+      position:fixed; 
+      top:0; left:0; 
+      width:100%; height:100%; 
+      background:rgba(0,0,0,0.7); 
+      justify-content:center; 
+      align-items:center;
+    }
+
+    #eventModal div {
+      background:#1a2b3c; 
+      padding:20px; 
+      border-radius:15px; 
+      width:90%; 
+      max-width:400px; 
+      color:white;
+    }
+
+    #eventModal input {
+      width:100%; 
+      padding:8px; 
+      margin:5px 0; 
+      border-radius:5px; 
+      border:none;
+    }
+
+    #eventModal button {
+      padding:10px 20px; 
+      border:none; 
+      border-radius:10px; 
+      cursor:pointer; 
+      margin:5px;
+    }
+
     #saveEventBtn { background:#1657a2; color:white; }
     #closeModalBtn { background:#555; color:white; }
-    .delete-event { position:absolute; top:5px; right:10px; cursor:pointer; color:#f00; font-weight:bold; }
-</style>
+
+    .delete-event {
+      position:absolute;
+      top:5px;
+      right:10px;
+      cursor:pointer;
+      color:#f00;
+      font-weight:bold;
+    }
+  </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="header"><h1>Agenda</h1></div>
+  <div class="container">
+    <div class="header">
+      <h1>Agenda Escolar</h1>
+      <span class="icon icon-plus">+</span>
+    </div>
 
     <div class="calendar-section">
-        <div class="month-year-nav">
-            <button id="prevBtn" style="background:none;border:none;color:white;font-size:1.5em;cursor:pointer;">&lt;</button>
-            <div id="monthDisplay" class="month"></div>
-            <div id="yearDisplay" class="year"></div>
-            <button id="nextBtn" style="background:none;border:none;color:white;font-size:1.5em;cursor:pointer;">&gt;</button>
-        </div>
-        <div class="days-grid" id="daysGrid"></div>
+      <div class="month-year-nav">
+        <button id="prevBtn" style="background:none; border:none; color:white; font-size:1.5em; cursor:pointer;">&lt;</button>
+        <div id="monthDisplay" class="month"></div>
+        <div id="yearDisplay" class="year"></div>
+        <button id="nextBtn" style="background:none; border:none; color:white; font-size:1.5em; cursor:pointer;">&gt;</button>
+      </div>
+      <div class="days-grid" id="daysGrid"></div>
     </div>
 
     <div class="agenda-section">
-        <div class="agenda-header">
-            <h2>Agenda</h2>
-            <span class="icon icon-plus">+</span>
-        </div>
-        <div id="eventsList"></div>
+      <div class="agenda-header">
+        <h2>📒 Eventos del mes</h2>
+      </div>
+      <div id="eventsList"></div>
     </div>
-</div>
+  </div>
 
-<!-- Modal -->
-<div id="eventModal">
+  <!-- Modal para agregar eventos -->
+  <div id="eventModal">
     <div>
-        <h3 style="text-align:center;">Agregar Evento</h3>
-        <label>Fecha y hora:</label>
-        <input type="datetime-local" id="eventDateTime">
-        <label>Materia:</label>
-        <input type="text" id="eventSubject" placeholder="Ej: Matemática">
-        <label>Link de Zoom:</label>
-        <input type="text" id="eventLink" placeholder="https://...">
-        <div style="text-align:center; margin-top:10px;">
-            <button id="saveEventBtn">Guardar</button>
-            <button id="closeModalBtn">Cancelar</button>
-        </div>
+      <h3 style="text-align:center;">Agregar Evento</h3>
+      <label>Fecha y hora:</label>
+      <input type="datetime-local" id="eventDateTime">
+      <label>Materia:</label>
+      <input type="text" id="eventSubject" placeholder="Ej: Matemática">
+      <label>Link de Zoom:</label>
+      <input type="text" id="eventLink" placeholder="https://...">
+      <div style="text-align:center; margin-top:10px;">
+        <button id="saveEventBtn">Guardar</button>
+        <button id="closeModalBtn">Cancelar</button>
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
-const monthDisplay = document.getElementById('monthDisplay');
-const yearDisplay = document.getElementById('yearDisplay');
-const daysGrid = document.getElementById('daysGrid');
-const eventsList = document.getElementById('eventsList');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
+  <script>
+    const monthDisplay = document.getElementById('monthDisplay');
+    const yearDisplay = document.getElementById('yearDisplay');
+    const daysGrid = document.getElementById('daysGrid');
+    const eventsList = document.getElementById('eventsList');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
 
-const modal = document.getElementById('eventModal');
-const plusBtn = document.querySelector('.icon-plus');
-const closeModalBtn = document.getElementById('closeModalBtn');
-const saveEventBtn = document.getElementById('saveEventBtn');
-const eventDateTime = document.getElementById('eventDateTime');
-const eventSubject = document.getElementById('eventSubject');
-const eventLink = document.getElementById('eventLink');
+    const modal = document.getElementById('eventModal');
+    const plusBtn = document.querySelector('.icon-plus');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const saveEventBtn = document.getElementById('saveEventBtn');
+    const eventDateTime = document.getElementById('eventDateTime');
+    const eventSubject = document.getElementById('eventSubject');
+    const eventLink = document.getElementById('eventLink');
 
-const months = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
-const weekDays = ["LU","MA","MI","JU","VI","SA","DO"];
-let currentDate = new Date();
-const events = [];
+    const months = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+    const weekDays = ["LU","MA","MI","JU","VI","SA","DO"];
 
-function renderCalendar() {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+    let currentDate = new Date();
 
-    monthDisplay.textContent = months[month];
-    yearDisplay.textContent = year;
-    daysGrid.innerHTML = '';
+    // Cargar eventos desde localStorage
+    let events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
 
-    weekDays.forEach(day=>{
-        const header=document.createElement('div');
-        header.classList.add('day-header');
-        header.textContent=day;
-        daysGrid.appendChild(header);
-    });
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
 
-    const firstDayOfMonth=new Date(year,month,1).getDay();
-    const lastDayOfMonth=new Date(year,month+1,0).getDate();
-    const firstDayIndex=(firstDayOfMonth+6)%7;
+      monthDisplay.textContent = months[month];
+      yearDisplay.textContent = year;
+      daysGrid.innerHTML = '';
 
-    for(let i=0;i<firstDayIndex;i++) daysGrid.appendChild(document.createElement('div'));
+      weekDays.forEach(day => {
+        const headerEl = document.createElement('div');
+        headerEl.classList.add('day-header');
+        headerEl.textContent = day;
+        daysGrid.appendChild(headerEl);
+      });
 
-    for(let day=1;day<=lastDayOfMonth;day++){
-        const dayEl=document.createElement('div');
+      const firstDayOfMonth = new Date(year, month, 1).getDay();
+      const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+      const firstDayIndex = (firstDayOfMonth + 6) % 7;
+
+      for (let i = 0; i < firstDayIndex; i++) daysGrid.appendChild(document.createElement('div'));
+
+      for (let day = 1; day <= lastDayOfMonth; day++) {
+        const dayEl = document.createElement('div');
         dayEl.classList.add('day');
-        dayEl.textContent=day;
+        dayEl.textContent = day;
 
-        const dayOfWeek=(firstDayIndex+day-1)%7;
-        if(dayOfWeek>=5) dayEl.classList.add('weekend');
+        const dayOfWeek = (firstDayIndex + day - 1) % 7;
+        if (dayOfWeek >= 5) dayEl.classList.add('weekend');
 
-        const today=new Date();
-        if(day===today.getDate() && month===today.getMonth() && year===today.getFullYear()) dayEl.classList.add('current-day');
+        const today = new Date();
+        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) dayEl.classList.add('current-day');
 
-        const dayEvents=events.filter(ev=> ev.date.getFullYear()===year && ev.date.getMonth()===month && ev.date.getDate()===day);
-        if(dayEvents.length>0) dayEl.classList.add('has-event');
+        const dayEvents = events.filter(event => 
+          new Date(event.date).getFullYear() === year && 
+          new Date(event.date).getMonth() === month && 
+          new Date(event.date).getDate() === day
+        );
+        if (dayEvents.length > 0) dayEl.classList.add('has-event');
 
         daysGrid.appendChild(dayEl);
+      }
+
+      renderEvents();
     }
 
-    renderEvents();
-}
+    function renderEvents() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      eventsList.innerHTML = '';
 
-function renderEvents(){
-    const year=currentDate.getFullYear();
-    const month=currentDate.getMonth();
-    eventsList.innerHTML='';
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
 
-    const today=new Date();
-    const tomorrow=new Date(today); tomorrow.setDate(today.getDate()+1);
+      const monthlyEvents = events.filter(event => 
+        new Date(event.date).getFullYear() === year && 
+        new Date(event.date).getMonth() === month
+      ).sort((a,b)=>new Date(a.date)-new Date(b.date));
 
-    const monthlyEvents=events.filter(ev=> ev.date.getFullYear()===year && ev.date.getMonth()===month).sort((a,b)=>a.date-b.date);
+      if (monthlyEvents.length > 0) {
+        monthlyEvents.forEach(event => {
+          const item = document.createElement('div');
+          item.classList.add('agenda-item');
 
-    if(monthlyEvents.length>0){
-        monthlyEvents.forEach(ev=>{
-            const item=document.createElement('div');
-            item.classList.add('agenda-item');
+          const eventDate = new Date(event.date);
+          let dateLabel = '';
+          if(eventDate.toDateString() === today.toDateString()) dateLabel = 'Hoy';
+          else if(eventDate.toDateString() === tomorrow.toDateString()) dateLabel = 'Mañana';
+          else dateLabel = `${eventDate.getDate()} de ${months[eventDate.getMonth()]}`;
 
-            let dateLabel='';
-            if(ev.date.getDate()===today.getDate() && ev.date.getMonth()===today.getMonth() && ev.date.getFullYear()===today.getFullYear()) dateLabel='Hoy';
-            else if(ev.date.getDate()===tomorrow.getDate() && ev.date.getMonth()===tomorrow.getMonth() && ev.date.getFullYear()===tomorrow.getFullYear()) dateLabel='Mañana';
-            else dateLabel=`${ev.date.getDate()} de ${months[ev.date.getMonth()]}`;
+          item.innerHTML = `
+            <div class="date-label">${dateLabel}</div>
+            <div class="event-title">${event.subject} - <a href="${event.zoomLink}" target="_blank" style="color:#f0c300;">Zoom</a></div>
+            <span class="delete-event">×</span>
+          `;
 
-            item.innerHTML=`
-                <div class="date-label">${dateLabel}</div>
-                <div class="event-title">${ev.description} - <a href="${ev.link}" target="_blank" style="color:#f0c300;">Zoom</a></div>
-                <span class="delete-event">×</span>
-            `;
+          item.querySelector('.delete-event').addEventListener('click', ()=>{
+            events = events.filter(e => e !== event);
+            localStorage.setItem('schoolEvents', JSON.stringify(events));
+            renderCalendar();
+          });
 
-            item.querySelector('.delete-event').addEventListener('click',()=>{
-                const index=events.findIndex(e=>e.id===ev.id);
-                if(index>-1){ events.splice(index,1); renderCalendar(); }
-            });
-
-            eventsList.appendChild(item);
+          eventsList.appendChild(item);
         });
-    } else {
-        const item=document.createElement('div');
+      } else {
+        const item = document.createElement('div');
         item.classList.add('agenda-item');
-        item.innerHTML=`<div class="event-title" style="text-align:center;">No hay eventos para este mes.</div>`;
+        item.innerHTML = `<div class="event-title" style="text-align:center;">No hay eventos para este mes.</div>`;
         eventsList.appendChild(item);
+      }
+
+      // Guardar en localStorage
+      localStorage.setItem('schoolEvents', JSON.stringify(events));
     }
-}
 
-prevBtn.addEventListener('click',()=>{ currentDate.setMonth(currentDate.getMonth()-1); renderCalendar(); });
-nextBtn.addEventListener('click',()=>{ currentDate.setMonth(currentDate.getMonth()+1); renderCalendar(); });
-
-plusBtn.addEventListener('click',()=>{ modal.style.display='flex'; });
-closeModalBtn.addEventListener('click',()=>{
-    modal.style.display='none';
-    eventDateTime.value=''; eventSubject.value=''; eventLink.value='';
-});
-
-saveEventBtn.addEventListener('click',()=>{
-    const datetime=new Date(eventDateTime.value);
-    const subject=eventSubject.value.trim();
-    const link=eventLink.value.trim();
-
-    if(!datetime || !subject || !link){ alert("Completa todos los campos"); return; }
-
-    events.push({
-        id:events.length+1,
-        date:datetime,
-        description:subject,
-        link:link,
-        type:'clase'
+    prevBtn.addEventListener('click', ()=>{
+      currentDate.setMonth(currentDate.getMonth()-1);
+      renderCalendar();
     });
 
-    modal.style.display='none';
-    eventDateTime.value=''; eventSubject.value=''; eventLink.value='';
+    nextBtn.addEventListener('click', ()=>{
+      currentDate.setMonth(currentDate.getMonth()+1);
+      renderCalendar();
+    });
+
+    plusBtn.addEventListener('click', ()=>{ modal.style.display='flex'; });
+
+    closeModalBtn.addEventListener('click', ()=>{
+      modal.style.display='none';
+      eventDateTime.value=''; eventSubject.value=''; eventLink.value='';
+    });
+
+    saveEventBtn.addEventListener('click', ()=>{
+      const datetime = new Date(eventDateTime.value);
+      const subject = eventSubject.value.trim();
+      const link = eventLink.value.trim();
+
+      if(!datetime || !subject || !link){
+        alert("Completa todos los campos");
+        return;
+      }
+
+      events.push({
+        date: datetime,
+        subject: subject,
+        zoomLink: link
+      });
+
+      localStorage.setItem('schoolEvents', JSON.stringify(events));
+
+      modal.style.display='none';
+      eventDateTime.value=''; eventSubject.value=''; eventLink.value='';
+      renderCalendar();
+    });
+
     renderCalendar();
-});
-
-renderCalendar();
-</script>
-
+  </script>
 </body>
 </html>
