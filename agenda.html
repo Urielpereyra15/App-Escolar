@@ -1,591 +1,109 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Agenda Escolar</title>
-    <style>
-        /* --- Header pequeño (icono + nombre) --- */
-        .topbar {
-            background-color: #223344;
-            color: #fff;
-            padding: 10px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .hamburger {
-            font-size: 20px;
-            cursor: pointer;
-            user-select: none;
-        }
-        .app-name {
-            font-weight: 700;
-            font-size: 1rem;
-        }
-
-        /* --- Diseño original de la agenda (tu estilo) --- */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #334455;
-            color: white;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background-color: #1657a2;
-            border-radius: 15px;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-        .icon {
-            font-size: 1.2em;
-            cursor: pointer;
-        }
-        .calendar-section {
-            background-color: #1a2b3c;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .month-year-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            font-size: 1.2em;
-            margin-bottom: 15px;
-        }
-        .month-year-nav .month, .month-year-nav .year {
-            background-color: #004080;
-            padding: 8px 15px;
-            border-radius: 20px;
-        }
-        .days-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-        }
-        .day-header {
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-        .day {
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #1657a2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            cursor: pointer;
-        }
-        .day.weekend {
-            background-color: #15202b;
-        }
-        .day.current-day {
-            background: transparent;
-            border: 2px solid #0056b3;
-            border-radius: 50%;
-            color: white;
-            padding: 8px;
-        }
-        .day.has-event::after {
-            content: '';
-            position: absolute;
-            bottom: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 6px;
-            height: 6px;
-            background-color: #f0c300;
-            border-radius: 50%;
-        }
-        .agenda-section {
-            background-color: #1a2b3c;
-            padding: 20px;
-            border-radius: 15px;
-        }
-        .agenda-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .agenda-header h2 {
-            margin: 0;
-            font-size: 1.5em;
-        }
-        .agenda-item {
-            background-color: #004080;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            position: relative;
-        }
-        .agenda-item .date-label {
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-        .agenda-item .event-title {
-            margin-top: 5px;
-            font-size: 1.1em;
-        }
-        .icon-plus {
-            font-family: 'Arial', sans-serif;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        /* Modal */
-        #eventModal {
-            display:none; 
-            position:fixed; 
-            top:0; left:0; 
-            width:100%; height:100%; 
-            background:rgba(0,0,0,0.7); 
-            justify-content:center; 
-            align-items:center;
-            z-index: 999;
-        }
-        #eventModal div {
-            background:#1a2b3c; 
-            padding:20px; 
-            border-radius:15px; 
-            width:90%; 
-            max-width:420px; 
-            color:white;
-        }
-        #eventModal input {
-            width:100%; 
-            padding:8px; 
-            margin:5px 0; 
-            border-radius:5px; 
-            border:none;
-        }
-        #eventModal button {
-            padding:10px 20px; 
-            border:none; 
-            border-radius:10px; 
-            cursor:pointer; 
-            margin:5px;
-        }
-        #saveEventBtn { background:#1657a2; color:white; }
-        #closeModalBtn { background:#555; color:white; }
-        .delete-event {
-            position:absolute;
-            top:8px;
-            right:12px;
-            cursor:pointer;
-            color:#ff6b6b;
-            font-weight:bold;
-            font-size:18px;
-            line-height:1;
-        }
-
-        /* small screens tweak */
-        @media (max-width:480px){
-            .container { padding: 10px; }
-            .month-year-nav .month, .month-year-nav .year { padding:6px 10px; font-size:1em; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Escolar</title>
+<style>
+h1 { margin: 20px 0; }
+.agenda-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 90%; max-width: 600px; margin: auto; }
+.event { padding: 10px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+.event:last-child { border-bottom: none; }
+.delete-btn { color: red; cursor: pointer; font-weight: bold; margin-left: 15px; }
+.add-btn { margin-top: 15px; padding: 10px; background-color: #334455; color: white; border: none; border-radius: 5px; cursor: pointer; }
+.add-btn:hover { background-color: #223344; }
+/* Header */
+.header { display: flex; align-items: center; gap: 10px; padding: 15px; background-color: #1657a2; color: white; border-radius: 10px; max-width: 600px; margin: 20px auto; }
+.menu-icon { font-size: 24px; cursor: pointer; }
+.header h1 { margin: 0; font-size: 20px; }
+</style>
 </head>
 <body>
 
-  <!-- TOP BAR: icon + name (no modifica el layout existente) -->
-  <div class="topbar">
-    <div class="hamburger" title="Menú">☰</div>
-    <div class="app-name">Mi Escuela</div>
-  </div>
+<div class="header">
+    <div class="menu-icon">☰</div>
+    <h1>Mi Escuela</h1>
+</div>
 
-  <div class="container">
-      <div class="header">
-          <h1>Agenda</h1>
-      </div>
+<div class="agenda-container">
+    <h2>Agenda</h2>
+    <div id="eventsList"></div>
+    <button class="add-btn" id="addEventBtn">+ Agregar evento</button>
+</div>
 
-      <div class="calendar-section">
-          <div class="month-year-nav">
-              <button id="prevBtn" style="background:none; border:none; color:white; font-size:1.5em; cursor:pointer;">&lt;</button>
-              <div id="monthDisplay" class="month"></div>
-              <div id="yearDisplay" class="year"></div>
-              <button id="nextBtn" style="background:none; border:none; color:white; font-size:1.5em; cursor:pointer;">&gt;</button>
-          </div>
-          <div class="days-grid" id="daysGrid"></div>
-      </div>
+<!-- Modal para agregar eventos -->
+<div id="eventModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); justify-content:center; align-items:center;">
+    <div style="background:white; color:black; padding:20px; border-radius:10px; max-width:400px; margin:auto;">
+        <h3 style="text-align:center;">Agregar Evento</h3>
+        <label>Fecha y hora:</label>
+        <input type="datetime-local" id="eventDateTime" style="width:100%; padding:5px; margin:5px 0;">
+        <label>Materia:</label>
+        <input type="text" id="eventSubject" placeholder="Ej: Matemática" style="width:100%; padding:5px; margin:5px 0;">
+        <label>Link de Zoom:</label>
+        <input type="text" id="eventLink" placeholder="https://..." style="width:100%; padding:5px; margin:5px 0;">
+        <div style="text-align:center; margin-top:10px;">
+            <button id="saveEventBtn" style="padding:10px 20px; margin:5px; background:#1657a2; color:white; border:none; border-radius:5px; cursor:pointer;">Guardar</button>
+            <button id="closeModalBtn" style="padding:10px 20px; margin:5px; background:#555; color:white; border:none; border-radius:5px; cursor:pointer;">Cancelar</button>
+        </div>
+    </div>
+</div>
 
-      <div class="agenda-section">
-          <div class="agenda-header">
-              <h2>Agenda</h2>
-              <span class="icon icon-plus">+</span>
-          </div>
-          <div id="eventsList"></div>
-      </div>
-  </div>
+<script>
+const eventsList = document.getElementById('eventsList');
+const addEventBtn = document.getElementById('addEventBtn');
+const modal = document.getElementById('eventModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const saveEventBtn = document.getElementById('saveEventBtn');
+const eventDateTime = document.getElementById('eventDateTime');
+const eventSubject = document.getElementById('eventSubject');
+const eventLink = document.getElementById('eventLink');
 
-  <!-- Modal para agregar eventos -->
-  <div id="eventModal" role="dialog" aria-hidden="true">
-      <div>
-          <h3 style="text-align:center;">Agregar Evento</h3>
-          <label>Fecha y hora:</label>
-          <input type="datetime-local" id="eventDateTime">
-          <label>Materia:</label>
-          <input type="text" id="eventSubject" placeholder="Ej: Matemática">
-          <label>Link de Zoom:</label>
-          <input type="text" id="eventLink" placeholder="https://...">
-          <div style="text-align:center; margin-top:10px;">
-              <button id="saveEventBtn">Guardar</button>
-              <button id="closeModalBtn">Cancelar</button>
-          </div>
-      </div>
-  </div>
+let events = [];
 
-  <script>
-    // Elementos
-    const monthDisplay = document.getElementById('monthDisplay');
-    const yearDisplay = document.getElementById('yearDisplay');
-    const daysGrid = document.getElementById('daysGrid');
-    const eventsList = document.getElementById('eventsList');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-
-    const modal = document.getElementById('eventModal');
-    const plusBtn = document.querySelector('.icon-plus');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const saveEventBtn = document.getElementById('saveEventBtn');
-    const eventDateTime = document.getElementById('eventDateTime');
-    const eventSubject = document.getElementById('eventSubject');
-    const eventLink = document.getElementById('eventLink');
-
-    const months = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
-    const weekDays = ["LU","MA","MI","JU","VI","SA","DO"];
-
-    let currentDate = new Date();
-
-    // Cargar eventos desde localStorage (clave usada: 'schoolEvents')
-    let events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
-
-    function renderCalendar() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-
-        monthDisplay.textContent = months[month];
-        yearDisplay.textContent = year;
-        daysGrid.innerHTML = '';
-
-        // headers de días
-        weekDays.forEach(day => {
-            const headerEl = document.createElement('div');
-            headerEl.classList.add('day-header');
-            headerEl.textContent = day;
-            daysGrid.appendChild(headerEl);
+// Renderizar eventos
+function renderEvents() {
+    eventsList.innerHTML = '';
+    events.forEach(event => {
+        const div = document.createElement('div');
+        div.classList.add('event');
+        div.innerHTML = `${event.dateTime} - ${event.subject} - <a href="${event.link}" target="_blank">Zoom</a><span class="delete-btn">×</span>`;
+        div.querySelector('.delete-btn').addEventListener('click', () => {
+            events = events.filter(e => e !== event);
+            renderEvents();
         });
-
-        const firstDayOfMonth = new Date(year, month, 1).getDay();
-        const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
-        const firstDayIndex = (firstDayOfMonth + 6) % 7; // ajustar para que la semana empiece en lunes
-
-        // espacios vacíos
-        for (let i = 0; i < firstDayIndex; i++) {
-            const emptyDay = document.createElement('div');
-            daysGrid.appendChild(emptyDay);
-        }
-
-        // días reales
-        for (let day = 1; day <= lastDayOfMonth; day++) {
-            const dayEl = document.createElement('div');
-            dayEl.classList.add('day');
-            dayEl.textContent = day;
-
-            const dayOfWeek = (firstDayIndex + day - 1) % 7;
-            if (dayOfWeek >= 5) dayEl.classList.add('weekend');
-
-            const today = new Date();
-            if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                dayEl.classList.add('current-day');
-            }
-
-            // marcar si hay eventos ese día
-            const dayEvents = events.filter(event => {
-                const d = new Date(event.date);
-                return d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
-            });
-            if (dayEvents.length > 0) dayEl.classList.add('has-event');
-
-            // al clickear un día, abre el modal con la fecha seleccionada
-            (function(y,m,d){
-                dayEl.addEventListener('click', () => {
-                    modal.style.display = 'flex';
-                    // completar campo datetime-local con fecha del día y hora actual
-                    const hour = new Date().getHours().toString().padStart(2,'0');
-                    const minute = new Date().getMinutes().toString().padStart(2,'0');
-                    const monthNum = (m + 1).toString().padStart(2,'0');
-                    const dayNum = d.toString().padStart(2,'0');
-                    eventDateTime.value = `${y}-${monthNum}-${dayNum}T${hour}:${minute}`;
-                });
-            })(year, month, day);
-
-            daysGrid.appendChild(dayEl);
-        }
-
-        renderEvents();
-    }
-
-    function renderEvents() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        eventsList.innerHTML = '';
-
-        const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-
-        const monthlyEvents = events.filter(event => {
-            const d = new Date(event.date);
-            return d.getFullYear() === year && d.getMonth() === month;
-        }).sort((a,b)=> new Date(a.date) - new Date(b.date));
-
-        if (monthlyEvents.length > 0) {
-            monthlyEvents.forEach((event, idx) => {
-                const item = document.createElement('div');
-                item.classList.add('agenda-item');
-
-                const eventDate = new Date(event.date);
-                let dateLabel = '';
-                if (eventDate.toDateString() === today.toDateString()) dateLabel = 'Hoy';
-                else if (eventDate.toDateString() === tomorrow.toDateString()) dateLabel = 'Mañana';
-                else dateLabel = `${eventDate.getDate()} de ${months[eventDate.getMonth()]}`;
-
-                item.innerHTML = `
-                    <div class="date-label">${dateLabel}</div>
-                    <div class="event-title">${event.subject} - <a href="${event.zoomLink}" target="_blank" style="color:#f0c300;">Zoom</a></div>
-                    <span class="delete-event" title="Eliminar">×</span>
-                `;
-
-                // borrar evento (index real: buscar por identidad única)
-                item.querySelector('.delete-event').addEventListener('click', () => {
-                    // eliminar por índice del array global 'events' comparando por match de fecha+subject+zoomLink
-                    const toRemoveIndex = events.findIndex(e => e.date === event.date && e.subject === event.subject && e.zoomLink === event.zoomLink);
-                    if (toRemoveIndex > -1) {
-                        events.splice(toRemoveIndex, 1);
-                        localStorage.setItem('schoolEvents', JSON.stringify(events));
-                        renderCalendar();
-                    }
-                });
-
-                eventsList.appendChild(item);
-            });
-        } else {
-            const item = document.createElement('div');
-            item.classList.add('agenda-item');
-            item.innerHTML = `<div class="event-title" style="text-align:center;">No hay eventos para este mes.</div>`;
-            eventsList.appendChild(item);
-        }
-
-        // sincronizar storage (por si se modificó desde otra parte)
-        localStorage.setItem('schoolEvents', JSON.stringify(events));
-    }
-
-    // navegación de meses
-    prevBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
+        eventsList.appendChild(div);
     });
+}
 
-    nextBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
+// Botones
+addEventBtn.addEventListener('click', () => modal.style.display = 'flex');
+closeModalBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+    eventDateTime.value = '';
+    eventSubject.value = '';
+    eventLink.value = '';
+});
+
+saveEventBtn.addEventListener('click', () => {
+    if(!eventDateTime.value || !eventSubject.value || !eventLink.value){
+        alert('Completa todos los campos');
+        return;
+    }
+    events.push({
+        dateTime: eventDateTime.value,
+        subject: eventSubject.value,
+        link: eventLink.value
     });
-
-    // abrir modal con botón +
-    plusBtn.addEventListener('click', () => {
-        modal.style.display = 'flex';
-    });
-
-    // cerrar modal cancelar
-    closeModalBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-        eventDateTime.value = '';
-        eventSubject.value = '';
-        eventLink.value = '';
-    });
-
-    // guardar evento
-    saveEventBtn.addEventListener('click', () => {
-        const datetimeStr = eventDateTime.value;
-        const subject = eventSubject.value.trim();
-        const link = eventLink.value.trim();
-
-        if (!datetimeStr || !subject || !link) {
-            alert('Completa todos los campos');
-            return;
-        }
-
-        // guardar como ISO string para fácil serialización
-        const newEvent = {
-            date: new Date(datetimeStr).toISOString(),
-            subject: subject,
-            zoomLink: link
-        };
-
-        events.push(newEvent);
-        localStorage.setItem('schoolEvents', JSON.stringify(events));
-
-        modal.style.display = 'none';
-        eventDateTime.value = '';
-        eventSubject.value = '';
-        eventLink.value = '';
-
-        renderCalendar();
-    });
-
-    // cargar events del storage en load
-    (function init(){
-        // si hay eventos en localStorage guardados con otra clave, no tocamos (pero preferimos 'schoolEvents')
-        const s = localStorage.getItem('schoolEvents');
-        if (s) {
-            try {
-                events = JSON.parse(s);
-            } catch (e) {
-                events = [];
-            }
-        } else {
-            events = [];
-        }
-        renderCalendar();
-    })();
-
-    // permitir cerrar modal si se clickea fuera del cuadro
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-
-    // si otro tab cambia los eventos, actualizar automáticamente
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'schoolEvents') {
-            events = JSON.parse(e.newValue || '[]');
-            renderCalendar();
-        }
-    });
-  </script>
-</body>
-</html>
-
-    h1 {
-      margin: 20px 0;
-    }
-
-    .agenda-container {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 90%;
-      max-width: 600px;
-    }
-
-    .event {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .event:last-child {
-      border-bottom: none;
-    }
-
-    .delete-btn {
-      color: red;
-      cursor: pointer;
-      font-weight: bold;
-      margin-left: 15px;
-    }
-
-    .add-btn {
-      margin-top: 15px;
-      padding: 10px;
-      background-color: #334455;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .add-btn:hover {
-      background-color: #223344;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <span class="menu-icon">&#9776;</span>
-    <span class="header-title">Mi Escuela</span>
-  </header>
-
-  <h1>Agenda</h1>
-  <div class="agenda-container">
-    <div id="events"></div>
-    <button class="add-btn" onclick="addEvent()">+ Agregar evento</button>
-  </div>
-
-  <script>
-    function loadEvents() {
-      return JSON.parse(localStorage.getItem("events")) || [];
-    }
-
-    function saveEvents(events) {
-      localStorage.setItem("events", JSON.stringify(events));
-    }
-
-    function renderEvents() {
-      const events = loadEvents();
-      const container = document.getElementById("events");
-      container.innerHTML = "";
-      events.forEach((event, index) => {
-        const div = document.createElement("div");
-        div.className = "event";
-        div.innerHTML = `
-          <span>${event.fecha} - ${event.materia} - <a href="${event.link}" target="_blank">Zoom</a></span>
-          <span class="delete-btn" onclick="deleteEvent(${index})">x</span>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function addEvent() {
-      const fecha = prompt("Ingrese fecha y hora:");
-      const materia = prompt("Ingrese materia:");
-      const link = prompt("Ingrese link de Zoom:");
-      if (fecha && materia && link) {
-        const events = loadEvents();
-        events.push({ fecha, materia, link });
-        saveEvents(events);
-        renderEvents();
-      }
-    }
-
-    function deleteEvent(index) {
-      const events = loadEvents();
-      events.splice(index, 1);
-      saveEvents(events);
-      renderEvents();
-    }
-
+    modal.style.display = 'none';
+    eventDateTime.value = '';
+    eventSubject.value = '';
+    eventLink.value = '';
     renderEvents();
-  </script>
+});
+
+// Inicializar
+renderEvents();
+</script>
+
 </body>
 </html>
