@@ -13,29 +13,29 @@ body {
     padding: 20px;
 }
 
-.navbar {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
+/* Barra de navegación */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #0b2c56;
+    position: sticky;
+    top: 0;
 }
-.navbar ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 10px;
+
+nav a {
+    text-decoration: none;
+    background: #0d4a8c;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    display: inline-block;
 }
-.navbar li a {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #1565C0;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-.navbar li a:hover {
-  background-color: #0D47A1;
+
+nav a:hover {
+    background: #1565c0;
 }
 
 .container {
@@ -191,15 +191,13 @@ body {
 </style>
 </head>
 <body>
-
-<nav class="navbar">
-  <ul>
-    <li><a href="index.html">🏠 Inicio</a></li>
-    <li><a href="agenda.html">📒 Agenda</a></li>
-    <li><a href="calificacion.html">⭐ Calificación</a></li>
-    <li><a href="asignaturas.html">🎓 Asignaturas</a></li>
-  </ul>
-</nav>    
+<!-- Menú -->
+  <nav>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="agenda.html">📒 Agenda</a>
+    <a href="calificacion.html">⭐ Calificación</a>
+    <a href="asignaturas.html">🎓 Asignaturas</a>
+  </nav>    
 
 <div class="container">
     <div class="header">
