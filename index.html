@@ -119,12 +119,10 @@
   </nav>
 
   <div class="container">
-    <!-- Agenda -->
+    <!-- Próximos eventos -->
     <div class="card">
-      <h3>📒 Agenda</h3>
-      <div class="agenda-item">Hoy - Parcial de contabilidad</div>
-      <div class="agenda-item">Mañana - Foro de contabilidad</div>
-      <div class="agenda-item">X día - Actividad</div>
+      <h3>📒 Próximos eventos</h3>
+      <div id="upcomingEvents"></div>
     </div>
 
     <!-- Calificaciones -->
@@ -151,5 +149,51 @@
       </div>
     </div>
   </div>
+
+  <script>
+    const months = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+    const upcomingEvents = document.getElementById('upcomingEvents');
+
+    function renderUpcomingEvents() {
+      upcomingEvents.innerHTML = '';
+      const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
+      const firstThree = events.slice(0, 3);
+
+      if(firstThree.length === 0){
+        upcomingEvents.innerHTML = '<div class="agenda-item">No hay eventos próximos</div>';
+        return;
+      }
+
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+
+      firstThree.forEach(event => {
+        const item = document.createElement('div');
+        item.classList.add('agenda-item');
+
+        if(event.date) event.date = new Date(event.date);
+
+        let dateLabel = '';
+        if(event.date.toDateString() === today.toDateString()) dateLabel = 'Hoy';
+        else if(event.date.toDateString() === tomorrow.toDateString()) dateLabel = 'Mañana';
+        else dateLabel = `${event.date.getDate()} de ${months[event.date.getMonth()]}`;
+
+        item.innerHTML = `
+          ${dateLabel} - ${event.subject} - 
+          <a href="${event.zoomLink}" target="_blank" style="color:#f0c300; text-decoration:underline;">Zoom</a>
+        `;
+        upcomingEvents.appendChild(item);
+      });
+    }
+
+    // Ejecuta al cargar la página
+    renderUpcomingEvents();
+
+    // Actualiza automáticamente si cambia localStorage desde otra pestaña o ventana
+    window.addEventListener('storage', (e) => {
+      if(e.key === 'schoolEvents') renderUpcomingEvents();
+    });
+  </script>
 </body>
 </html>
