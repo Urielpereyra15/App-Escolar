@@ -12,27 +12,32 @@
             margin: 0;
             padding: 20px;
         }
+        
         .container {
             max-width: 600px;
             margin: auto;
         }
+        
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px;
-            background-color: #223344;
+            background-color: #1657a2;
             border-radius: 15px;
             margin-bottom: 20px;
         }
+        
         .header h1 {
             margin: 0;
             font-size: 1.5em;
         }
+        
         .icon {
             font-size: 1.2em;
             cursor: pointer;
         }
+        
         .calendar-section {
             background-color: #1a2b3c;
             padding: 20px;
@@ -40,6 +45,7 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        
         .month-year-nav {
             display: flex;
             justify-content: space-between;
@@ -48,48 +54,56 @@
             font-size: 1.2em;
             margin-bottom: 15px;
         }
+        
         .month-year-nav .month, .month-year-nav .year {
             background-color: #004080;
             padding: 8px 15px;
             border-radius: 20px;
         }
+        
         /* ESTILO NUEVO */
         .month-year-nav .month-and-year {
-            background-color: #004080;
+            background-color: #1657a2;
             padding: 8px 15px;
             border-radius: 20px;
             display: flex; /* Añadido para que mes y año estén uno al lado del otro */
             gap: 5px; /* Espacio entre el mes y el año */
         }
+        
         /* FIN DE ESTILO NUEVO */
         .days-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 10px;
         }
+        
         .day-header {
             font-weight: bold;
             font-size: 0.9em;
         }
+        
         .day {
             padding: 10px;
             border-radius: 5px;
-            background-color: #223344;
+            background-color: #1657a2;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
         }
+        
         .day.weekend {
             background-color: #15202b;
         }
+        
         .day.current-day {
             background: transparent;
             border: 2px solid #0056b3;
-            border-radius: 50%;
+            border-radius: 25%;
             color: white;
             padding: 8px;
         }
+        
         .day.has-event::after {
             content: '';
             position: absolute;
@@ -101,48 +115,53 @@
             background-color: #f0c300;
             border-radius: 50%;
         }
+        
         .agenda-section {
             background-color: #1a2b3c;
             padding: 20px;
             border-radius: 15px;
         }
+        
         .agenda-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
         }
+        
         .agenda-header h2 {
             margin: 0;
             font-size: 1.5em;
         }
+        
         .agenda-item {
             background-color: #004080;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 10px;
         }
+        
         .agenda-item .date-label {
             font-weight: bold;
             font-size: 0.9em;
         }
+        
         .agenda-item .event-title {
             margin-top: 5px;
             font-size: 1.1em;
         }
+        
         .icon-pencil, .icon-plus {
             font-family: 'Arial', sans-serif;
             font-size: 24px;
-        }
+        }  
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <span class="icon icon-pencil">&#9999;</span>
         <h1>Agenda</h1>
-        <span class="icon icon-pencil">&#9999;</span>
     </div>
 
     <div class="calendar-section">
