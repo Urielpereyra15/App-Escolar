@@ -12,6 +12,32 @@ body {
     margin: 0;
     padding: 20px;
 }
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+.navbar ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+}
+.navbar li a {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #1565C0;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+.navbar li a:hover {
+  background-color: #0D47A1;
+}
+
 .container {
     max-width: 600px;
     margin: auto;
@@ -165,6 +191,15 @@ body {
 </style>
 </head>
 <body>
+
+<nav class="navbar">
+  <ul>
+    <li><a href="index.html">🏠 Inicio</a></li>
+    <li><a href="agenda.html">📒 Agenda</a></li>
+    <li><a href="calificacion.html">⭐ Calificación</a></li>
+    <li><a href="asignaturas.html">🎓 Asignaturas</a></li>
+  </ul>
+</nav>    
 
 <div class="container">
     <div class="header">
