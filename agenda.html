@@ -7,8 +7,10 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #1c1c1c;
+            background-color: #334455;
             color: white;
+            margin: 0;
+            padding: 20px;
         }
         .container {
             max-width: 600px;
@@ -51,6 +53,15 @@
             padding: 8px 15px;
             border-radius: 20px;
         }
+        /* ESTILO NUEVO */
+        .month-year-nav .month-and-year {
+            background-color: #004080;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex; /* Añadido para que mes y año estén uno al lado del otro */
+            gap: 5px; /* Espacio entre el mes y el año */
+        }
+        /* FIN DE ESTILO NUEVO */
         .days-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -129,14 +140,17 @@
 
 <div class="container">
     <div class="header">
+        <span class="icon icon-pencil">&#9999;</span>
         <h1>Agenda</h1>
+        <span class="icon icon-pencil">&#9999;</span>
     </div>
 
     <div class="calendar-section">
         <div class="month-year-nav">
             <button id="prevBtn" style="background:none; border:none; color:white; font-size:1.5em; cursor:pointer;">&lt;</button>
-            <div id="month-year-display">
-                <div id="monthDisplay" class="month"></div> <div id="yearDisplay" class="year"></div>
+            <div id="month-year-display" class="month-and-year">
+                <span id="monthDisplay"></span>
+                <span id="yearDisplay"></span>
             </div>
             <button id="nextBtn" style="background:none; border:none; color:white; font-size:1.5em; cursor:pointer;">&gt;</button>
         </div>
