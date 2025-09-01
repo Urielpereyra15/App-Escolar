@@ -9,63 +9,81 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f5f5f5;
+      background: #f4f4f9;
+      color: #333;
     }
+
     header {
-      background: #0056b3;
-      color: white;
-      padding: 15px;
+      background: #004080;
+      color: #fff;
+      padding: 1rem;
       text-align: center;
     }
+
+    nav {
+      background: #0066cc;
+      padding: 0.5rem;
+      text-align: center;
+    }
+
+    nav a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
     .calendar {
       max-width: 600px;
-      margin: 20px auto;
-      background: white;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 1rem;
       border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
-    .calendar-header {
+
+    .calendar header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      background: none;
+      color: #333;
+      padding: 0;
     }
-    .calendar-header h2 {
+
+    .calendar h2 {
       margin: 0;
     }
-    .calendar-header button {
-      background: #0056b3;
-      color: white;
+
+    .calendar button {
+      background: #004080;
+      color: #fff;
       border: none;
-      padding: 8px 12px;
+      padding: 5px 10px;
       border-radius: 5px;
       cursor: pointer;
     }
-    .calendar-header button:hover {
-      background: #003d80;
+
+    .calendar table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
     }
-    .days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-    }
-    .day {
-      padding: 10px;
+
+    .calendar th, .calendar td {
+      width: 14.28%;
       text-align: center;
-      border-radius: 5px;
+      padding: 10px;
+      border: 1px solid #ddd;
     }
-    .day.header {
-      font-weight: bold;
-      background: #eee;
+
+    .calendar th {
+      background: #f0f0f0;
     }
-    .day.today {
-      background: #0056b3;
-      color: white;
-      font-weight: bold;
-    }
-    .day.empty {
-      background: transparent;
+
+    .today {
+      background: #ffcc00;
+      border-radius: 50%;
     }
   </style>
 </head>
@@ -74,25 +92,41 @@
     <h1>Agenda Escolar</h1>
   </header>
 
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="agenda.html">Agenda</a>
+    <a href="calificaciones.html">Calificaciones</a>
+    <a href="asignaturas.html">Asignaturas</a>
+  </nav>
+
   <div class="calendar">
-    <div class="calendar-header">
-      <button id="prev">&#8592; Anterior</button>
+    <header>
+      <button id="prev">&#9664;</button>
       <h2 id="monthYear"></h2>
-      <button id="next">Siguiente &#8594;</button>
-    </div>
-    <div class="days" id="days"></div>
+      <button id="next">&#9654;</button>
+    </header>
+    <table>
+      <thead>
+        <tr>
+          <th>Lun</th>
+          <th>Mar</th>
+          <th>Mié</th>
+          <th>Jue</th>
+          <th>Vie</th>
+          <th>Sáb</th>
+          <th>Dom</th>
+        </tr>
+      </thead>
+      <tbody id="calendarBody">
+      </tbody>
+    </table>
   </div>
 
   <script>
     const monthYear = document.getElementById("monthYear");
-    const daysContainer = document.getElementById("days");
+    const calendarBody = document.getElementById("calendarBody");
     const prevBtn = document.getElementById("prev");
     const nextBtn = document.getElementById("next");
-
-    const months = [
-      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-    ];
 
     let currentDate = new Date();
 
@@ -100,42 +134,54 @@
       const year = date.getFullYear();
       const month = date.getMonth();
 
-      monthYear.textContent = `${months[month]} ${year}`;
-      daysContainer.innerHTML = "";
+      // Primer día del mes
+      const firstDay = new Date(year, month, 1);
+      const startDay = (firstDay.getDay() + 6) % 7; // Ajustar para que lunes sea el primer día
 
-      const firstDay = new Date(year, month, 1).getDay();
-      const lastDate = new Date(year, month + 1, 0).getDate();
+      // Último día del mes
+      const lastDay = new Date(year, month + 1, 0).getDate();
 
-      const weekDays = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-      weekDays.forEach(d => {
-        const dayEl = document.createElement("div");
-        dayEl.classList.add("day", "header");
-        dayEl.textContent = d;
-        daysContainer.appendChild(dayEl);
-      });
+      // Mostrar mes y año
+      const options = { month: 'long', year: 'numeric' };
+      monthYear.textContent = date.toLocaleDateString('es-ES', options);
 
-      for (let i = 0; i < firstDay; i++) {
-        const emptyEl = document.createElement("div");
-        emptyEl.classList.add("day", "empty");
-        daysContainer.appendChild(emptyEl);
+      // Limpiar calendario
+      calendarBody.innerHTML = "";
+
+      let row = document.createElement("tr");
+
+      // Celdas vacías antes del primer día
+      for (let i = 0; i < startDay; i++) {
+        let cell = document.createElement("td");
+        row.appendChild(cell);
       }
 
-      for (let i = 1; i <= lastDate; i++) {
-        const dayEl = document.createElement("div");
-        dayEl.classList.add("day");
-        dayEl.textContent = i;
-
-        const today = new Date();
-        if (
-          i === today.getDate() &&
-          month === today.getMonth() &&
-          year === today.getFullYear()
-        ) {
-          dayEl.classList.add("today");
+      // Días del mes
+      for (let day = 1; day <= lastDay; day++) {
+        if (row.children.length === 7) {
+          calendarBody.appendChild(row);
+          row = document.createElement("tr");
         }
 
-        daysContainer.appendChild(dayEl);
+        let cell = document.createElement("td");
+        cell.textContent = day;
+
+        // Resaltar día actual
+        const today = new Date();
+        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+          cell.classList.add("today");
+        }
+
+        row.appendChild(cell);
       }
+
+      // Rellenar con celdas vacías al final
+      while (row.children.length < 7) {
+        let cell = document.createElement("td");
+        row.appendChild(cell);
+      }
+
+      calendarBody.appendChild(row);
     }
 
     prevBtn.addEventListener("click", () => {
