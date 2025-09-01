@@ -1,83 +1,155 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Inicio | Sistema Académico</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio Escolar</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
       font-family: Arial, sans-serif;
-      background: #f0f0f0;
-    }
-
-    header {
-      background-color: #004080;
+      background-color: #1c1c1c;
       color: white;
-      text-align: center;
-      padding: 40px 20px;
     }
 
-    main {
-      max-width: 700px;
-      margin: 50px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      text-align: center;
+    /* Barra de navegación */
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      background-color: #0b2c56;
+      position: sticky;
+      top: 0;
     }
 
-    h1 {
-      margin-top: 0;
-    }
-
-    p {
-      font-size: 1.1em;
-      margin-bottom: 30px;
-    }
-
-    .boton {
-      background-color: #004080;
-      color: white;
-      padding: 15px 30px;
+    nav button {
+      background: #0d4a8c;
       border: none;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 1.1em;
-      transition: background-color 0.3s;
-    }
-
-    .boton:hover {
-      background-color: #002e5b;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 60px;
-      padding: 15px;
-      background: #004080;
       color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    nav button:hover {
+      background: #1565c0;
+    }
+
+    /* Contenedor principal */
+    .container {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .card {
+      background: #0d3d77;
+      border-radius: 15px;
+      padding: 15px;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+    }
+
+    /* Agenda */
+    .agenda-item {
+      background: #1657a2;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    /* Calificaciones */
+    .grade {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1657a2;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .circle {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .green { background: green; }
+    .yellow { background: orange; }
+    .red { background: red; }
+
+    /* Notas */
+    .notes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 10px;
+    }
+
+    .note {
+      background: #1657a2;
+      padding: 15px;
+      text-align: center;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
+  <!-- Menú -->
+  <nav>
+    <button>☰</button>
+    <button>📒 Agenda</button>
+    <button>⭐ Calificación</button>
+    <button>🎓 Asignaturas</button>
+  </nav>
 
-  <header>
-    <h1>Bienvenido al Sistema Académico</h1>
-    <p>Visualizá tu plan de estudios de forma interactiva</p>
-  </header>
+  <div class="container">
+    <!-- Agenda -->
+    <div class="card">
+      <h3>📒 Agenda</h3>
+      <div class="agenda-item">Hoy - Parcial de contabilidad</div>
+      <div class="agenda-item">Mañana - Foro de contabilidad</div>
+      <div class="agenda-item">X día - Actividad</div>
+    </div>
 
-  <main>
-    <h2>Accedé a tu Malla Curricular</h2>
-    <p>Podés ver qué materias tenés aprobadas, cuáles te faltan y sus correlativas.</p>
-    <a href="malla-curricular.html" class="boton">Ir a la Malla Curricular</a>
-  </main>
+    <!-- Calificaciones -->
+    <div class="card">
+      <h3>⭐ Últimas calificaciones <span style="margin-left:auto;">Promedio: 0,00</span></h3>
+      <div class="grade"><div class="circle green">10</div> Contabilidad</div>
+      <div class="grade"><div class="circle yellow">6</div> Administración</div>
+      <div class="grade"><div class="circle yellow">6</div> Administración</div>
+      <div class="grade"><div class="circle green">10</div> Contabilidad</div>
+      <div class="grade"><div class="circle red">4</div> Historia de la Cultura</div>
+    </div>
 
-  <footer>
-    © 2025 Universidad Ficticia | Sistema Académico
-  </footer>
-
+    <!-- Notas -->
+    <div class="card">
+      <h3>📝 Notas</h3>
+      <div class="notes">
+        <div class="note">11/05</div>
+        <div class="note">11/05</div>
+        <div class="note">10/05</div>
+        <div class="note">09/04</div>
+        <div class="note">09/04</div>
+        <div class="note">09/04</div>
+        <div class="note">08/04</div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
