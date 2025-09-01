@@ -9,119 +9,122 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f4f4f9;
-      color: #333;
+      background: #f5f5f5;
     }
-
     header {
-      background: #004080;
-      color: #fff;
-      padding: 1rem;
+      background: #0056b3;
+      color: white;
+      padding: 15px;
       text-align: center;
     }
-
-    nav {
-      background: #0066cc;
-      padding: 0.5rem;
-      text-align: center;
-    }
-
-    nav a {
-      color: #fff;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
     .calendar {
       max-width: 600px;
-      margin: 2rem auto;
-      background: #fff;
-      padding: 1rem;
+      margin: 20px auto;
+      background: white;
       border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      padding: 20px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
     }
-
-    .calendar header {
+    .calendar-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: none;
-      color: #333;
-      padding: 0;
+      margin-bottom: 15px;
     }
-
-    .calendar h2 {
+    .calendar-header h2 {
       margin: 0;
     }
-
-    .calendar button {
-      background: #004080;
-      color: #fff;
+    .calendar-header button {
+      background: #0056b3;
+      color: white;
       border: none;
-      padding: 5px 10px;
+      padding: 8px 12px;
       border-radius: 5px;
       cursor: pointer;
     }
-
-    .calendar table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
+    .calendar-header button:hover {
+      background: #003d80;
     }
-
-    .calendar th, .calendar td {
-      width: 14.28%;
-      text-align: center;
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+    .day {
       padding: 10px;
-      border: 1px solid #ddd;
+      text-align: center;
+      border-radius: 5px;
+      position: relative;
     }
-
-    .calendar th {
-      background: #f0f0f0;
+    .day.header {
+      font-weight: bold;
+      background: #eee;
     }
-
-    .today {
-      background: #ffcc00;
+    .day.today {
+      /* Estilos para el día actual */
+      background: transparent;
+      border: 2px solid #0056b3;
+      border-radius: 50%;
+      color: #000;
+      font-weight: bold;
+      /* Asegura que el punto del evento no se vea cortado */
+      padding: 8px; 
+    }
+    .day.has-event::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      background-color: #f0c300;
       border-radius: 50%;
     }
-
-    .tasks-section {
-      max-width: 600px;
-      margin: 2rem auto;
-      background: #fff;
-      padding: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    .day.empty {
+      background: transparent;
     }
-
-    .tasks-section h2 {
-      color: #004080;
+    .event-list {
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    }
+    .event-list h2 {
+      color: #0056b3;
       text-align: center;
       margin-top: 0;
-      margin-bottom: 1rem;
     }
-
-    #taskList {
-      list-style: none;
+    #eventsContainer {
+      list-style-type: none;
       padding: 0;
     }
-
-    #taskList li {
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      padding: 10px;
-      margin-bottom: 8px;
+    .event-item {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 15px;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
     }
-
-    #taskList li .task-date {
+    .event-item:last-child {
+      border-bottom: none;
+    }
+    .event-item .event-marker {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .event-item .event-date {
       font-weight: bold;
-      color: #0066cc;
     }
+    .event-item .event-description {
+      flex-grow: 1;
+    }
+    .type-evaluacion .event-marker { background-color: #ff5733; }
+    .type-tarea .event-marker { background-color: #009688; }
+    .type-proyecto .event-marker { background-color: #9c27b0; }
   </style>
 </head>
 <body>
@@ -129,160 +132,137 @@
     <h1>Agenda Escolar</h1>
   </header>
 
-  <nav>
-    <a href="index.html">Inicio</a>
-    <a href="agenda.html">Agenda</a>
-    <a href="calificaciones.html">Calificaciones</a>
-    <a href="asignaturas.html">Asignaturas</a>
-  </nav>
-
   <div class="calendar">
-    <header>
-      <button id="prev">&#9664;</button>
+    <div class="calendar-header">
+      <button id="prev">&#8592; Anterior</button>
       <h2 id="monthYear"></h2>
-      <button id="next">&#9654;</button>
-    </header>
-    <table>
-      <thead>
-        <tr>
-          <th>Lun</th>
-          <th>Mar</th>
-          <th>Mié</th>
-          <th>Jue</th>
-          <th>Vie</th>
-          <th>Sáb</th>
-          <th>Dom</th>
-        </tr>
-      </thead>
-      <tbody id="calendarBody">
-      </tbody>
-    </table>
+      <button id="next">Siguiente &#8594;</button>
+    </div>
+    <div class="days" id="days"></div>
   </div>
 
-  <div class="tasks-section">
-    <h2>Tareas del mes</h2>
-    <ul id="taskList">
-      </ul>
+  <div class="event-list">
+    <h2>Tareas y Eventos</h2>
+    <ul id="eventsContainer"></ul>
   </div>
 
   <script>
     const monthYear = document.getElementById("monthYear");
-    const calendarBody = document.getElementById("calendarBody");
+    const daysContainer = document.getElementById("days");
     const prevBtn = document.getElementById("prev");
     const nextBtn = document.getElementById("next");
-    const taskList = document.getElementById("taskList");
+    const eventsContainer = document.getElementById("eventsContainer");
+
+    const months = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
 
     let currentDate = new Date();
 
-    const tasks = [
-      { date: new Date(2025, 8, 5), description: "Entrega de proyecto de matemáticas", subject: "Matemáticas" },
-      { date: new Date(2025, 8, 12), description: "Examen de historia", subject: "Historia" },
-      { date: new Date(2025, 9, 2), description: "Presentación de biología", subject: "Biología" },
-      { date: new Date(2025, 9, 15), description: "Prueba de física", subject: "Física" },
-      { date: new Date(2025, 10, 20), description: "Trabajo final de literatura", subject: "Literatura" },
+    const events = [
+      { id: 1, date: new Date(2025, 8, 1), description: "Examen de Matemáticas", type: "evaluacion" },
+      { id: 2, date: new Date(2025, 8, 5), description: "Entrega de proyecto de Biología", type: "proyecto" },
+      { id: 3, date: new Date(2025, 8, 12), description: "Tarea de Historia", type: "tarea" },
+      { id: 4, date: new Date(2025, 8, 20), description: "Presentación de Lenguaje", type: "proyecto" },
+      { id: 5, date: new Date(2025, 9, 3), description: "Prueba de Física", type: "evaluacion" },
+      { id: 6, date: new Date(2025, 9, 10), description: "Entrega de ensayo de Química", type: "tarea" },
+      { id: 7, date: new Date(2025, 10, 15), description: "Examen final de Programación", type: "evaluacion" }
     ];
 
     function renderCalendar(date) {
       const year = date.getFullYear();
       const month = date.getMonth();
 
-      // Primer día del mes
-      const firstDay = new Date(year, month, 1);
-      const startDay = (firstDay.getDay() + 6) % 7; // Ajustar para que lunes sea el primer día
+      monthYear.textContent = `${months[month]} ${year}`;
+      daysContainer.innerHTML = "";
 
-      // Último día del mes
-      const lastDay = new Date(year, month + 1, 0).getDate();
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
 
-      // Mostrar mes y año
-      const options = { month: 'long', year: 'numeric' };
-      monthYear.textContent = date.toLocaleDateString('es-ES', options);
-
-      // Limpiar calendario
-      calendarBody.innerHTML = "";
-
-      let row = document.createElement("tr");
-
-      // Celdas vacías antes del primer día
-      for (let i = 0; i < startDay; i++) {
-        let cell = document.createElement("td");
-        row.appendChild(cell);
-      }
-
-      // Días del mes
-      for (let day = 1; day <= lastDay; day++) {
-        if (row.children.length === 7) {
-          calendarBody.appendChild(row);
-          row = document.createElement("tr");
-        }
-
-        let cell = document.createElement("td");
-        cell.textContent = day;
-
-        // Resaltar día actual
-        const today = new Date();
-        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-          cell.classList.add("today");
-        }
-
-        row.appendChild(cell);
-      }
-
-      // Rellenar con celdas vacías al final
-      while (row.children.length < 7) {
-        let cell = document.createElement("td");
-        row.appendChild(cell);
-      }
-
-      calendarBody.appendChild(row);
-    }
-
-    function renderTasks(date) {
-      const year = date.getFullYear();
-      const month = date.getMonth();
-
-      // Limpiar la lista de tareas
-      taskList.innerHTML = "";
-
-      // Filtrar tareas para el mes actual
-      const monthlyTasks = tasks.filter(task => {
-        return task.date.getFullYear() === year && task.date.getMonth() === month;
+      const weekDays = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+      weekDays.forEach(d => {
+        const dayEl = document.createElement("div");
+        dayEl.classList.add("day", "header");
+        dayEl.textContent = d;
+        daysContainer.appendChild(dayEl);
       });
 
-      // Mostrar las tareas filtradas
-      if (monthlyTasks.length > 0) {
-        monthlyTasks.forEach(task => {
+      for (let i = 0; i < firstDay; i++) {
+        const emptyEl = document.createElement("div");
+        emptyEl.classList.add("day", "empty");
+        daysContainer.appendChild(emptyEl);
+      }
+
+      for (let i = 1; i <= lastDate; i++) {
+        const dayEl = document.createElement("div");
+        dayEl.classList.add("day");
+        dayEl.textContent = i;
+
+        const today = new Date();
+        if (
+          i === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear()
+        ) {
+          dayEl.classList.add("today");
+        }
+
+        const dayEvents = events.filter(event => 
+          event.date.getFullYear() === year && 
+          event.date.getMonth() === month && 
+          event.date.getDate() === i
+        );
+        if (dayEvents.length > 0) {
+          dayEl.classList.add("has-event");
+        }
+
+        daysContainer.appendChild(dayEl);
+      }
+    }
+
+    function renderEvents(date) {
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      eventsContainer.innerHTML = "";
+
+      const monthlyEvents = events.filter(event => 
+        event.date.getFullYear() === year && 
+        event.date.getMonth() === month
+      ).sort((a, b) => a.date - b.date);
+
+      if (monthlyEvents.length > 0) {
+        monthlyEvents.forEach(event => {
           const li = document.createElement("li");
-          const day = task.date.getDate();
-          const taskContent = `
-            <div>
-              <span class="task-date">${day} de ${date.toLocaleDateString('es-ES', { month: 'long' })}</span>
-              <p>${task.description} - **${task.subject}**</p>
-            </div>
+          li.classList.add("event-item", `type-${event.type}`);
+          li.innerHTML = `
+            <div class="event-marker"></div>
+            <div class="event-date">${event.date.getDate()}</div>
+            <div class="event-description">${event.description}</div>
           `;
-          li.innerHTML = taskContent;
-          taskList.appendChild(li);
+          eventsContainer.appendChild(li);
         });
       } else {
         const li = document.createElement("li");
-        li.textContent = "No hay tareas para este mes.";
-        taskList.appendChild(li);
+        li.textContent = "No hay eventos programados para este mes.";
+        eventsContainer.appendChild(li);
       }
     }
 
     prevBtn.addEventListener("click", () => {
       currentDate.setMonth(currentDate.getMonth() - 1);
       renderCalendar(currentDate);
-      renderTasks(currentDate);
+      renderEvents(currentDate);
     });
 
     nextBtn.addEventListener("click", () => {
       currentDate.setMonth(currentDate.getMonth() + 1);
       renderCalendar(currentDate);
-      renderTasks(currentDate);
+      renderEvents(currentDate);
     });
 
     renderCalendar(currentDate);
-    renderTasks(currentDate);
+    renderEvents(currentDate);
   </script>
 </body>
 </html>
