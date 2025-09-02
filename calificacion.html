@@ -28,6 +28,9 @@
     .cerrar { float:right; font-size:20px; cursor:pointer; }
     button[type="submit"] { background:#285ca8; border:none; color:white; padding:8px 15px; border-radius:10px; cursor:pointer; font-size:16px; }
     button[type="submit"]:hover { background:#3b7ddb; }
+    /* Filtros */
+    .filtros { margin:15px; display:flex; gap:10px; flex-wrap:wrap; }
+    .filtros select { padding:5px 8px; border-radius:8px; border:none; }
   </style>
 </head>
 <body>
@@ -45,24 +48,39 @@
   <button class="add-btn" onclick="abrirModal()">+</button>
 </div>
 
-<div id="materias-container">
-  <div class="materia" data-nombre="Contabilidad"><h2>Contabilidad</h2></div>
-  <div class="materia" data-nombre="Administración"><h2>Administración</h2></div>
-  <div class="materia" data-nombre="Historia de la Cultura"><h2>Historia de la Cultura</h2></div>
+<!-- Filtros -->
+<div class="filtros">
+  <select id="filtroMateria">
+    <option value="">Todas las materias</option>
+  </select>
+  <select id="filtroAno">
+    <option value="">Todos los años</option>
+    <option>1ro</option>
+    <option>2do</option>
+    <option>3ro</option>
+    <option>4to</option>
+  </select>
+  <select id="filtroTipo">
+    <option value="">Todos los tipos</option>
+    <option>Parcial</option>
+    <option>Foro</option>
+    <option>Auto-evaluación (obligatoria)</option>
+    <option>Auto-evaluación (no obligatoria)</option>
+  </select>
 </div>
 
+<div id="materias-container">
+  <!-- Se llenará automáticamente según las materias de la malla -->
+</div>
+
+<!-- Modal de nueva calificación -->
 <div id="modal" class="modal">
   <div class="modal-content">
     <span class="cerrar" onclick="cerrarModal()">&times;</span>
     <h2>Nueva Calificación</h2>
     <form id="formCalificacion">
       <label>Materia:</label><br>
-      <select id="materia" required>
-        <option value="">--Seleccionar--</option>
-        <option>Contabilidad</option>
-        <option>Administración</option>
-        <option>Historia de la Cultura</option>
-      </select><br><br>
+      <select id="materia" required></select><br><br>
 
       <label>Tipo de evaluación:</label><br>
       <select id="tipo" required>
@@ -95,62 +113,92 @@
 </div>
 
 <script>
-function abrirModal() { document.getElementById("modal").style.display = "flex"; }
-function cerrarModal() { document.getElementById("modal").style.display = "none"; }
+// Materias con su año según la malla
+const materiasAno = {
+  // 1er Año
+  "Contabilidad":"1ro", "Administración":"1ro", "Historia de la Cultura":"1ro", "Matemática 1":"1ro", "Derecho Público":"1ro", "Introducción a la Economía":"1ro",
+  // 2do Año
+  "Metodología de la Investigación":"2do", "Derecho Privado":"2do", "Contabilidad Superior":"2do", "Teoría de la Organización":"2do", "Estadística":"2do",
+  "Historia Económica":"2do", "Microeconómia":"2do", "Filosofía":"2do", "Matemática 2":"2do",
+  // 3er Año
+  "Costos 1":"3ro", "Derecho Tributario":"3ro", "Administración Pública":"3ro", "Dirección General":"3ro", "Estados Contables":"3ro", "Derecho Comercial":"3ro",
+  "Derecho Laboral":"3ro", "Macroeconómia":"3ro", "Matemática Financiera y Actuarial":"3ro", "Sistema de Información Administrativa":"3ro", "Teología":"3ro",
+  "Sociología":"3ro", "Costo para la Toma de Decisiones":"3ro", "Remuneración y Beneficios":"3ro",
+  // 4to Año
+  "Auditoria 1":"4to", "Ética y Deontologia Profesional":"4to", "Interpretación de Estados Contables":"4to", "Sociedades":"4to", "Teoría y Técnica Impositiva 1":"4to",
+  "Auditoria y Control de Sistema de Información":"4to", "Gestión Financiera":"4to", "Derecho Concursal":"4to", "Auditoria 2":"4to", "Teoría y Técnica Impositiva 2":"4to",
+  "Contabilidad Gerencial":"4to", "Práctica Profesional Supervisada":"4to"
+};
 
-function colorNota(nota, sistema, minAprobado) {
-  nota = nota.toString().trim();
-  minAprobado = parseFloat(minAprobado);
-  if(sistema === "1-10") {
-    nota = parseFloat(nota);
-    if(nota < minAprobado - 2) return "rojo";
-    if(nota >= minAprobado - 2 && nota < minAprobado) return "amarillo";
-    return "verde";
-  }
-  if(sistema === "0-100") {
-    nota = parseFloat(nota);
-    if(nota < minAprobado - 10) return "rojo";
-    if(nota >= minAprobado - 10 && nota < minAprobado) return "amarillo";
-    return "verde";
-  }
-  if(sistema === "0-1") return nota=="0"?"rojo":"verde";
-  if(sistema === "si-no") return nota.toLowerCase()==="no"?"rojo":"verde";
+// Inicializar selects y materias
+const materiaSelect = document.getElementById("materia");
+const materiasContainer = document.getElementById("materias-container");
+for(let mat in materiasAno){
+  let option = document.createElement("option");
+  option.value = mat;
+  option.textContent = mat;
+  materiaSelect.appendChild(option);
+
+  // Crear contenedor de materia
+  let div = document.createElement("div");
+  div.classList.add("materia");
+  div.dataset.nombre = mat;
+  div.innerHTML = `<h2>${mat}</h2>`;
+  materiasContainer.appendChild(div);
+}
+
+// Modal
+function abrirModal(){ document.getElementById("modal").style.display="flex"; }
+function cerrarModal(){ document.getElementById("modal").style.display="none"; }
+
+// Color de nota
+function colorNota(nota,sistema,minAprobado){
+  nota = nota.toString().trim(); minAprobado = parseFloat(minAprobado);
+  if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "rojo"; if(nota>=minAprobado-2 && nota<minAprobado) return "amarillo"; return "verde"; }
+  if(sistema==="0-100"){ nota=parseFloat(nota); if(nota<minAprobado-10) return "rojo"; if(nota>=minAprobado-10 && nota<minAprobado) return "amarillo"; return "verde"; }
+  if(sistema==="0-1") return nota==="0"?"rojo":"verde";
+  if(sistema==="si-no") return nota.toLowerCase()==="no"?"rojo":"verde";
   return "";
 }
 
-function guardarCalificacion(obj) {
+// Guardar y borrar
+function guardarCalificacion(obj){
   let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
   calificaciones.push(obj);
   localStorage.setItem("calificaciones", JSON.stringify(calificaciones));
 }
 
-function borrarCalificacion(index) {
+function borrarCalificacion(index){
   let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
   calificaciones.splice(index,1);
   localStorage.setItem("calificaciones", JSON.stringify(calificaciones));
   cargarCalificaciones();
 }
 
-function cargarCalificaciones() {
-  let contenedores = document.querySelectorAll(".materia");
-  contenedores.forEach(m=>m.innerHTML=`<h2>${m.dataset.nombre}</h2>`);
-
+// Cargar calificaciones con filtros
+function cargarCalificaciones(){
+  document.querySelectorAll(".materia").forEach(m=>m.innerHTML=`<h2>${m.dataset.nombre}</h2>`);
   let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
+
+  let matFiltro = document.getElementById("filtroMateria").value;
+  let anoFiltro = document.getElementById("filtroAno").value;
+  let tipoFiltro = document.getElementById("filtroTipo").value;
+
   calificaciones.forEach((c,index)=>{
-    let materiaDiv = document.querySelector(`.materia[data-nombre="${c.materia}"]`);
-    if(materiaDiv){
+    if((!matFiltro || c.materia===matFiltro) && (!anoFiltro || c.ano===anoFiltro) && (!tipoFiltro || c.tipo===tipoFiltro)){
       let div = document.createElement("div");
       div.classList.add("calificacion");
       div.innerHTML = `
-        <div><span class="nota ${colorNota(c.nota,c.sistema,c.minAprobado)}">${c.nota}</span> ${c.materia} - ${c.tipo} - ${c.sistema}</div>
+        <div><span class="nota ${colorNota(c.nota,c.sistema,c.minAprobado)}">${c.nota}</span> ${c.materia} - ${c.tipo} - ${c.sistema} - ${c.ano}</div>
         <small>${c.fecha}</small>
         <button class="btn-borrar" onclick="borrarCalificacion(${index})">🗑️</button>
       `;
-      materiaDiv.appendChild(div);
+      document.querySelector(`.materia[data-nombre="${c.materia}"]`).appendChild(div);
     }
   });
 }
 
+// Formulario
 document.getElementById("formCalificacion").addEventListener("submit",function(e){
   e.preventDefault();
   let materia=document.getElementById("materia").value;
@@ -159,13 +207,19 @@ document.getElementById("formCalificacion").addEventListener("submit",function(e
   let nota=document.getElementById("nota").value;
   let minAprobado=document.getElementById("minAprobado").value;
   let fecha=document.getElementById("fecha").value;
+  let ano = materiasAno[materia];
 
-  let obj={materia,tipo,sistema,nota,minAprobado,fecha};
+  let obj={materia,tipo,sistema,nota,minAprobado,fecha,ano};
   guardarCalificacion(obj);
   cerrarModal();
   e.target.reset();
   cargarCalificaciones();
 });
+
+// Filtros
+document.getElementById("filtroMateria").addEventListener("change",cargarCalificaciones);
+document.getElementById("filtroAno").addEventListener("change",cargarCalificaciones);
+document.getElementById("filtroTipo").addEventListener("change",cargarCalificaciones);
 
 window.onload=cargarCalificaciones;
 </script>
