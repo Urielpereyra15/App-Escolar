@@ -158,7 +158,12 @@ nav a:hover {
     function renderUpcomingEvents() {
       upcomingEvents.innerHTML = '';
       const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
-      const firstThree = events.slice(0, 3);
+
+      // Ordenar de más reciente a más viejo
+      const sortedEvents = events.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+      // Tomar solo los primeros 3
+      const firstThree = sortedEvents.slice(0, 3);
 
       if(firstThree.length === 0){
         upcomingEvents.innerHTML = '<div class="agenda-item">No hay eventos próximos</div>';
