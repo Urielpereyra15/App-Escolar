@@ -64,6 +64,14 @@
         <option>Historia de la Cultura</option>
       </select><br><br>
 
+      <label>Tipo de evaluación:</label><br>
+      <select id="tipo" required>
+        <option>Parcial</option>
+        <option>Foro</option>
+        <option>Auto-evaluación (obligatoria)</option>
+        <option>Auto-evaluación (no obligatoria)</option>
+      </select><br><br>
+
       <label>Sistema de nota:</label><br>
       <select id="sistemaNota" required>
         <option value="1-10">1 a 10</option>
@@ -90,11 +98,9 @@
 function abrirModal() { document.getElementById("modal").style.display = "flex"; }
 function cerrarModal() { document.getElementById("modal").style.display = "none"; }
 
-// Color según nota
 function colorNota(nota, sistema, minAprobado) {
   nota = nota.toString().trim();
   minAprobado = parseFloat(minAprobado);
-
   if(sistema === "1-10") {
     nota = parseFloat(nota);
     if(nota < minAprobado - 2) return "rojo";
@@ -112,58 +118,56 @@ function colorNota(nota, sistema, minAprobado) {
   return "";
 }
 
-// Guardar calificaciones en localStorage
 function guardarCalificacion(obj) {
-  let calificaciones = JSON.parse(localStorage.getItem("calificaciones") || "[]");
+  let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
   calificaciones.push(obj);
   localStorage.setItem("calificaciones", JSON.stringify(calificaciones));
 }
 
-// Eliminar calificación
 function borrarCalificacion(index) {
-  let calificaciones = JSON.parse(localStorage.getItem("calificaciones") || "[]");
+  let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
   calificaciones.splice(index,1);
   localStorage.setItem("calificaciones", JSON.stringify(calificaciones));
   cargarCalificaciones();
 }
 
-// Mostrar calificaciones
 function cargarCalificaciones() {
-  let contenedor = document.querySelectorAll(".materia");
-  contenedor.forEach(m => m.innerHTML = `<h2>${m.dataset.nombre}</h2>`);
+  let contenedores = document.querySelectorAll(".materia");
+  contenedores.forEach(m=>m.innerHTML=`<h2>${m.dataset.nombre}</h2>`);
 
-  let calificaciones = JSON.parse(localStorage.getItem("calificaciones") || "[]");
+  let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
   calificaciones.forEach((c,index)=>{
     let materiaDiv = document.querySelector(`.materia[data-nombre="${c.materia}"]`);
     if(materiaDiv){
       let div = document.createElement("div");
       div.classList.add("calificacion");
-      div.innerHTML = `<div><span class="nota ${colorNota(c.nota,c.sistema,c.minAprobado)}">${c.nota}</span> ${c.materia} - ${c.sistema}</div>
-                       <small>${c.fecha}</small>
-                       <button class="btn-borrar" onclick="borrarCalificacion(${index})">🗑️</button>`;
+      div.innerHTML = `
+        <div><span class="nota ${colorNota(c.nota,c.sistema,c.minAprobado)}">${c.nota}</span> ${c.materia} - ${c.tipo} - ${c.sistema}</div>
+        <small>${c.fecha}</small>
+        <button class="btn-borrar" onclick="borrarCalificacion(${index})">🗑️</button>
+      `;
       materiaDiv.appendChild(div);
     }
   });
 }
 
-// Formulario
-document.getElementById("formCalificacion").addEventListener("submit", function(e){
+document.getElementById("formCalificacion").addEventListener("submit",function(e){
   e.preventDefault();
-  let materia = document.getElementById("materia").value;
-  let sistema = document.getElementById("sistemaNota").value;
-  let nota = document.getElementById("nota").value;
-  let minAprobado = document.getElementById("minAprobado").value;
-  let fecha = document.getElementById("fecha").value;
+  let materia=document.getElementById("materia").value;
+  let tipo=document.getElementById("tipo").value;
+  let sistema=document.getElementById("sistemaNota").value;
+  let nota=document.getElementById("nota").value;
+  let minAprobado=document.getElementById("minAprobado").value;
+  let fecha=document.getElementById("fecha").value;
 
-  let obj = {materia,sistema,nota,minAprobado,fecha};
+  let obj={materia,tipo,sistema,nota,minAprobado,fecha};
   guardarCalificacion(obj);
   cerrarModal();
   e.target.reset();
   cargarCalificaciones();
 });
 
-// Cargar al iniciar
-window.onload = cargarCalificaciones;
+window.onload=cargarCalificaciones;
 </script>
 
 </body>
