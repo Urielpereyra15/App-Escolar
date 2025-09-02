@@ -21,7 +21,6 @@
       background-color: #0b2c56;
       position: sticky;
       top: 0;
-      z-index: 100;
     }
 
     nav a {
@@ -38,15 +37,8 @@
       background: #1565c0;
     }
 
-    header {
-      text-align: center;
-      padding: 20px;
-    }
-
     .container {
       padding: 15px;
-      max-width: 1000px;
-      margin: 0 auto;
       display: flex;
       flex-direction: column;
       gap: 15px;
@@ -58,46 +50,49 @@
       padding: 15px;
     }
 
-    .card h2, .card h3 {
+    .card h2 {
       margin: 0 0 10px;
-      color: #fff;
+      color: #f0c300;
     }
 
     ul {
       list-style: none;
       padding: 0;
-      margin: 0;
     }
 
     li {
       background: #1657a2;
-      margin-bottom: 8px;
+      margin: 8px 0;
       padding: 10px;
       border-radius: 10px;
       cursor: pointer;
       position: relative;
-      transition: all 0.3s;
     }
 
     li.aprobada {
-      background-color: #2e7d32; /* verde */
-      text-decoration: line-through;
+      background-color: #4caf50;
+      text-decoration: line-through green;
     }
 
     li.bloqueada {
       background-color: #555;
       color: #ccc;
       cursor: not-allowed;
-      text-decoration: line-through;
+      text-decoration: line-through black;
     }
 
     .correlativas {
-      display: none;
       font-size: 0.85em;
-      margin-top: 5px;
       color: #f0c300;
+      margin-top: 5px;
     }
 
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #0b2c56;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -107,20 +102,21 @@
     <a href="agenda.html">📒 Agenda</a>
     <a href="calificacion.html">⭐ Calificación</a>
     <a href="asignaturas.html">🎓 Asignaturas</a>
-    <a href="malla.html">📑 Malla Curricular</a>
+    <a href="malla-curricular.html">📑 Malla Curricular</a>
   </nav>
 
   <div class="container">
 
+    <!-- 1º Año -->
     <div class="card">
-      <h2>1º Año - 1er Semestre</h2>
+      <h2>1º Año</h2>
+      <h3>1er Semestre</h3>
       <ul>
         <li data-id="contabilidad">Contabilidad</li>
         <li data-id="administracion">Administración</li>
         <li data-id="historia-de-la-cultura">Historia de la Cultura</li>
       </ul>
-
-      <h2>1º Año - 2do Semestre</h2>
+      <h3>2do Semestre</h3>
       <ul>
         <li data-id="matematica-1">Matemática I</li>
         <li data-id="derecho-publico">Derecho Público</li>
@@ -128,6 +124,7 @@
       </ul>
     </div>
 
+    <!-- 2º Año -->
     <div class="card">
       <h2>2º Año</h2>
       <h3>1er Semestre</h3>
@@ -143,154 +140,129 @@
           <div class="correlativas">Correlativas: Administración</div>
         </li>
       </ul>
-
       <h3>2do Semestre</h3>
       <ul>
-        <li data-id="estadistica" data-correlativas="matematica-1">
-          Estadística
+        <li data-id="estadistica" data-correlativas="matematica-1">Estadística
           <div class="correlativas">Correlativas: Matemática I</div>
         </li>
-        <li data-id="historia-economica" data-correlativas="historia-de-la-cultura">
-          Historia Económica
+        <li data-id="historia-economica" data-correlativas="historia-de-la-cultura">Historia Económica
           <div class="correlativas">Correlativas: Historia de la Cultura</div>
         </li>
-        <li data-id="microeconomia" data-correlativas="matematica-1,introduccion-a-la-economia">
-          Microeconomía
+        <li data-id="microeconomia" data-correlativas="matematica-1,introduccion-a-la-economia">Microeconomía
           <div class="correlativas">Correlativas: Matemática I, Introducción a la Economía</div>
+        </li>
+        <li data-id="filosofia" data-correlativas="historia-de-la-cultura">Filosofía
+          <div class="correlativas">Correlativas: Historia de la Cultura</div>
+        </li>
+        <li data-id="matematica-2" data-correlativas="matematica-1">Matemática II
+          <div class="correlativas">Correlativas: Matemática I</div>
         </li>
       </ul>
     </div>
 
-  <div class="card">
-    <h2>3º Año</h2>
-    <h3>1er Semestre</h3>
-    <ul>
-      <li data-id="costos-1" data-correlativas="contabilidad">
-        Costos I
-        <div class="correlativas">Correlativas: Contabilidad</div>
-      </li>
-      <li data-id="derecho-tributario">
-        Derecho Tributario
-      </li>
-      <li data-id="administracion-publica" data-correlativas="derecho-publico,contabilidad">
-        Administración Pública
-        <div class="correlativas">Correlativas: Derecho Público, Contabilidad</div>
-      </li>
-      <li data-id="direccion-general" data-correlativas="administracion">
-        Dirección General
-        <div class="correlativas">Correlativas: Administración</div>
-      </li>
-      <li data-id="estados-contables" data-correlativas="contabilidad,contabilidad-superior">
-        Estados Contables
-        <div class="correlativas">Correlativas: Contabilidad, Contabilidad Superior</div>
-      </li>
-      <li data-id="derecho-comercial" data-correlativas="derecho-privado">
-        Derecho Comercial
-        <div class="correlativas">Correlativas: Derecho Privado</div>
-      </li>
-      <li data-id="derecho-laboral" data-correlativas="derecho-privado">
-        Derecho Laboral
-        <div class="correlativas">Correlativas: Derecho Privado</div>
-      </li>
-      <li data-id="macroeconomia" data-correlativas="microeconomia">
-        Macroeconomía
-        <div class="correlativas">Correlativas: Microeconomía</div>
-      </li>
-    </ul>
+    <!-- 3º Año -->
+    <div class="card">
+      <h2>3º Año</h2>
+      <h3>1er Semestre</h3>
+      <ul>
+        <li data-id="costos-1" data-correlativas="contabilidad">Costos I
+          <div class="correlativas">Correlativas: Contabilidad</div>
+        </li>
+        <li data-id="derecho-tributario">Derecho Tributario</li>
+        <li data-id="administracion-publica" data-correlativas="derecho-publico,contabilidad">Administración Pública
+          <div class="correlativas">Correlativas: Derecho Público, Contabilidad</div>
+        </li>
+        <li data-id="direccion-general" data-correlativas="administracion">Dirección General
+          <div class="correlativas">Correlativas: Administración</div>
+        </li>
+        <li data-id="estados-contables" data-correlativas="contabilidad,contabilidad-superior">Estados Contables
+          <div class="correlativas">Correlativas: Contabilidad, Contabilidad Superior</div>
+        </li>
+        <li data-id="derecho-comercial" data-correlativas="derecho-privado">Derecho Comercial
+          <div class="correlativas">Correlativas: Derecho Privado</div>
+        </li>
+        <li data-id="derecho-laboral" data-correlativas="derecho-privado">Derecho Laboral
+          <div class="correlativas">Correlativas: Derecho Privado</div>
+        </li>
+        <li data-id="macroeconomia" data-correlativas="microeconomia">Macroeconomía
+          <div class="correlativas">Correlativas: Microeconomía</div>
+        </li>
+      </ul>
+      <h3>2do Semestre</h3>
+      <ul>
+        <li data-id="matematica-financiera-y-actuarial" data-correlativas="matematica-1,matematica-2">Matemática Financiera y Actuarial
+          <div class="correlativas">Correlativas: Matemática I, Matemática II</div>
+        </li>
+        <li data-id="sistema-de-informacion-administrativa" data-correlativas="teoria-de-la-organizacion">Sistema de Información Administrativa
+          <div class="correlativas">Correlativas: Teoría de la Organización</div>
+        </li>
+        <li data-id="teologia" data-correlativas="filosofia">Teología
+          <div class="correlativas">Correlativas: Filosofía</div>
+        </li>
+        <li data-id="sociologia" data-correlativas="teoria-de-la-organizacion">Sociología
+          <div class="correlativas">Correlativas: Teoría de la Organización</div>
+        </li>
+        <li data-id="costo-para-la-toma-de-decisiones" data-correlativas="costos-1">Costo para la Toma de Decisiones
+          <div class="correlativas">Correlativas: Costos I</div>
+        </li>
+        <li data-id="remuneraciones-y-beneficios" data-correlativas="derecho-laboral">Remuneraciones y Beneficios
+          <div class="correlativas">Correlativas: Derecho Laboral</div>
+        </li>
+      </ul>
+    </div>
 
-    <h3>2do Semestre</h3>
-    <ul>
-      <li data-id="matematica-financiera-y-actuarial" data-correlativas="matematica-1,matematica-2">
-        Matemática Financiera y Actuarial
-        <div class="correlativas">Correlativas: Matemática I, Matemática II</div>
-      </li>
-      <li data-id="sistema-de-informacion-administrativa" data-correlativas="teoria-de-la-organizacion">
-        Sistema de Información Administrativa
-        <div class="correlativas">Correlativas: Teoría de la Organización</div>
-      </li>
-      <li data-id="teologia" data-correlativas="filosofia">
-        Teología
-        <div class="correlativas">Correlativas: Filosofía</div>
-      </li>
-      <li data-id="sociologia" data-correlativas="teoria-de-la-organizacion">
-        Sociología
-        <div class="correlativas">Correlativas: Teoría de la Organización</div>
-      </li>
-      <li data-id="costo-para-la-toma-de-decisiones" data-correlativas="costos-1">
-        Costo para la Toma de Decisiones
-        <div class="correlativas">Correlativas: Costos I</div>
-      </li>
-      <li data-id="remuneraciones-y-beneficios" data-correlativas="derecho-laboral">
-        Remuneraciones y Beneficios
-        <div class="correlativas">Correlativas: Derecho Laboral</div>
-      </li>
-    </ul>
+    <!-- 4º Año -->
+    <div class="card">
+      <h2>4º Año</h2>
+      <h3>1er Semestre</h3>
+      <ul>
+        <li data-id="auditoria-1" data-correlativas="estados-contables">Auditoría I
+          <div class="correlativas">Correlativas: Estados Contables</div>
+        </li>
+        <li data-id="etica-y-deontologia-profesional" data-correlativas="teologia">Ética y Deontología Profesional
+          <div class="correlativas">Correlativas: Teología</div>
+        </li>
+        <li data-id="interpretacion-de-estados-contables" data-correlativas="estados-contables">Interpretación de Estados Contables
+          <div class="correlativas">Correlativas: Estados Contables</div>
+        </li>
+        <li data-id="sociedades" data-correlativas="derecho-comercial">Sociedades
+          <div class="correlativas">Correlativas: Derecho Comercial</div>
+        </li>
+        <li data-id="teoria-y-tecnica-impositiva-1" data-correlativas="derecho-tributario">Teoría y Técnica Impositiva I
+          <div class="correlativas">Correlativas: Derecho Tributario</div>
+        </li>
+        <li data-id="auditoria-y-control-de-sistema-de-informacion" data-correlativas="sistema-de-informacion-administrativa">Auditoría y Control de Sistema de Información
+          <div class="correlativas">Correlativas: Sistema de Información Administrativa</div>
+        </li>
+      </ul>
+      <h3>2do Semestre</h3>
+      <ul>
+        <li data-id="gestion-financiera" data-correlativas="matematica-financiera-y-actuarial,direccion-general">Gestión Financiera
+          <div class="correlativas">Correlativas: Matemática Financiera y Actuarial, Dirección General</div>
+        </li>
+        <li data-id="derecho-concursal" data-correlativas="derecho-comercial">Derecho Concursal
+          <div class="correlativas">Correlativas: Derecho Comercial</div>
+        </li>
+        <li data-id="auditoria-2" data-correlativas="auditoria-1">Auditoría II
+          <div class="correlativas">Correlativas: Auditoría I</div>
+        </li>
+        <li data-id="teoria-y-tecnica-impositiva-2" data-correlativas="teoria-y-tecnica-impositiva-1">Teoría y Técnica Impositiva II
+          <div class="correlativas">Correlativas: Teoría y Técnica Impositiva I</div>
+        </li>
+        <li data-id="contabilidad-gerencial" data-correlativas="direccion-general,gestion-financiera">Contabilidad Gerencial
+          <div class="correlativas">Correlativas: Dirección General, Gestión Financiera</div>
+        </li>
+        <li data-id="practica-profesional-supervisada" data-correlativas="historia-economica,metodologia-de-la-investigacion,teologia,macroeconomia,matematica-financiera-y-actuarial,administracion-publica,derecho-laboral,costo-para-la-toma-de-decisiones,derecho-tributario,sociologia,interpretacion-de-estados-contables,derecho-concursal,contabilidad-gerencial,auditoria-y-control-de-sistema-de-informacion,auditoria-2">Práctica Profesional Supervisada
+          <div class="correlativas">Correlativas: Historia Económica, Metodología de la Investigación, Teología, Macroeconomía, Matemática Financiera y Actuarial, Administración Pública, Derecho Laboral, Costos para la Toma de Decisiones, Derecho Tributario, Sociología, Interpretación de Estados Contables, Derecho Concursal, Contabilidad Gerencial, Auditoría y Control de Sistema de Información, Auditoría II</div>
+        </li>
+      </ul>
+    </div>
+
   </div>
 
-  <div class="card">
-    <h2>4º Año</h2>
-    <h3>1er Semestre</h3>
-    <ul>
-      <li data-id="auditoria-1" data-correlativas="estados-contables">
-        Auditoría I
-        <div class="correlativas">Correlativas: Estados Contables</div>
-      </li>
-      <li data-id="etica-y-deontologia-profesional" data-correlativas="teologia">
-        Ética y Deontología Profesional
-        <div class="correlativas">Correlativas: Teología</div>
-      </li>
-      <li data-id="interpretacion-de-estados-contables" data-correlativas="estados-contables">
-        Interpretación de Estados Contables
-        <div class="correlativas">Correlativas: Estados Contables</div>
-      </li>
-      <li data-id="sociedades" data-correlativas="derecho-comercial">
-        Sociedades
-        <div class="correlativas">Correlativas: Derecho Comercial</div>
-      </li>
-      <li data-id="teoria-y-tecnica-impositiva-1" data-correlativas="derecho-tributario">
-        Teoría y Técnica Impositiva I
-        <div class="correlativas">Correlativas: Derecho Tributario</div>
-      </li>
-      <li data-id="auditoria-y-control-de-sistema-de-informacion" data-correlativas="sistema-de-informacion-administrativa">
-        Auditoría y Control de Sistema de Información
-        <div class="correlativas">Correlativas: Sistema de Información Administrativa</div>
-      </li>
-    </ul>
-
-    <h3>2do Semestre</h3>
-    <ul>
-      <li data-id="gestion-financiera" data-correlativas="matematica-financiera-y-actuarial,direccion-general">
-        Gestión Financiera
-        <div class="correlativas">Correlativas: Matemática Financiera y Actuarial, Dirección General</div>
-      </li>
-      <li data-id="derecho-concursal" data-correlativas="derecho-comercial">
-        Derecho Concursal
-        <div class="correlativas">Correlativas: Derecho Comercial</div>
-      </li>
-      <li data-id="auditoria-2" data-correlativas="auditoria-1">
-        Auditoría II
-        <div class="correlativas">Correlativas: Auditoría I</div>
-      </li>
-      <li data-id="teoria-y-tecnica-impositiva-2" data-correlativas="teoria-y-tecnica-impositiva-1">
-        Teoría y Técnica Impositiva II
-        <div class="correlativas">Correlativas: Teoría y Técnica Impositiva I</div>
-      </li>
-      <li data-id="contabilidad-gerencial" data-correlativas="direccion-general,gestion-financiera">
-        Contabilidad Gerencial
-        <div class="correlativas">Correlativas: Dirección General, Gestión Financiera</div>
-      </li>
-      <li data-id="practica-profesional-supervisada" data-correlativas="historia-economica,metodologia-de-la-investigacion,teologia,macroeconomia,matematica-financiera-y-actuarial,administracion-publica,derecho-laboral,costo-para-la-toma-de-decisiones,derecho-tributario,sociologia,interpretacion-de-estados-contables,derecho-concursal,contabilidad-gerencial,auditoria-y-control-de-sistema-de-informacion,auditoria-2">
-        Práctica Profesional Supervisada
-        <div class="correlativas">Correlativas: Historia Económica, Metodología de la Investigación, Teología, Macroeconomía, Matemática Financiera y Actuarial, Administración Pública, Derecho Laboral, Costos para la Toma de Decisiones, Derecho Tributario, Sociología, Interpretación de Estados Contables, Derecho Concursal, Contabilidad Gerencial, Auditoría y Control de Sistemas de Información, Auditoría II</div>
-      </li>
-      <li data-id="seminario-de-practica-profesional" data-correlativas="estados-contables,remuneraciones-y-beneficios,interpretacion-de-estados-contables,teoria-y-tecnica-impositiva-1,auditoria-1,sociedades">
-        Seminario de Práctica Profesional
-        <div class="correlativas">Correlativas: Estados Contables, Remuneraciones y Beneficios, Interpretación de Estados Contables, Teoría y Técnica Impositiva I, Auditoría I, Sociedades</div>
-      </li>
-    </ul>
-  </div>
-
-</div>
+  <footer>
+    © 2025 Pereyra Company | Todos los derechos reservados
+  </footer>
 
   <script>
     const materias = document.querySelectorAll("li");
@@ -304,7 +276,7 @@
       materias.forEach(materia => {
         const id = materia.dataset.id;
         const correlativas = materia.dataset.correlativas?.split(",") || [];
-        const todasAprobadas = correlativas.every(correl => aprobadas.has(correl.trim()));
+        const todasAprobadas = correlativas.every(correl => aprobadas.has(correl));
 
         materia.classList.remove("aprobada", "bloqueada");
 
