@@ -19,8 +19,9 @@
       gap: 10px;
       padding: 10px;
       background-color: #0b2c56;
-      position: sticky;
-      top: 0;
+      position: sticky; /* lo hace fijo al hacer scroll */
+      top: 0;           /* posición arriba */
+      z-index: 1000;    /* para que quede por encima de todo */
     }
 
     nav a {
@@ -52,7 +53,7 @@
 
     .card h2 {
       margin: 0 0 10px;
-      color: #f0c300;
+      color: white;
     }
 
     ul {
@@ -83,7 +84,7 @@
 
     .correlativas {
       font-size: 0.85em;
-      color: #f0c300;
+      color: white;
       margin-top: 5px;
     }
 
