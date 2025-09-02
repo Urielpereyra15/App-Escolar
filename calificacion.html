@@ -1,1 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calificaciones</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #334455;
+      color: white;
+    }
 
+    /* Barra de navegación */
+    .navbar {
+      background-color: #1a2d40;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      border-radius: 0 0 15px 15px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: white;
+      background-color: #285ca8;
+      padding: 10px 18px;
+      border-radius: 15px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.3s;
+    }
+
+    .navbar a:hover {
+      background-color: #3b7ddb;
+    }
+
+    /* Encabezado de página */
+    .header {
+      background-color: #1e3d73;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 10px;
+      margin: 15px;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .add-btn {
+      background: #285ca8;
+      border: none;
+      color: white;
+      font-size: 20px;
+      padding: 5px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    /* Contenedor de cada Materia */
+    .materia {
+      background-color: #1e4a8a;
+      padding: 15px;
+      border-radius: 15px;
+      margin: 15px;
+    }
+
+    .materia h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    /* Lista de calificaciones */
+    .calificacion {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      background: #285ca8;
+      padding: 10px;
+      border-radius: 15px;
+      margin: 8px 0;
+    }
+
+    .calificacion span.nota {
+      color: black;
+      font-weight: bold;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+
+    .calificacion span.rojo { background: #ff4d4d; }
+    .calificacion span.amarillo { background: #ffd633; }
+    .calificacion span.verde { background: #4dff4d; }
+
+    .calificacion small {
+      margin-left: 38px;
+      font-size: 12px;
+      color: #ddd;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #1e4a8a;
+      padding: 20px;
+      border-radius: 15px;
+      width: 300px;
+      color: white;
+    }
+
+    .modal-content input, 
+    .modal-content select {
+      width: 100%;
+      padding: 6px;
+      border-radius: 8px;
+      border: none;
+      margin-top: 3px;
+    }
+
+    .cerrar {
+      float: right;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    button[type="submit"] {
+      background: #285ca8;
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button[type="submit"]:hover {
+      background: #3b7ddb;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <div class="navbar">
+    <a href="index.html">🏠 Inicio</a>
+    <a href="agenda.html">📒 Agenda</a>
+    <a href="calificaciones.html">⭐ Calificación</a>
+    <a href="asignaturas.html">📖 Asignaturas</a>
+    <a href="malla.html">📄 Malla Curricular</a>
+  </div>
+
+  <!-- Encabezado -->
+  <div class="header">
+    <h1>⭐ Calificaciones</h1>
+    <button class="add-btn" onclick="abrirModal()">+</button>
+  </div>
+
+  <!-- Materias predefinidas -->
+  <div id="materias-container">
+    <div class="materia" data-nombre="Contabilidad"><h2>Contabilidad</h2></div>
+    <div class="materia" data-nombre="Administración"><h2>Administración</h2></div>
+    <div class="materia" data-nombre="Historia de la Cultura"><h2>Historia de la Cultura</h2></div>
+  </div>
+
+  <!-- Modal oculto -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="cerrar" onclick="cerrarModal()">&times;</span>
+      <h2>Nueva Calificación</h2>
+      <form id="formCalificacion">
+        <label>Materia:</label><br>
+        <select id="materia" required>
+          <option value="">--Seleccionar--</option>
+          <option>Contabilidad</option>
+          <option>Administración</option>
+          <option>Historia de la Cultura</option>
+        </select><br><br>
+
+        <label>Sistema de nota:</label><br>
+        <select id="sistemaNota" required>
+          <option value="1-10">1 a 10</option>
+          <option value="0-100">0 a 100</option>
+          <option value="0-1">0/1</option>
+          <option value="si-no">Sí/No</option>
+        </select><br><br>
+
+        <label>Nota:</label><br>
+        <input type="text" id="nota" required><br><br>
+
+        <label>Mínimo aprobado:</label><br>
+        <input type="number" id="minAprobado" value="7" min="0" max="100" required><br><br>
+
+        <label>Fecha:</label><br>
+        <input type="date" id="fecha" required><br><br>
+
+        <button type="submit">Guardar</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function abrirModal() {
+      document.getElementById("modal").style.display = "flex";
+    }
+    function cerrarModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    // Función para asignar color según nota, sistema y mínimo aprobado
+    function colorNota(nota, sistema, minAprobado) {
+      nota = nota.toString().trim();
+      minAprobado = parseFloat(minAprobado);
+
+      if(sistema === "1-10") {
+        nota = parseFloat(nota);
+        if(nota < minAprobado - 2) return "rojo";
+        if(nota >= minAprobado - 2 && nota < minAprobado) return "amarillo";
+        return "verde";
+      }
+
+      if(sistema === "0-100") {
+        nota = parseFloat(nota);
+        if(nota < minAprobado - 10) return "rojo";
+        if(nota >= minAprobado - 10 && nota < minAprobado) return "amarillo";
+        return "verde";
+      }
+
+      if(sistema === "0-1") {
+        return nota == "0" ? "rojo" : "verde";
+      }
+
+      if(sistema === "si-no") {
+        return nota.toLowerCase() === "no" ? "rojo" : "verde";
+      }
+
+      return "";
+    }
+
+    // Manejar envío del formulario
+    document.getElementById("formCalificacion").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      let materia = document.getElementById("materia").value;
+      let sistema = document.getElementById("sistemaNota").value;
+      let nota = document.getElementById("nota").value;
+      let minAprobado = document.getElementById("minAprobado").value;
+      let fecha = document.getElementById("fecha").value;
+
+      if(!materia) return;
+
+      let nuevaCalificacion = document.createElement("div");
+      nuevaCalificacion.classList.add("calificacion");
+      nuevaCalificacion.innerHTML = `
+        <div><span class="nota ${colorNota(nota, sistema, minAprobado)}">${nota}</span> ${materia} - ${sistema}</div>
+        <small>${fecha}</small>
+      `;
+
+      let contenedorMateria = document.querySelector(`.materia[data-nombre="${materia}"]`);
+      contenedorMateria.appendChild(nuevaCalificacion);
+
+      cerrarModal();
+      e.target.reset();
+    });
+  </script>
+
+</body>
+</html>
