@@ -317,7 +317,7 @@ function renderEvents(){
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate()+1);
 
-    const sortedEvents = events.sort((a,b)=> new Date(a.date)-new Date(b.date));
+    const sortedEvents = events.sort((a,b)=> new Date(b.date)-new Date(a.date));
     if(sortedEvents.length===0){
         const item = document.createElement('div');
         item.classList.add('agenda-item');
