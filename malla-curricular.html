@@ -7,10 +7,35 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background-color: #334455;
       margin: 0;
-      padding: 0;
+      color: white;
     }
+
+    /* Barra de navegación */
+    nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #0b2c56;
+  position: sticky;
+  top: 0;
+}
+
+nav a {
+  text-decoration: none;
+  background: #0d4a8c;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-size: 14px;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: #1565c0;
+}
 
     header {
       background-color: #004080;
@@ -85,6 +110,14 @@
   </style>
 </head>
 <body>
+
+  <nav>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="agenda.html">📒 Agenda</a>
+    <a href="calificacion.html">⭐ Calificación</a>
+    <a href="asignaturas.html">🎓 Asignaturas</a>
+    <a href="malla-curricular.html">📑 Malla Curricular</a>
+  </nav>
 
   <header>
     <h1>Malla Curricular Interactiva</h1>
