@@ -5,58 +5,38 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Asignaturas</title>
   <style>
-    /* Estilo igual a index.html / agenda.html */
-    :root{
-      --bg:#334455;
-      --header:#1a252f;
-      --nav:#0d1b26;
-      --nav-item:#234;
-      --card:#0b4da2;
-      --accent:#00bfff;
-      --panel:#16324f;
-    }
-
-    *{box-sizing:border-box}
     body{
       margin:0;
       font-family: Arial, sans-serif;
-      background:var(--bg);
-      color:white;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+      background: #334455;
+      color: white;
     }
 
-    header{
-      background:var(--header);
-      padding:16px;
-      text-align:center;
-      position:sticky;
-      top:0;
-      z-index:50;
+    /* Barra de navegación */
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      background-color: #0b2c56;
+      position: sticky;
+      top: 0;
     }
-    header h1{margin:0;font-size:20px;font-weight:700}
+    
+    nav a {
+      text-decoration: none;
+      background: #0d4a8c;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: inline-block;
+    }
 
-    nav{
-      display:flex;
-      justify-content:center;
-      gap:12px;
-      background:var(--nav);
-      padding:10px;
+    nav a:hover {
+      background: #1565c0;
     }
-    nav a{
-      text-decoration:none;
-      color:white;
-      background:var(--nav-item);
-      padding:8px 12px;
-      border-radius:10px;
-      font-weight:700;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      transition:background .18s;
-    }
-    nav a:hover{background:var(--accent)}
-
+    
     main{padding:20px;max-width:980px;margin:0 auto}
 
     .titulo{
@@ -175,10 +155,6 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>Asignaturas</h1>
-  </header>
-
   <nav>
     <a href="index.html">🏠 Inicio</a>
     <a href="agenda.html">🗓️ Agenda</a>
@@ -189,7 +165,7 @@
 
   <main>
     <div class="titulo">
-      <span>📖 Asignaturas</span>
+      <span> Asignaturas</span>
     </div>
 
     <!-- Select filtro -->
