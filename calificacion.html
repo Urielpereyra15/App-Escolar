@@ -52,13 +52,6 @@
   <select id="filtroMateria">
     <option value="">Todas las materias</option>
   </select>
-  <select id="filtroAno">
-    <option value="">Todos los años</option>
-    <option>1ro</option>
-    <option>2do</option>
-    <option>3ro</option>
-    <option>4to</option>
-  </select>
   <select id="filtroTipo">
     <option value="">Todos los tipos</option>
     <option>Parcial</option>
@@ -110,7 +103,7 @@
 </div>
 
 <script>
-// Materias con su año según la malla
+// Materias con su año (lo seguimos guardando aunque no filtremos por año)
 const materiasAno = {
   "Contabilidad":"1ro","Administración":"1ro","Historia de la Cultura":"1ro","Matemática 1":"1ro","Derecho Público":"1ro","Introducción a la Economía":"1ro",
   "Metodología de la Investigación":"2do","Derecho Privado":"2do","Contabilidad Superior":"2do","Teoría de la Organización":"2do","Estadística":"2do",
@@ -123,10 +116,11 @@ const materiasAno = {
   "Contabilidad Gerencial":"4to","Práctica Profesional Supervisada":"4to"
 };
 
-// Inicializar selects y contenedores
+// Inicializar selects
 const materiaSelect = document.getElementById("materia");
 const filtroMateria = document.getElementById("filtroMateria");
 const materiasContainer = document.getElementById("materias-container");
+
 for(let mat in materiasAno){
   let option = document.createElement("option");
   option.value = mat; option.textContent = mat; materiaSelect.appendChild(option);
@@ -139,7 +133,7 @@ for(let mat in materiasAno){
 function abrirModal(){ document.getElementById("modal").style.display="flex"; }
 function cerrarModal(){ document.getElementById("modal").style.display="none"; }
 
-// Color de nota
+// Color nota
 function colorNota(nota,sistema,minAprobado){
   nota = nota.toString().trim(); minAprobado = parseFloat(minAprobado);
   if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "rojo"; if(nota>=minAprobado-2 && nota<minAprobado) return "amarillo"; return "verde"; }
@@ -169,14 +163,12 @@ function cargarCalificaciones(){
   let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
 
   let matFiltro = document.getElementById("filtroMateria").value;
-  let anoFiltro = document.getElementById("filtroAno").value;
   let tipoFiltro = document.getElementById("filtroTipo").value;
 
   let calificacionesPorMateria = {};
 
   calificaciones.forEach((c,index)=>{
     if((!matFiltro || c.materia===matFiltro) &&
-       (!anoFiltro || c.ano===anoFiltro) &&
        (!tipoFiltro || c.tipo===tipoFiltro)){
       if(!calificacionesPorMateria[c.materia]) calificacionesPorMateria[c.materia]=[];
       calificacionesPorMateria[c.materia].push({...c,index});
@@ -224,7 +216,6 @@ document.getElementById("formCalificacion").addEventListener("submit",function(e
 
 // Filtros
 document.getElementById("filtroMateria").addEventListener("change",cargarCalificaciones);
-document.getElementById("filtroAno").addEventListener("change",cargarCalificaciones);
 document.getElementById("filtroTipo").addEventListener("change",cargarCalificaciones);
 
 window.onload=cargarCalificaciones;
