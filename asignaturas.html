@@ -1,1 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asignaturas</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #2c3e50;
+      color: white;
+    }
 
+    header {
+      background-color: #1a252f;
+      padding: 15px;
+      text-align: center;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #0d1b26;
+      padding: 10px;
+      gap: 15px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: white;
+      background-color: #234;
+      padding: 10px 15px;
+      border-radius: 12px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.2s;
+    }
+
+    nav a:hover {
+      background-color: #00bfff;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    .titulo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #16324f;
+      padding: 10px 15px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .buscador {
+      margin: 15px 0;
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    .asignaturas {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    .card {
+      background: #0b4da2;
+      padding: 15px;
+      border-radius: 12px;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-add {
+      background: #00bfff;
+      color: white;
+      border: none;
+      font-size: 18px;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      color: black;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .close {
+      color: #aaa;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: red;
+    }
+
+    .modal-content label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .modal-content button {
+      margin-top: 15px;
+      padding: 10px;
+      width: 100%;
+      background: #0b4da2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .modal-content button:hover {
+      background: #00bfff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Asignaturas</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="agenda.html">🗓️ Agenda</a>
+    <a href="calificacion.html">⭐ Calificación</a>
+    <a href="asignaturas.html">📖 Asignaturas</a>
+    <a href="malla.html">📄 Malla Curricular</a>
+  </nav>
+
+  <main>
+    <div class="titulo">
+      <span>📖 Asignaturas</span>
+    </div>
+
+    <input type="text" id="buscador" class="buscador" placeholder="Buscar materia...">
+
+    <div id="lista-asignaturas" class="asignaturas">
+      <!-- Aquí van todas tus materias (vacías de profesores) -->
+      <!-- 1er Año -->
+      <div class="card"><h2>Contabilidad</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Contabilidad')">+</button></p><ul id="profesores-Contabilidad"></ul></div>
+      <div class="card"><h2>Administración</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Administracion')">+</button></p><ul id="profesores-Administracion"></ul></div>
+      <div class="card"><h2>Historia de la Cultura</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-HistoriaCultura')">+</button></p><ul id="profesores-HistoriaCultura"></ul></div>
+      <div class="card"><h2>Matemática 1</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Matematica1')">+</button></p><ul id="profesores-Matematica1"></ul></div>
+      <div class="card"><h2>Derecho Público</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-DerechoPublico')">+</button></p><ul id="profesores-DerechoPublico"></ul></div>
+      <div class="card"><h2>Introducción a la Economía</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Economia')">+</button></p><ul id="profesores-Economia"></ul></div>
+
+      <!-- 2do Año -->
+      <div class="card"><h2>Metodología de la Investigación</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Metodologia')">+</button></p><ul id="profesores-Metodologia"></ul></div>
+      <div class="card"><h2>Derecho Privado</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-DerechoPrivado')">+</button></p><ul id="profesores-DerechoPrivado"></ul></div>
+      <div class="card"><h2>Contabilidad Superior</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-ContabilidadSuperior')">+</button></p><ul id="profesores-ContabilidadSuperior"></ul></div>
+      <div class="card"><h2>Teoría de la Organización</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-TeoriaOrganizacion')">+</button></p><ul id="profesores-TeoriaOrganizacion"></ul></div>
+      <div class="card"><h2>Estadística</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Estadistica')">+</button></p><ul id="profesores-Estadistica"></ul></div>
+      <div class="card"><h2>Historia Económica</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-HistoriaEconomica')">+</button></p><ul id="profesores-HistoriaEconomica"></ul></div>
+      <div class="card"><h2>Microeconomía</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Microeconomia')">+</button></p><ul id="profesores-Microeconomia"></ul></div>
+      <div class="card"><h2>Filosofía</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Filosofia')">+</button></p><ul id="profesores-Filosofia"></ul></div>
+      <div class="card"><h2>Matemática 2</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Matematica2')">+</button></p><ul id="profesores-Matematica2"></ul></div>
+
+      <!-- 3er Año -->
+      <div class="card"><h2>Costos 1</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Costos1')">+</button></p><ul id="profesores-Costos1"></ul></div>
+      <div class="card"><h2>Derecho Tributario</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-DerechoTributario')">+</button></p><ul id="profesores-DerechoTributario"></ul></div>
+      <div class="card"><h2>Administración Pública</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-AdministracionPublica')">+</button></p><ul id="profesores-AdministracionPublica"></ul></div>
+      <div class="card"><h2>Dirección General</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-DireccionGeneral')">+</button></p><ul id="profesores-DireccionGeneral"></ul></div>
+      <div class="card"><h2>Estados Contables</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-EstadosContables')">+</button></p><ul id="profesores-EstadosContables"></ul></div>
+      <div class="card"><h2>Derecho Comercial</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-DerechoComercial')">+</button></p><ul id="profesores-DerechoComercial"></ul></div>
+      <div class="card"><h2>Derecho Laboral</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-DerechoLaboral')">+</button></p><ul id="profesores-DerechoLaboral"></ul></div>
+      <div class="card"><h2>Macroeconomía</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Macroeconomia')">+</button></p><ul id="profesores-Macroeconomia"></ul></div>
+      <div class="card"><h2>Matemática Financiera y Actuarial</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-MatematicaFinanciera')">+</button></p><ul id="profesores-MatematicaFinanciera"></ul></div>
+      <div class="card"><h2>Sistema de Información Administrativa</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-SistemaInformacion')">+</button></p><ul id="profesores-SistemaInformacion"></ul></div>
+      <div class="card"><h2>Teología</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Teologia')">+</button></p><ul id="profesores-Teologia"></ul></div>
+      <div class="card"><h2>Sociología</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Sociologia')">+</button></p><ul id="profesores-Sociologia"></ul></div>
+      <div class="card"><h2>Costo para la Toma de Decisiones</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-CostoDecision')">+</button></p><ul id="profesores-CostoDecision"></ul></div>
+      <div class="card"><h2>Remuneración y Beneficios</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Remuneracion')">+</button></p><ul id="profesores-Remuneracion"></ul></div>
+
+      <!-- 4to Año -->
+      <div class="card"><h2>Auditoría 1</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Auditoria1')">+</button></p><ul id="profesores-Auditoria1"></ul></div>
+      <div class="card"><h2>Ética y Deontología Profesional</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Etica')">+</button></p><ul id="profesores-Etica"></ul></div>
+      <div class="card"><h2>Interpretación de Estados Contables</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-InterpretacionEstados')">+</button></p><ul id="profesores-InterpretacionEstados"></ul></div>
+      <div class="card"><h2>Sociedades</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Sociedades')">+</button></p><ul id="profesores-Sociedades"></ul></div>
+      <div class="card"><h2>Teoría y Técnica Impositiva 1</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-TeoriaImpositiva1')">+</button></p><ul id="profesores-TeoriaImpositiva1"></ul></div>
+      <div class="card"><h2>Auditoría y Control de Sistema de Información</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-AuditoriaControl')">+</button></p><ul id="profesores-AuditoriaControl"></ul></div>
+      <div class="card"><h2>Gestión Financiera</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-GestionFinanciera')">+</button></p><ul id="profesores-GestionFinanciera"></ul></div>
+      <div class="card"><h2>Derecho Concursal</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-DerechoConcursal')">+</button></p><ul id="profesores-DerechoConcursal"></ul></div>
+      <div class="card"><h2>Auditoría 2</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Auditoria2')">+</button></p><ul id="profesores-Auditoria2"></ul></div>
+      <div class="card"><h2>Teoría y Técnica Impositiva 2</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-TeoriaImpositiva2')">+</button></p><ul id="profesores-TeoriaImpositiva2"></ul></div>
+      <div class="card"><h2>Contabilidad Gerencial</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-ContabilidadGerencial')">+</button></p><ul id="profesores-ContabilidadGerencial"></ul></div>
+      <div class="card"><h2>Práctica Profesional Supervisada</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-PracticaProfesional')">+</button></p><ul id="profesores-PracticaProfesional"></ul></div>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal()">&times;</span>
+      <h3>Agregar Profesor</h3>
+      <label for="nombre-profesor">Nombre:</label>
+      <input type="text" id="nombre-profesor">
+      <button onclick="agregarProfesor()">Agregar</button>
+    </div>
+  </div>
+
+  <script>
+    let modal = document.getElementById("modal");
+    let inputProfesor = document.getElementById("nombre-profesor");
+    let listaActual = null;
+
+    function abrirModal(idLista) {
+      listaActual = document.getElementById(idLista);
+      inputProfesor.value = '';
+      modal.style.display = "block";
+    }
+
+    function cerrarModal() {
+      modal.style.display = "none";
+    }
+
+    function agregarProfesor() {
+      if (inputProfesor.value.trim() !== '') {
+        let li = document.createElement('li');
+        li.textContent = inputProfesor.value.trim();
+        listaActual.appendChild(li);
+        cerrarModal();
+      }
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        cerrarModal();
+      }
+    }
+
+    // Buscador
+    const buscador = document.getElementById('buscador');
+    buscador.addEventListener('input', function() {
+      const filtro = this.value.toLowerCase();
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        const nombre = card.querySelector('h2').textContent.toLowerCase();
+        card.style.display = nombre.includes(filtro) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>
