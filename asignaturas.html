@@ -1,174 +1,176 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Asignaturas</title>
   <style>
-    body {
-      margin: 0;
+    /* Estilo igual a index.html / agenda.html */
+    :root{
+      --bg:#334455;
+      --header:#1a252f;
+      --nav:#0d1b26;
+      --nav-item:#234;
+      --card:#0b4da2;
+      --accent:#00bfff;
+      --panel:#16324f;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
       font-family: Arial, sans-serif;
-      background-color: #334455;
-      color: white;
+      background:var(--bg);
+      color:white;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
 
-    header {
-      background-color: #1a252f;
-      padding: 15px;
-      text-align: center;
+    header{
+      background:var(--header);
+      padding:16px;
+      text-align:center;
+      position:sticky;
+      top:0;
+      z-index:50;
+    }
+    header h1{margin:0;font-size:20px;font-weight:700}
+
+    nav{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      background:var(--nav);
+      padding:10px;
+    }
+    nav a{
+      text-decoration:none;
+      color:white;
+      background:var(--nav-item);
+      padding:8px 12px;
+      border-radius:10px;
+      font-weight:700;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition:background .18s;
+    }
+    nav a:hover{background:var(--accent)}
+
+    main{padding:20px;max-width:980px;margin:0 auto}
+
+    .titulo{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:var(--panel);
+      padding:10px 14px;
+      border-radius:10px;
+      margin-bottom:12px;
+      font-weight:700;
+      font-size:18px;
     }
 
-    nav {
-      display: flex;
-      justify-content: center;
-      background-color: #0d1b26;
-      padding: 10px;
-      gap: 15px;
+    /* Select (filtro) */
+    .buscador{
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:none;
+      font-size:15px;
+      margin:12px 0 18px 0;
+      appearance: auto;
     }
 
-    nav a {
-      text-decoration: none;
-      color: white;
-      background-color: #234;
-      padding: 10px 15px;
-      border-radius: 12px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      transition: background 0.2s;
+    .asignaturas{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
     }
 
-    nav a:hover {
-      background-color: #00bfff;
+    .card{
+      background:var(--card);
+      padding:14px;
+      border-radius:12px;
+      transition:transform .16s,box-shadow .16s;
+    }
+    .card:hover{transform:scale(1.02); box-shadow: 0 6px 18px rgba(0,0,0,0.25)}
+
+    .card h2{
+      margin:0 0 8px 0;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:17px;
+      font-weight:700;
     }
 
-    main {
-      padding: 20px;
-    }
+    .card p{margin:0 0 8px 0;font-size:14px}
+    .card ul{margin:0;padding-left:18px}
 
-    .titulo {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #16324f;
-      padding: 10px 15px;
-      border-radius: 12px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .buscador {
-      margin: 15px 0;
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-    }
-
-    .asignaturas {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 15px;
-    }
-
-    .card {
-      background: #0b4da2;
-      padding: 15px;
-      border-radius: 12px;
-      transition: transform 0.2s;
-    }
-
-    .card:hover {
-      transform: scale(1.03);
-    }
-
-    .card h2 {
-      margin: 0 0 10px;
-      font-size: 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .btn-add {
-      background: #00bfff;
-      color: white;
-      border: none;
-      font-size: 18px;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      cursor: pointer;
+    .btn-add{
+      background:var(--accent);
+      color:#002;
+      border:none;
+      font-size:16px;
+      border-radius:50%;
+      width:30px;height:30px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
     }
 
     /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.6);
+    .modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      z-index:999;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
     }
+    .modal.open{display:flex}
 
-    .modal-content {
-      background-color: #fefefe;
-      color: black;
-      margin: 10% auto;
-      padding: 20px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 400px;
-      position: relative;
+    .modal-content{
+      width:100%;
+      max-width:420px;
+      background:#fff;
+      color:#111;
+      padding:18px;
+      border-radius:10px;
+      position:relative;
     }
-
-    .close {
-      color: #aaa;
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
+    .close{
+      position:absolute;
+      top:10px;right:12px;
+      font-size:22px;color:#666;cursor:pointer;font-weight:700;
     }
-
-    .close:hover {
-      color: red;
+    .modal-content h3{margin:0 0 10px 0}
+    .modal-content label{display:block;margin-top:10px;font-weight:700}
+    .modal-content input{width:100%;padding:8px;margin-top:6px;border:1px solid #ddd;border-radius:6px}
+    .modal-content .btn-save{
+      margin-top:14px;
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:none;
+      background:var(--card);
+      color:white;
+      font-weight:700;
+      cursor:pointer;
     }
+    .modal-content .btn-save:hover{background:var(--accent)}
 
-    .modal-content label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
+    /* responsive */
+    @media (min-width:720px){
+      .asignaturas{grid-template-columns:repeat(2,1fr)}
     }
-
-    .modal-content input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    .modal-content button {
-      margin-top: 15px;
-      padding: 10px;
-      width: 100%;
-      background: #0b4da2;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .modal-content button:hover {
-      background: #00bfff;
+    @media (min-width:1100px){
+      .asignaturas{grid-template-columns:repeat(3,1fr)}
     }
   </style>
 </head>
@@ -190,92 +192,213 @@
       <span>📖 Asignaturas</span>
     </div>
 
-    <input type="text" id="buscador" class="buscador" placeholder="Buscar materia...">
+    <!-- Select filtro -->
+    <select id="filtro-materias" class="buscador" aria-label="Filtro de materias">
+      <option value="todas">Todas las materias</option>
 
-    <div id="lista-asignaturas" class="asignaturas">
-      <!-- Aquí van todas las materias (sin profesores) -->
-      <div class="card"><h2>Contabilidad</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Contabilidad')">+</button></p><ul id="profesores-Contabilidad"></ul></div>
-      <div class="card"><h2>Administración</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Administracion')">+</button></p><ul id="profesores-Administracion"></ul></div>
-      <div class="card"><h2>Historia de la Cultura</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-HistoriaCultura')">+</button></p><ul id="profesores-HistoriaCultura"></ul></div>
-      <div class="card"><h2>Matemática 1</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Matematica1')">+</button></p><ul id="profesores-Matematica1"></ul></div>
-      <div class="card"><h2>Derecho Público</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-DerechoPublico')">+</button></p><ul id="profesores-DerechoPublico"></ul></div>
-      <div class="card"><h2>Introducción a la Economía</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Economia')">+</button></p><ul id="profesores-Economia"></ul></div>
+      <!-- 1er Año -->
+      <option value="Contabilidad">Contabilidad</option>
+      <option value="Administración">Administración</option>
+      <option value="Historia de la Cultura">Historia de la Cultura</option>
+      <option value="Matemática 1">Matemática 1</option>
+      <option value="Derecho Público">Derecho Público</option>
+      <option value="Introducción a la Economía">Introducción a la Economía</option>
 
       <!-- 2do Año -->
-      <div class="card"><h2>Metodología de la Investigación</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Metodologia')">+</button></p><ul id="profesores-Metodologia"></ul></div>
-      <div class="card"><h2>Derecho Privado</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-DerechoPrivado')">+</button></p><ul id="profesores-DerechoPrivado"></ul></div>
-      <div class="card"><h2>Contabilidad Superior</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-ContabilidadSuperior')">+</button></p><ul id="profesores-ContabilidadSuperior"></ul></div>
-      <div class="card"><h2>Teoría de la Organización</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-TeoriaOrganizacion')">+</button></p><ul id="profesores-TeoriaOrganizacion"></ul></div>
-      <div class="card"><h2>Estadística</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Estadistica')">+</button></p><ul id="profesores-Estadistica"></ul></div>
-      <div class="card"><h2>Historia Económica</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-HistoriaEconomica')">+</button></p><ul id="profesores-HistoriaEconomica"></ul></div>
-      <div class="card"><h2>Microeconomía</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Microeconomia')">+</button></p><ul id="profesores-Microeconomia"></ul></div>
-      <div class="card"><h2>Filosofía</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Filosofia')">+</button></p><ul id="profesores-Filosofia"></ul></div>
-      <div class="card"><h2>Matemática 2</h2><p><strong>Profesores:</strong> <button class="btn-add" onclick="abrirModal('profesores-Matematica2')">+</button></p><ul id="profesores-Matematica2"></ul></div>
+      <option value="Metodología de la Investigación">Metodología de la Investigación</option>
+      <option value="Derecho Privado">Derecho Privado</option>
+      <option value="Contabilidad Superior">Contabilidad Superior</option>
+      <option value="Teoría de la Organización">Teoría de la Organización</option>
+      <option value="Estadística">Estadística</option>
+      <option value="Historia Económica">Historia Económica</option>
+      <option value="Microeconomía">Microeconomía</option>
+      <option value="Filosofía">Filosofía</option>
+      <option value="Matemática 2">Matemática 2</option>
 
-      <!-- 3er y 4to Año siguen igual (por límite de espacio aquí) -->
-      <!-- Reemplazá los IDs con el nombre de cada materia como ya se ve en los anteriores -->
+      <!-- 3er Año -->
+      <option value="Costos 1">Costos 1</option>
+      <option value="Derecho Tributario">Derecho Tributario</option>
+      <option value="Administración Pública">Administración Pública</option>
+      <option value="Dirección General">Dirección General</option>
+      <option value="Estados Contables">Estados Contables</option>
+      <option value="Derecho Comercial">Derecho Comercial</option>
+      <option value="Derecho Laboral">Derecho Laboral</option>
+      <option value="Macroeconomía">Macroeconomía</option>
+      <option value="Matemática Financiera y Actuarial">Matemática Financiera y Actuarial</option>
+      <option value="Sistema de Información Administrativa">Sistema de Información Administrativa</option>
+      <option value="Teología">Teología</option>
+      <option value="Sociología">Sociología</option>
+      <option value="Costo para la Toma de Decisiones">Costo para la Toma de Decisiones</option>
+      <option value="Remuneración y Beneficios">Remuneración y Beneficios</option>
+
+      <!-- 4to Año -->
+      <option value="Auditoría 1">Auditoría 1</option>
+      <option value="Ética y Deontologia Profesional">Ética y Deontologia Profesional</option>
+      <option value="Interpretación de Estados Contables">Interpretación de Estados Contables</option>
+      <option value="Sociedades">Sociedades</option>
+      <option value="Teoría y Técnica Impositiva 1">Teoría y Técnica Impositiva 1</option>
+      <option value="Auditoría y Control de Sistema de Información">Auditoría y Control de Sistema de Información</option>
+      <option value="Gestión Financiera">Gestión Financiera</option>
+      <option value="Derecho Concursal">Derecho Concursal</option>
+      <option value="Auditoría 2">Auditoría 2</option>
+      <option value="Teoría y Técnica Impositiva 2">Teoría y Técnica Impositiva 2</option>
+      <option value="Contabilidad Gerencial">Contabilidad Gerencial</option>
+      <option value="Práctica Profesional Supervisada">Práctica Profesional Supervisada</option>
+    </select>
+
+    <div id="lista-asignaturas" class="asignaturas">
+      <!-- Cada card sin profesores (vacío) -->
+      <div class="card">
+        <h2>Contabilidad <button class="btn-add" title="Agregar profesor" onclick="abrirModal(this)">+</button></h2>
+        <p><strong>Profesores:</strong></p>
+        <ul></ul>
+      </div>
+
+      <div class="card">
+        <h2>Administración <button class="btn-add" title="Agregar profesor" onclick="abrirModal(this)">+</button></h2>
+        <p><strong>Profesores:</strong></p><ul></ul>
+      </div>
+
+      <div class="card">
+        <h2>Historia de la Cultura <button class="btn-add" title="Agregar profesor" onclick="abrirModal(this)">+</button></h2>
+        <p><strong>Profesores:</strong></p><ul></ul>
+      </div>
+
+      <div class="card">
+        <h2>Matemática 1 <button class="btn-add" title="Agregar profesor" onclick="abrirModal(this)">+</button></h2>
+        <p><strong>Profesores:</strong></p><ul></ul>
+      </div>
+
+      <div class="card">
+        <h2>Derecho Público <button class="btn-add" title="Agregar profesor" onclick="abrirModal(this)">+</button></h2>
+        <p><strong>Profesores:</strong></p><ul></ul>
+      </div>
+
+      <div class="card">
+        <h2>Introducción a la Economía <button class="btn-add" title="Agregar profesor" onclick="abrirModal(this)">+</button></h2>
+        <p><strong>Profesores:</strong></p><ul></ul>
+      </div>
+
+      <!-- 2do Año -->
+      <div class="card"><h2>Metodología de la Investigación <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Derecho Privado <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Contabilidad Superior <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Teoría de la Organización <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Estadística <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Historia Económica <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Microeconomía <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Filosofía <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Matemática 2 <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+
+      <!-- 3er Año -->
+      <div class="card"><h2>Costos 1 <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Derecho Tributario <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Administración Pública <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Dirección General <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Estados Contables <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Derecho Comercial <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Derecho Laboral <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Macroeconomía <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Matemática Financiera y Actuarial <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Sistema de Información Administrativa <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Teología <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Sociología <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Costo para la Toma de Decisiones <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Remuneración y Beneficios <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+
+      <!-- 4to Año -->
+      <div class="card"><h2>Auditoría 1 <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Ética y Deontologia Profesional <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Interpretación de Estados Contables <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Sociedades <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Teoría y Técnica Impositiva 1 <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Auditoría y Control de Sistema de Información <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Gestión Financiera <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Derecho Concursal <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Auditoría 2 <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Teoría y Técnica Impositiva 2 <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Contabilidad Gerencial <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
+      <div class="card"><h2>Práctica Profesional Supervisada <button class="btn-add" onclick="abrirModal(this)">+</button></h2><p><strong>Profesores:</strong></p><ul></ul></div>
     </div>
   </main>
 
   <!-- Modal -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="cerrarModal()">&times;</span>
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-content" role="document">
+      <span class="close" onclick="cerrarModal()" aria-label="Cerrar">&times;</span>
       <h3>Agregar Profesor</h3>
-      <label for="nombre-profesor">Nombre:</label>
-      <input type="text" id="nombre-profesor">
-      <button onclick="agregarProfesor()">Agregar</button>
+      <label for="nombre-profesor">Nombre y Apellido *</label>
+      <input id="nombre-profesor" type="text" placeholder="Ej: Juan Pérez" />
+      <label for="contacto-profesor">Medio de contacto (opcional)</label>
+      <input id="contacto-profesor" type="text" placeholder="Ej: 11-xxxx-xxxx / mail@ejemplo.com" />
+      <button class="btn-save" onclick="guardarProfesor()">Guardar</button>
     </div>
   </div>
 
   <script>
-    let modal = document.getElementById("modal");
-    let inputProfesor = document.getElementById("nombre-profesor");
-    let listaActual = null;
+    const selectFiltro = document.getElementById('filtro-materias');
+    const cards = document.querySelectorAll('#lista-asignaturas .card');
+    const modal = document.getElementById('modal');
+    const nombreInput = document.getElementById('nombre-profesor');
+    const contactoInput = document.getElementById('contacto-profesor');
+    let listaActualUL = null;
 
-    function abrirModal(idLista) {
-      listaActual = document.getElementById(idLista);
-      inputProfesor.value = '';
-      modal.style.display = "block";
-    }
-
-    function cerrarModal() {
-      modal.style.display = "none";
-    }
-
-    function agregarProfesor() {
-      if (inputProfesor.value.trim() !== '') {
-        let li = document.createElement('li');
-        li.textContent = inputProfesor.value.trim();
-        listaActual.appendChild(li);
-        cerrarModal();
-      }
-    }
-
-    window.onclick = function(event) {
-      if (event.target == modal) {
-        cerrarModal();
-      }
-    }
-
-    // Buscador
-    const buscador = document.getElementById('buscador');
-    buscador.addEventListener('input', function() {
-      const filtro = this.value.toLowerCase();
-      const cards = document.querySelectorAll('.card');
+    // filtro por select
+    selectFiltro.addEventListener('change', () => {
+      const val = selectFiltro.value;
       cards.forEach(card => {
-        const nombre = card.querySelector('h2').textContent.toLowerCase();
-        card.style.display = nombre.includes(filtro) ? '' : 'none';
+        const nombre = card.querySelector('h2').childNodes[0].textContent.trim();
+        if (val === 'todas' || nombre === val) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
       });
     });
 
-    // Mostrar solo la primera materia al inicio
-    window.onload = function() {
-      const cards = document.querySelectorAll('.card');
-      cards.forEach((card, index) => {
-        card.style.display = index === 0 ? '' : 'none';
-      });
+    // abrir modal: pasamos el botón, buscamos el ul de la card correspondiente
+    function abrirModal(button){
+      const card = button.closest('.card');
+      listaActualUL = card.querySelector('ul');
+      nombreInput.value = '';
+      contactoInput.value = '';
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      nombreInput.focus();
     }
+
+    function cerrarModal(){
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+    }
+
+    // guardar profesor en la ul correspondiente
+    function guardarProfesor(){
+      const nombre = nombreInput.value.trim();
+      const contacto = contactoInput.value.trim();
+      if(!nombre) {
+        nombreInput.focus();
+        return;
+      }
+      const li = document.createElement('li');
+      li.textContent = contacto ? `${nombre} (${contacto})` : nombre;
+      listaActualUL.appendChild(li);
+      cerrarModal();
+    }
+
+    // cerrar modal si clickeás fuera
+    window.addEventListener('click', (e) => {
+      if(e.target === modal) cerrarModal();
+    });
+
+    // cerrar con ESC
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && modal.classList.contains('open')) cerrarModal();
+    });
+
+    // inicial: por defecto "todas" -> mostrar todo (si querés cambiar para mostrar solo la primera, lo ajusto)
+    selectFiltro.value = 'todas';
+    // (si tenés preferencia: mostrar solo la primera materia al inicio, lo activo)
   </script>
 </body>
 </html>
