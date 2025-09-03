@@ -28,7 +28,6 @@
     .cerrar { float:right; font-size:20px; cursor:pointer; }
     button[type="submit"] { background:#285ca8; border:none; color:white; padding:8px 15px; border-radius:10px; cursor:pointer; font-size:16px; }
     button[type="submit"]:hover { background:#3b7ddb; }
-    /* Filtros */
     .filtros { margin:15px; display:flex; gap:10px; flex-wrap:wrap; }
     .filtros select { padding:5px 8px; border-radius:8px; border:none; }
   </style>
@@ -69,9 +68,7 @@
   </select>
 </div>
 
-<div id="materias-container">
-  <!-- Se llenará automáticamente según las materias de la malla -->
-</div>
+<div id="materias-container"></div>
 
 <!-- Modal de nueva calificación -->
 <div id="modal" class="modal">
@@ -115,36 +112,27 @@
 <script>
 // Materias con su año según la malla
 const materiasAno = {
-  // 1er Año
-  "Contabilidad":"1ro", "Administración":"1ro", "Historia de la Cultura":"1ro", "Matemática 1":"1ro", "Derecho Público":"1ro", "Introducción a la Economía":"1ro",
-  // 2do Año
-  "Metodología de la Investigación":"2do", "Derecho Privado":"2do", "Contabilidad Superior":"2do", "Teoría de la Organización":"2do", "Estadística":"2do",
-  "Historia Económica":"2do", "Microeconómia":"2do", "Filosofía":"2do", "Matemática 2":"2do",
-  // 3er Año
-  "Costos 1":"3ro", "Derecho Tributario":"3ro", "Administración Pública":"3ro", "Dirección General":"3ro", "Estados Contables":"3ro", "Derecho Comercial":"3ro",
-  "Derecho Laboral":"3ro", "Macroeconómia":"3ro", "Matemática Financiera y Actuarial":"3ro", "Sistema de Información Administrativa":"3ro", "Teología":"3ro",
-  "Sociología":"3ro", "Costo para la Toma de Decisiones":"3ro", "Remuneración y Beneficios":"3ro",
-  // 4to Año
-  "Auditoria 1":"4to", "Ética y Deontologia Profesional":"4to", "Interpretación de Estados Contables":"4to", "Sociedades":"4to", "Teoría y Técnica Impositiva 1":"4to",
-  "Auditoria y Control de Sistema de Información":"4to", "Gestión Financiera":"4to", "Derecho Concursal":"4to", "Auditoria 2":"4to", "Teoría y Técnica Impositiva 2":"4to",
-  "Contabilidad Gerencial":"4to", "Práctica Profesional Supervisada":"4to"
+  "Contabilidad":"1ro","Administración":"1ro","Historia de la Cultura":"1ro","Matemática 1":"1ro","Derecho Público":"1ro","Introducción a la Economía":"1ro",
+  "Metodología de la Investigación":"2do","Derecho Privado":"2do","Contabilidad Superior":"2do","Teoría de la Organización":"2do","Estadística":"2do",
+  "Historia Económica":"2do","Microeconómia":"2do","Filosofía":"2do","Matemática 2":"2do",
+  "Costos 1":"3ro","Derecho Tributario":"3ro","Administración Pública":"3ro","Dirección General":"3ro","Estados Contables":"3ro","Derecho Comercial":"3ro",
+  "Derecho Laboral":"3ro","Macroeconómia":"3ro","Matemática Financiera y Actuarial":"3ro","Sistema de Información Administrativa":"3ro","Teología":"3ro",
+  "Sociología":"3ro","Costo para la Toma de Decisiones":"3ro","Remuneración y Beneficios":"3ro",
+  "Auditoria 1":"4to","Ética y Deontologia Profesional":"4to","Interpretación de Estados Contables":"4to","Sociedades":"4to","Teoría y Técnica Impositiva 1":"4to",
+  "Auditoria y Control de Sistema de Información":"4to","Gestión Financiera":"4to","Derecho Concursal":"4to","Auditoria 2":"4to","Teoría y Técnica Impositiva 2":"4to",
+  "Contabilidad Gerencial":"4to","Práctica Profesional Supervisada":"4to"
 };
 
-// Inicializar selects y materias
+// Inicializar selects y contenedores
 const materiaSelect = document.getElementById("materia");
+const filtroMateria = document.getElementById("filtroMateria");
 const materiasContainer = document.getElementById("materias-container");
 for(let mat in materiasAno){
   let option = document.createElement("option");
-  option.value = mat;
-  option.textContent = mat;
-  materiaSelect.appendChild(option);
+  option.value = mat; option.textContent = mat; materiaSelect.appendChild(option);
 
-  // Crear contenedor de materia
-  let div = document.createElement("div");
-  div.classList.add("materia");
-  div.dataset.nombre = mat;
-  div.innerHTML = `<h2>${mat}</h2>`;
-  materiasContainer.appendChild(div);
+  let fOption = document.createElement("option");
+  fOption.value = mat; fOption.textContent = mat; filtroMateria.appendChild(fOption);
 }
 
 // Modal
@@ -177,25 +165,43 @@ function borrarCalificacion(index){
 
 // Cargar calificaciones con filtros
 function cargarCalificaciones(){
-  document.querySelectorAll(".materia").forEach(m=>m.innerHTML=`<h2>${m.dataset.nombre}</h2>`);
+  materiasContainer.innerHTML = "";
   let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
 
   let matFiltro = document.getElementById("filtroMateria").value;
   let anoFiltro = document.getElementById("filtroAno").value;
   let tipoFiltro = document.getElementById("filtroTipo").value;
 
+  let calificacionesPorMateria = {};
+
   calificaciones.forEach((c,index)=>{
-    if((!matFiltro || c.materia===matFiltro) && (!anoFiltro || c.ano===anoFiltro) && (!tipoFiltro || c.tipo===tipoFiltro)){
-      let div = document.createElement("div");
-      div.classList.add("calificacion");
-      div.innerHTML = `
-        <div><span class="nota ${colorNota(c.nota,c.sistema,c.minAprobado)}">${c.nota}</span> ${c.materia} - ${c.tipo} - ${c.sistema} - ${c.ano}</div>
-        <small>${c.fecha}</small>
-        <button class="btn-borrar" onclick="borrarCalificacion(${index})">🗑️</button>
-      `;
-      document.querySelector(`.materia[data-nombre="${c.materia}"]`).appendChild(div);
+    if((!matFiltro || c.materia===matFiltro) &&
+       (!anoFiltro || c.ano===anoFiltro) &&
+       (!tipoFiltro || c.tipo===tipoFiltro)){
+      if(!calificacionesPorMateria[c.materia]) calificacionesPorMateria[c.materia]=[];
+      calificacionesPorMateria[c.materia].push({...c,index});
     }
   });
+
+  for(let mat in calificacionesPorMateria){
+    let divMateria = document.createElement("div");
+    divMateria.classList.add("materia");
+    divMateria.dataset.nombre = mat;
+    divMateria.innerHTML = `<h2>${mat}</h2>`;
+
+    calificacionesPorMateria[mat].forEach(c=>{
+      let divCalif = document.createElement("div");
+      divCalif.classList.add("calificacion");
+      divCalif.innerHTML = `
+        <div><span class="nota ${colorNota(c.nota,c.sistema,c.minAprobado)}">${c.nota}</span> ${c.materia} - ${c.tipo} - ${c.sistema} - ${c.ano}</div>
+        <small>${c.fecha}</small>
+        <button class="btn-borrar" onclick="borrarCalificacion(${c.index})">🗑️</button>
+      `;
+      divMateria.appendChild(divCalif);
+    });
+
+    materiasContainer.appendChild(divMateria);
+  }
 }
 
 // Formulario
