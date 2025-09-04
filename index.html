@@ -71,11 +71,12 @@
     .grade {
       display: flex;
       align-items: center;
-      gap: 5px;
+      justify-content: flex-start;
       background: #1657a2;
       padding: 10px;
       border-radius: 10px;
       margin-bottom: 8px;
+      gap:10px;
     }
 
     .circle {
@@ -94,11 +95,6 @@
     .yellow { background: orange; }
     .red { background: red; }
 
-    span.materia {
-      flex-grow:1;
-      text-align:left;
-      margin-left:2px;
-    }
   </style>
 </head>
 <body>
@@ -118,7 +114,7 @@
       <div id="upcomingEvents"></div>
     </div>
 
-    <!-- Calificaciones -->
+    <!-- Últimas calificaciones -->
     <div class="card">
       <h3>⭐ Últimas calificaciones</h3>
       <div id="ultimas-calificaciones"></div>
@@ -127,141 +123,139 @@
     <!-- 🎖️ Promedio -->
     <div class="card">
       <h3>🎖️ Promedio</h3>
-      <div style="display:flex; gap:15px; flex-wrap:wrap;">
-        <!-- Bloque gráfico -->
-        <div style="flex:1; min-width:250px;">
-          <canvas id="promediosGrafico"></canvas>
+      <div style="display:flex; gap:15px;">
+        <!-- Gráfico -->
+        <div style="flex:1; padding:15px; border-radius:15px; background:#0d3d77;">
+          <canvas id="promedioChart"></canvas>
         </div>
 
-        <!-- Bloque top 3 materias -->
-        <div style="flex:1; min-width:200px; background:#1657a2; padding:10px; border-radius:10px;">
-          <h4>Top 3 materias</h4>
-          <ul id="topMaterias" style="list-style:none; padding:0; margin:0;"></ul>
+        <!-- Top 3 materias -->
+        <div style="flex:1; padding:15px; border-radius:15px; background:#1657a2;">
+          <ul id="topMaterias" style="list-style:none; padding:0; margin:0; font-size:22px; font-weight:bold;"></ul>
         </div>
       </div>
     </div>
+
   </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-const months = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
-const upcomingEvents = document.getElementById('upcomingEvents');
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const months = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+    const upcomingEvents = document.getElementById('upcomingEvents');
 
-function renderUpcomingEvents() {
-  upcomingEvents.innerHTML = '';
-  const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
-  const sortedEvents = events.sort((a,b) => new Date(b.date) - new Date(a.date));
-  const firstThree = sortedEvents.slice(0, 3);
+    function renderUpcomingEvents() {
+      upcomingEvents.innerHTML = '';
+      const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
+      const sortedEvents = events.sort((a,b) => new Date(b.date) - new Date(a.date));
+      const firstThree = sortedEvents.slice(0, 3);
 
-  if(firstThree.length === 0){
-    upcomingEvents.innerHTML = '<div class="agenda-item">No hay eventos próximos</div>';
-    return;
-  }
+      if(firstThree.length === 0){
+        upcomingEvents.innerHTML = '<div class="agenda-item">No hay eventos próximos</div>';
+        return;
+      }
 
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
 
-  firstThree.forEach(event => {
-    const item = document.createElement('div');
-    item.classList.add('agenda-item');
+      firstThree.forEach(event => {
+        const item = document.createElement('div');
+        item.classList.add('agenda-item');
+        if(event.date) event.date = new Date(event.date);
 
-    if(event.date) event.date = new Date(event.date);
+        let dateLabel = '';
+        if(event.date.toDateString() === today.toDateString()) dateLabel = 'Hoy';
+        else if(event.date.toDateString() === tomorrow.toDateString()) dateLabel = 'Mañana';
+        else dateLabel = `${event.date.getDate()} de ${months[event.date.getMonth()]}`;
 
-    let dateLabel = '';
-    if(event.date.toDateString() === today.toDateString()) dateLabel = 'Hoy';
-    else if(event.date.toDateString() === tomorrow.toDateString()) dateLabel = 'Mañana';
-    else dateLabel = `${event.date.getDate()} de ${months[event.date.getMonth()]}`;
+        item.innerHTML = `
+          ${dateLabel} - ${event.subject} - 
+          <a href="${event.zoomLink}" target="_blank" style="color:#f0c300; text-decoration:underline;">Zoom</a>
+        `;
+        upcomingEvents.appendChild(item);
+      });
+    }
 
-    item.innerHTML = `
-      ${dateLabel} - ${event.subject} - 
-      <a href="${event.zoomLink}" target="_blank" style="color:#f0c300; text-decoration:underline;">Zoom</a>
-    `;
-    upcomingEvents.appendChild(item);
-  });
-}
+    renderUpcomingEvents();
+    window.addEventListener('storage', (e) => { if(e.key === 'schoolEvents') renderUpcomingEvents(); });
 
-renderUpcomingEvents();
-window.addEventListener('storage', (e) => {
-  if(e.key === 'schoolEvents') renderUpcomingEvents();
-});
+    // Últimas calificaciones
+    function colorNota(nota,sistema,minAprobado){
+      nota = nota.toString().trim(); minAprobado = parseFloat(minAprobado);
+      if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "red"; if(nota>=minAprobado-2 && nota<minAprobado) return "yellow"; return "green"; }
+      if(sistema==="0-100"){ nota=parseFloat(nota); if(nota<minAprobado-10) return "red"; if(nota>=minAprobado-10 && nota<minAprobado) return "yellow"; return "green"; }
+      if(sistema==="0-1") return nota==="0"?"red":"green";
+      if(sistema==="si-no") return nota.toLowerCase()==="no"?"red":"green";
+      return "";
+    }
 
-// Función color nota
-function colorNota(nota,sistema,minAprobado){
-  nota = nota.toString().trim(); minAprobado = parseFloat(minAprobado);
-  if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "red"; if(nota>=minAprobado-2 && nota<minAprobado) return "yellow"; return "green"; }
-  if(sistema==="0-100"){ nota=parseFloat(nota); if(nota<minAprobado-10) return "red"; if(nota>=minAprobado-10 && nota<minAprobado) return "yellow"; return "green"; }
-  if(sistema==="0-1") return nota==="0"?"red":"green";
-  if(sistema==="si-no") return nota.toLowerCase()==="no"?"red":"green";
-  return "";
-}
+    let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
+    calificaciones.sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
+    let ultimas5 = calificaciones.slice(0,5);
 
-// Últimas calificaciones
-let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
-calificaciones.sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
-let ultimas5 = calificaciones.slice(0,5);
-const contenedor = document.getElementById("ultimas-calificaciones");
-contenedor.innerHTML = '';
-let sumaNotas = 0;
+    const contenedor = document.getElementById("ultimas-calificaciones");
+    contenedor.innerHTML = '';
 
-ultimas5.forEach(c=>{
-  sumaNotas += parseFloat(c.nota)||0;
-  const div = document.createElement('div');
-  div.classList.add('grade');
-  const circle = document.createElement('div');
-  circle.classList.add('circle', colorNota(c.nota,c.sistema,c.minAprobado));
-  circle.textContent = c.nota;
-  const nombre = document.createElement('span');
-  nombre.textContent = c.materia;
-  nombre.classList.add('materia');
-  div.appendChild(circle);
-  div.appendChild(nombre);
-  contenedor.appendChild(div);
-});
+    ultimas5.forEach(c=>{
+      const div = document.createElement('div');
+      div.classList.add('grade');
 
-// Promedios generales
-const promedio = calificaciones.length ? (calificaciones.reduce((a,b)=> a + parseFloat(b.nota||0),0)/calificaciones.length).toFixed(2) : '0,00';
-console.log("Promedio total:", promedio);
+      const circle = document.createElement('div');
+      circle.classList.add('circle', colorNota(c.nota,c.sistema,c.minAprobado));
+      circle.textContent = c.nota;
 
-// --- Gráfico promedios históricos ---
-let calificacionesOrdenadas = [...calificaciones].sort((a,b)=> new Date(a.fecha) - new Date(b.fecha));
-let promediosPorMes = {};
-calificacionesOrdenadas.forEach(c=>{
-  let fecha = new Date(c.fecha);
-  let key = `${fecha.getMonth()+1}-${fecha.getFullYear()}`;
-  if(!promediosPorMes[key]) promediosPorMes[key] = {suma:0,cant:0};
-  promediosPorMes[key].suma += parseFloat(c.nota)||0;
-  promediosPorMes[key].cant +=1;
-});
+      const nombre = document.createElement('span');
+      nombre.textContent = c.materia;
 
-let labels = Object.keys(promediosPorMes);
-let data = labels.map(l => (promediosPorMes[l].suma / promediosPorMes[l].cant).toFixed(2));
+      div.appendChild(circle);
+      div.appendChild(nombre);
+      contenedor.appendChild(div);
+    });
 
-new Chart(document.getElementById('promediosGrafico'), {
-  type:'line',
-  data:{ labels:labels, datasets:[{ label:'Promedio mensual', data:data, borderColor:'yellow', backgroundColor:'rgba(255,255,0,0.2)', tension:0.3, fill:true }]},
-  options:{ scales:{ y:{ beginAtZero:true, max:10 } }, plugins:{ legend:{ labels:{color:'white'} } } }
-});
+    // 🎖️ Promedio
+    const promedios = {};
+    calificaciones.forEach(c=>{
+      if(!promedios[c.materia]) promedios[c.materia]=[];
+      promedios[c.materia].push(parseFloat(c.nota)||0);
+    });
 
-// --- Top 3 materias ---
-let materiasMap = {};
-calificaciones.forEach(c=>{
-  if(!materiasMap[c.materia]) materiasMap[c.materia] = {suma:0,cant:0};
-  materiasMap[c.materia].suma += parseFloat(c.nota)||0;
-  materiasMap[c.materia].cant +=1;
-});
+    const labels = Object.keys(promedios);
+    const data = labels.map(m=>promedios[m].reduce((a,b)=>a+b,0)/promedios[m].length);
 
-let promediosMaterias = Object.entries(materiasMap).map(([mat,v])=>({materia:mat,promedio:v.suma/v.cant}));
-promediosMaterias.sort((a,b)=> b.promedio - a.promedio);
-let top3 = promediosMaterias.slice(0,3);
-const topMateriasUl = document.getElementById("topMaterias");
-let medallas = ["🥇","🥈","🥉"];
-top3.forEach((m,index)=>{
-  const li = document.createElement('li');
-  li.textContent = `${medallas[index]} ${m.materia}: ${m.promedio.toFixed(2)}`;
-  li.style.padding="5px 0";
-  topMateriasUl.appendChild(li);
-});
-</script>
+    const ctx = document.getElementById('promedioChart').getContext('2d');
+    new Chart(ctx, {
+      type:'line',
+      data:{
+        labels:labels,
+        datasets:[{
+          label:'Promedio',
+          data:data,
+          borderColor:'#f0c300',
+          backgroundColor:'#1657a2',
+          fill:true
+        }]
+      },
+      options:{
+        responsive:true,
+        plugins:{ legend:{ display:false }},
+        scales:{ y:{ beginAtZero:true }}
+      }
+    });
+
+    const top3 = Object.keys(promedios)
+                  .map(m=>({materia:m,promedio:promedios[m].reduce((a,b)=>a+b,0)/promedios[m].length}))
+                  .sort((a,b)=>b.promedio-a.promedio)
+                  .slice(0,3);
+
+    const topMateriasUl = document.getElementById("topMaterias");
+    const medallas = ["🥇","🥈","🥉"];
+    top3.forEach((m,i)=>{
+      const li = document.createElement('li');
+      li.textContent = `${medallas[i]} ${m.materia}: ${m.promedio.toFixed(2)}`;
+      li.style.padding="15px 0";
+      li.style.fontSize="22px";
+      topMateriasUl.appendChild(li);
+    });
+  </script>
 </body>
 </html>
