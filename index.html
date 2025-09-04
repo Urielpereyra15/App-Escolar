@@ -14,29 +14,28 @@
 
     /* Barra de navegación */
     nav {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px;
-  background-color: #0b2c56;
-  position: sticky;
-  top: 0;
-}
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      background-color: #0b2c56;
+      position: sticky;
+      top: 0;
+    }
 
-nav a {
-  text-decoration: none;
-  background: #0d4a8c;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 10px;
-  font-size: 14px;
-  display: inline-block;
-}
+    nav a {
+      text-decoration: none;
+      background: #0d4a8c;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: inline-block;
+    }
 
-nav a:hover {
-  background: #1565c0;
-}
-
+    nav a:hover {
+      background: #1565c0;
+    }
 
     /* Contenedor principal */
     .container {
@@ -72,7 +71,7 @@ nav a:hover {
     .grade {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 5px;
       background: #1657a2;
       padding: 10px;
       border-radius: 10px;
@@ -95,18 +94,10 @@ nav a:hover {
     .yellow { background: orange; }
     .red { background: red; }
 
-    /* Notas */
-    .notes {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-      gap: 10px;
-    }
-
-    .note {
-      background: #1657a2;
-      padding: 15px;
-      text-align: center;
-      border-radius: 10px;
+    span.materia {
+      flex-grow:1;
+      text-align:left;
+      margin-left:2px;
     }
   </style>
 </head>
@@ -129,76 +120,73 @@ nav a:hover {
 
     <!-- Calificaciones -->
     <div class="card">
-  <h3>⭐ Últimas calificaciones</h3>
-  <div id="ultimas-calificaciones"></div>
-</div>
+      <h3>⭐ Últimas calificaciones</h3>
+      <div id="ultimas-calificaciones"></div>
+    </div>
 
-    <!-- Notas -->
+    <!-- 🎖️ Promedio -->
     <div class="card">
-      <h3>📝 Notas</h3>
-      <div class="notes">
-        <div class="note">11/05</div>
-        <div class="note">11/05</div>
-        <div class="note">10/05</div>
-        <div class="note">09/04</div>
-        <div class="note">09/04</div>
-        <div class="note">09/04</div>
-        <div class="note">08/04</div>
+      <h3>🎖️ Promedio</h3>
+      <div style="display:flex; gap:15px; flex-wrap:wrap;">
+        <!-- Bloque gráfico -->
+        <div style="flex:1; min-width:250px;">
+          <canvas id="promediosGrafico"></canvas>
+        </div>
+
+        <!-- Bloque top 3 materias -->
+        <div style="flex:1; min-width:200px; background:#1657a2; padding:10px; border-radius:10px;">
+          <h4>Top 3 materias</h4>
+          <ul id="topMaterias" style="list-style:none; padding:0; margin:0;"></ul>
+        </div>
       </div>
     </div>
   </div>
 
-  <script>
-    const months = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
-    const upcomingEvents = document.getElementById('upcomingEvents');
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const months = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+const upcomingEvents = document.getElementById('upcomingEvents');
 
-    function renderUpcomingEvents() {
-      upcomingEvents.innerHTML = '';
-      const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
+function renderUpcomingEvents() {
+  upcomingEvents.innerHTML = '';
+  const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
+  const sortedEvents = events.sort((a,b) => new Date(b.date) - new Date(a.date));
+  const firstThree = sortedEvents.slice(0, 3);
 
-      // Ordenar de más reciente a más viejo
-      const sortedEvents = events.sort((a,b) => new Date(b.date) - new Date(a.date));
+  if(firstThree.length === 0){
+    upcomingEvents.innerHTML = '<div class="agenda-item">No hay eventos próximos</div>';
+    return;
+  }
 
-      // Tomar solo los primeros 3
-      const firstThree = sortedEvents.slice(0, 3);
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
 
-      if(firstThree.length === 0){
-        upcomingEvents.innerHTML = '<div class="agenda-item">No hay eventos próximos</div>';
-        return;
-      }
+  firstThree.forEach(event => {
+    const item = document.createElement('div');
+    item.classList.add('agenda-item');
 
-      const today = new Date();
-      const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
+    if(event.date) event.date = new Date(event.date);
 
-      firstThree.forEach(event => {
-        const item = document.createElement('div');
-        item.classList.add('agenda-item');
+    let dateLabel = '';
+    if(event.date.toDateString() === today.toDateString()) dateLabel = 'Hoy';
+    else if(event.date.toDateString() === tomorrow.toDateString()) dateLabel = 'Mañana';
+    else dateLabel = `${event.date.getDate()} de ${months[event.date.getMonth()]}`;
 
-        if(event.date) event.date = new Date(event.date);
+    item.innerHTML = `
+      ${dateLabel} - ${event.subject} - 
+      <a href="${event.zoomLink}" target="_blank" style="color:#f0c300; text-decoration:underline;">Zoom</a>
+    `;
+    upcomingEvents.appendChild(item);
+  });
+}
 
-        let dateLabel = '';
-        if(event.date.toDateString() === today.toDateString()) dateLabel = 'Hoy';
-        else if(event.date.toDateString() === tomorrow.toDateString()) dateLabel = 'Mañana';
-        else dateLabel = `${event.date.getDate()} de ${months[event.date.getMonth()]}`;
+renderUpcomingEvents();
+window.addEventListener('storage', (e) => {
+  if(e.key === 'schoolEvents') renderUpcomingEvents();
+});
 
-        item.innerHTML = `
-          ${dateLabel} - ${event.subject} - 
-          <a href="${event.zoomLink}" target="_blank" style="color:#f0c300; text-decoration:underline;">Zoom</a>
-        `;
-        upcomingEvents.appendChild(item);
-      });
-    }
-
-    // Ejecuta al cargar la página
-    renderUpcomingEvents();
-
-    // Actualiza automáticamente si cambia localStorage desde otra pestaña o ventana
-    window.addEventListener('storage', (e) => {
-      if(e.key === 'schoolEvents') renderUpcomingEvents();
-    });
-
-// Función para obtener color según la nota (copiada de calificacion.html)
+// Función color nota
 function colorNota(nota,sistema,minAprobado){
   nota = nota.toString().trim(); minAprobado = parseFloat(minAprobado);
   if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "red"; if(nota>=minAprobado-2 && nota<minAprobado) return "yellow"; return "green"; }
@@ -208,47 +196,72 @@ function colorNota(nota,sistema,minAprobado){
   return "";
 }
 
-// Cargar calificaciones desde localStorage
+// Últimas calificaciones
 let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
-
-// Ordenar por fecha descendente (más recientes primero)
 calificaciones.sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
-
-// Tomar las últimas 5 más recientes
 let ultimas5 = calificaciones.slice(0,5);
-
 const contenedor = document.getElementById("ultimas-calificaciones");
 contenedor.innerHTML = '';
-
 let sumaNotas = 0;
-    
-ultimas5.forEach(c=>{
-  sumaNotas += parseFloat(c.nota) || 0;
 
+ultimas5.forEach(c=>{
+  sumaNotas += parseFloat(c.nota)||0;
   const div = document.createElement('div');
   div.classList.add('grade');
-
   const circle = document.createElement('div');
   circle.classList.add('circle', colorNota(c.nota,c.sistema,c.minAprobado));
   circle.textContent = c.nota;
-
-// Nombre de la materia
   const nombre = document.createElement('span');
   nombre.textContent = c.materia;
-  nombre.style.flexGrow = "1"; // hace que el nombre ocupe el resto del espacio y quede a la derecha del círculo
-  nombre.style.textAlign = "left"; // asegura que el texto quede alineado a la izquierda
-
-  // Primero nota, luego nombre
+  nombre.classList.add('materia');
   div.appendChild(circle);
   div.appendChild(nombre);
-
   contenedor.appendChild(div);
 });
 
-// Calcular promedio
-const promedio = ultimas5.length ? (sumaNotas/ultimas5.length).toFixed(2) : '0,00';
-document.getElementById("promedio").textContent = `Promedio: ${promedio}`;
-    
-  </script>
+// Promedios generales
+const promedio = calificaciones.length ? (calificaciones.reduce((a,b)=> a + parseFloat(b.nota||0),0)/calificaciones.length).toFixed(2) : '0,00';
+console.log("Promedio total:", promedio);
+
+// --- Gráfico promedios históricos ---
+let calificacionesOrdenadas = [...calificaciones].sort((a,b)=> new Date(a.fecha) - new Date(b.fecha));
+let promediosPorMes = {};
+calificacionesOrdenadas.forEach(c=>{
+  let fecha = new Date(c.fecha);
+  let key = `${fecha.getMonth()+1}-${fecha.getFullYear()}`;
+  if(!promediosPorMes[key]) promediosPorMes[key] = {suma:0,cant:0};
+  promediosPorMes[key].suma += parseFloat(c.nota)||0;
+  promediosPorMes[key].cant +=1;
+});
+
+let labels = Object.keys(promediosPorMes);
+let data = labels.map(l => (promediosPorMes[l].suma / promediosPorMes[l].cant).toFixed(2));
+
+new Chart(document.getElementById('promediosGrafico'), {
+  type:'line',
+  data:{ labels:labels, datasets:[{ label:'Promedio mensual', data:data, borderColor:'yellow', backgroundColor:'rgba(255,255,0,0.2)', tension:0.3, fill:true }]},
+  options:{ scales:{ y:{ beginAtZero:true, max:10 } }, plugins:{ legend:{ labels:{color:'white'} } } }
+});
+
+// --- Top 3 materias ---
+let materiasMap = {};
+calificaciones.forEach(c=>{
+  if(!materiasMap[c.materia]) materiasMap[c.materia] = {suma:0,cant:0};
+  materiasMap[c.materia].suma += parseFloat(c.nota)||0;
+  materiasMap[c.materia].cant +=1;
+});
+
+let promediosMaterias = Object.entries(materiasMap).map(([mat,v])=>({materia:mat,promedio:v.suma/v.cant}));
+promediosMaterias.sort((a,b)=> b.promedio - a.promedio);
+let top3 = promediosMaterias.slice(0,3);
+const topMateriasUl = document.getElementById("topMaterias");
+let medallas = ["🥇","🥈","🥉"];
+top3.forEach((m,index)=>{
+  const li = document.createElement('li');
+  li.textContent = `${medallas[index]} ${m.materia}: ${m.promedio.toFixed(2)}`;
+  li.style.padding="5px 0";
+  topMateriasUl.appendChild(li);
+});
+</script>
 </body>
 </html>
