@@ -12,7 +12,6 @@
       color: white;
     }
 
-    /* Barra de navegación */
     nav {
       display: flex;
       justify-content: center;
@@ -33,72 +32,28 @@
       display: inline-block;
     }
 
-    nav a:hover {
-      background: #1565c0;
-    }
+    nav a:hover { background: #1565c0; }
 
-    /* Contenedor principal */
-    .container {
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
+    .container { padding: 15px; display: flex; flex-direction: column; gap: 15px; }
+    .card { background: #0d3d77; border-radius: 15px; padding: 15px; }
+    .card h3 { margin: 0 0 10px; display: flex; align-items: center; gap: 8px; font-size: 18px; }
 
-    .card {
-      background: #0d3d77;
-      border-radius: 15px;
-      padding: 15px;
-    }
+    .agenda-item { background: #1657a2; padding: 10px; border-radius: 10px; margin-bottom: 8px; }
 
-    .card h3 {
-      margin: 0 0 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 18px;
-    }
-
-    /* Agenda */
-    .agenda-item {
-      background: #1657a2;
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 8px;
-    }
-
-    /* Calificaciones */
-    .grade {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      background: #1657a2;
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 8px;
-      gap:10px;
-    }
-
-    .circle {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: bold;
-      color: white;
-    }
-
+    .grade { display: flex; align-items: center; justify-content: flex-start; background: #1657a2; padding: 10px; border-radius: 10px; margin-bottom: 8px; gap: 10px; }
+    .circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: white; }
     .green { background: green; }
     .yellow { background: orange; }
     .red { background: red; }
 
+    /* Promedio */
+    .promedio-container { display: flex; gap: 15px; flex-wrap: wrap; }
+    .promedio-block { flex: 1; min-width: 250px; padding: 15px; border-radius: 15px; background: #0d3d77; }
+    #topMaterias ul { list-style: none; padding: 0; margin: 0; }
+    #topMaterias li { margin-bottom: 10px; }
   </style>
 </head>
 <body>
-  <!-- Menú -->
   <nav>
     <a href="index.html">🏠 Inicio</a>
     <a href="agenda.html">📒 Agenda</a>
@@ -118,24 +73,22 @@
     <div class="card">
       <h3>⭐ Últimas calificaciones</h3>
       <div id="ultimas-calificaciones"></div>
+      <div id="promedio" style="margin-top:10px; font-weight:bold;">Promedio: 0,00</div>
     </div>
 
     <!-- 🎖️ Promedio -->
     <div class="card">
       <h3>🎖️ Promedio</h3>
-      <div style="display:flex; gap:15px;">
-        <!-- Gráfico -->
-        <div style="flex:1; padding:15px; border-radius:15px; background:#0d3d77;">
-          <canvas id="promedioChart"></canvas>
+      <div class="promedio-container">
+        <div class="promedio-block">
+          <canvas id="promedioChart" width="400" height="200"></canvas>
         </div>
-
-        <!-- Top 3 materias -->
-        <div style="flex:1; padding:15px; border-radius:15px; background:#1657a2;">
-          <ul id="topMaterias" style="list-style:none; padding:0; margin:0; font-size:22px; font-weight:bold;"></ul>
+        <div class="promedio-block" id="topMaterias">
+          <h4>Top 3 materias</h4>
+          <ul></ul>
         </div>
       </div>
     </div>
-
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -146,8 +99,8 @@
     function renderUpcomingEvents() {
       upcomingEvents.innerHTML = '';
       const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
-      const sortedEvents = events.sort((a,b) => new Date(b.date) - new Date(a.date));
-      const firstThree = sortedEvents.slice(0, 3);
+      const sortedEvents = events.sort((a,b)=> new Date(b.date)-new Date(a.date));
+      const firstThree = sortedEvents.slice(0,3);
 
       if(firstThree.length === 0){
         upcomingEvents.innerHTML = '<div class="agenda-item">No hay eventos próximos</div>';
@@ -156,32 +109,26 @@
 
       const today = new Date();
       const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
+      tomorrow.setDate(today.getDate()+1);
 
-      firstThree.forEach(event => {
+      firstThree.forEach(event=>{
         const item = document.createElement('div');
         item.classList.add('agenda-item');
         if(event.date) event.date = new Date(event.date);
-
         let dateLabel = '';
-        if(event.date.toDateString() === today.toDateString()) dateLabel = 'Hoy';
-        else if(event.date.toDateString() === tomorrow.toDateString()) dateLabel = 'Mañana';
-        else dateLabel = `${event.date.getDate()} de ${months[event.date.getMonth()]}`;
-
-        item.innerHTML = `
-          ${dateLabel} - ${event.subject} - 
-          <a href="${event.zoomLink}" target="_blank" style="color:#f0c300; text-decoration:underline;">Zoom</a>
-        `;
+        if(event.date.toDateString()===today.toDateString()) dateLabel='Hoy';
+        else if(event.date.toDateString()===tomorrow.toDateString()) dateLabel='Mañana';
+        else dateLabel=`${event.date.getDate()} de ${months[event.date.getMonth()]}`;
+        item.innerHTML=`${dateLabel} - ${event.subject} - <a href="${event.zoomLink}" target="_blank" style="color:#f0c300; text-decoration:underline;">Zoom</a>`;
         upcomingEvents.appendChild(item);
       });
     }
 
     renderUpcomingEvents();
-    window.addEventListener('storage', (e) => { if(e.key === 'schoolEvents') renderUpcomingEvents(); });
+    window.addEventListener('storage', e=>{ if(e.key==='schoolEvents') renderUpcomingEvents(); });
 
-    // Últimas calificaciones
     function colorNota(nota,sistema,minAprobado){
-      nota = nota.toString().trim(); minAprobado = parseFloat(minAprobado);
+      nota=nota.toString().trim(); minAprobado=parseFloat(minAprobado);
       if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "red"; if(nota>=minAprobado-2 && nota<minAprobado) return "yellow"; return "green"; }
       if(sistema==="0-100"){ nota=parseFloat(nota); if(nota<minAprobado-10) return "red"; if(nota>=minAprobado-10 && nota<minAprobado) return "yellow"; return "green"; }
       if(sistema==="0-1") return nota==="0"?"red":"green";
@@ -190,40 +137,45 @@
     }
 
     let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
-    calificaciones.sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
+    calificaciones.sort((a,b)=> new Date(b.fecha)-new Date(a.fecha));
     let ultimas5 = calificaciones.slice(0,5);
 
     const contenedor = document.getElementById("ultimas-calificaciones");
-    contenedor.innerHTML = '';
-
+    contenedor.innerHTML='';
+    let sumaNotas=0;
     ultimas5.forEach(c=>{
-      const div = document.createElement('div');
+      sumaNotas+=parseFloat(c.nota)||0;
+      const div=document.createElement('div');
       div.classList.add('grade');
-
-      const circle = document.createElement('div');
-      circle.classList.add('circle', colorNota(c.nota,c.sistema,c.minAprobado));
-      circle.textContent = c.nota;
-
-      const nombre = document.createElement('span');
-      nombre.textContent = c.materia;
-
+      const circle=document.createElement('div');
+      circle.classList.add('circle',colorNota(c.nota,c.sistema,c.minAprobado));
+      circle.textContent=c.nota;
+      const nombre=document.createElement('span');
+      nombre.textContent=c.materia;
+      nombre.style.marginLeft="5px";
       div.appendChild(circle);
       div.appendChild(nombre);
       contenedor.appendChild(div);
     });
 
-    // 🎖️ Promedio
-    const promedios = {};
+    const promedio = calificaciones.length ? (calificaciones.reduce((a,b)=>a+parseFloat(b.nota||0),0)/calificaciones.length).toFixed(2) : '0,00';
+    document.getElementById("promedio").textContent=`Promedio: ${promedio}`;
+
+    // ===== Gráfico promedio =====
+    const promedioPorMateria = {};
     calificaciones.forEach(c=>{
-      if(!promedios[c.materia]) promedios[c.materia]=[];
-      promedios[c.materia].push(parseFloat(c.nota)||0);
+      if(!promedioPorMateria[c.materia]) promedioPorMateria[c.materia]=[];
+      promedioPorMateria[c.materia].push(parseFloat(c.nota)||0);
     });
 
-    const labels = Object.keys(promedios);
-    const data = labels.map(m=>promedios[m].reduce((a,b)=>a+b,0)/promedios[m].length);
+    const labels = Object.keys(promedioPorMateria);
+    const data = labels.map(m=>{
+      const notas = promedioPorMateria[m];
+      return notas.reduce((a,b)=>a+b,0)/notas.length;
+    });
 
     const ctx = document.getElementById('promedioChart').getContext('2d');
-    new Chart(ctx, {
+    const chart = new Chart(ctx,{
       type:'line',
       data:{
         labels:labels,
@@ -231,31 +183,37 @@
           label:'Promedio',
           data:data,
           borderColor:'#f0c300',
-          backgroundColor:'#1657a2',
-          fill:true
+          backgroundColor:'transparent',
+          tension:0.3
         }]
       },
       options:{
         responsive:true,
-        plugins:{ legend:{ display:false }},
-        scales:{ y:{ beginAtZero:true }}
+        plugins:{ legend:{ labels:{ color:'white' } } },
+        scales:{
+          x:{ ticks:{ color:'white' } },
+          y:{ ticks:{ color:'white' } }
+        }
       }
     });
 
-    const top3 = Object.keys(promedios)
-                  .map(m=>({materia:m,promedio:promedios[m].reduce((a,b)=>a+b,0)/promedios[m].length}))
-                  .sort((a,b)=>b.promedio-a.promedio)
-                  .slice(0,3);
+    // ===== Top 3 materias =====
+    const topMaterias = Object.entries(promedioPorMateria).map(([m,notas])=>{
+      const promedio = notas.reduce((a,b)=>a+b,0)/notas.length;
+      return {materia:m,promedio};
+    }).sort((a,b)=>b.promedio-a.promedio).slice(0,3);
 
-    const topMateriasUl = document.getElementById("topMaterias");
-    const medallas = ["🥇","🥈","🥉"];
-    top3.forEach((m,i)=>{
-      const li = document.createElement('li');
-      li.textContent = `${medallas[i]} ${m.materia}: ${m.promedio.toFixed(2)}`;
+    const topMateriasUl = document.querySelector("#topMaterias ul");
+    topMateriasUl.innerHTML='';
+    const medallas = ['🥇','🥈','🥉'];
+    topMaterias.forEach((m,i)=>{
+      const li=document.createElement('li');
+      li.textContent=`${medallas[i]} ${m.materia} - ${m.promedio.toFixed(2)}`;
       li.style.padding="15px 0";
-      li.style.fontSize="22px";
+      li.style.fontSize="20px";
       topMateriasUl.appendChild(li);
     });
+
   </script>
 </body>
 </html>
