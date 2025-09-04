@@ -198,24 +198,27 @@ nav a:hover {
       if(e.key === 'schoolEvents') renderUpcomingEvents();
     });
 
-    // Función para obtener color según la nota
-function getColor(nota,sistema,minAprobado){
+// Función para obtener color según la nota (copiada de calificacion.html)
+function colorNota(nota,sistema,minAprobado){
   nota = nota.toString().trim(); minAprobado = parseFloat(minAprobado);
-  if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "rojo"; if(nota>=minAprobado-2 && nota<minAprobado) return "amarillo"; return "verde"; }
-  if(sistema==="0-100"){ nota=parseFloat(nota); if(nota<minAprobado-10) return "rojo"; if(nota>=minAprobado-10 && nota<minAprobado) return "amarillo"; return "verde"; }
-  if(sistema==="0-1") return nota==="0"?"rojo":"verde";
-  if(sistema==="si-no") return nota.toLowerCase()==="no"?"rojo":"verde";
+  if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "red"; if(nota>=minAprobado-2 && nota<minAprobado) return "yellow"; return "green"; }
+  if(sistema==="0-100"){ nota=parseFloat(nota); if(nota<minAprobado-10) return "red"; if(nota>=minAprobado-10 && nota<minAprobado) return "yellow"; return "green"; }
+  if(sistema==="0-1") return nota==="0"?"red":"green";
+  if(sistema==="si-no") return nota.toLowerCase()==="no"?"red":"green";
   return "";
 }
 
-// Cargar últimas 5 calificaciones
+// Cargar calificaciones desde localStorage
 let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
+
+// Tomar las últimas 5 (más recientes primero)
 let ultimas5 = calificaciones.slice(-5).reverse();
 
 const contenedor = document.getElementById("ultimas-calificaciones");
 contenedor.innerHTML = '';
 
 let sumaNotas = 0;
+    
 ultimas5.forEach(c=>{
   sumaNotas += parseFloat(c.nota) || 0;
 
@@ -223,7 +226,7 @@ ultimas5.forEach(c=>{
   div.classList.add('grade');
 
   const circle = document.createElement('div');
-  circle.classList.add('circle', getColor(c.nota,c.sistema,c.minAprobado));
+  circle.classList.add('circle', colorNota(c.nota,c.sistema,c.minAprobado));
   circle.textContent = c.nota;
 
   div.appendChild(circle);
