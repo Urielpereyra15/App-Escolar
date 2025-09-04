@@ -211,8 +211,11 @@ function colorNota(nota,sistema,minAprobado){
 // Cargar calificaciones desde localStorage
 let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
 
-// Tomar las últimas 5 (más recientes primero)
-let ultimas5 = calificaciones.slice(-5).reverse();
+// Ordenar por fecha descendente (más recientes primero)
+calificaciones.sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
+
+// Tomar las últimas 5 más recientes
+let ultimas5 = calificaciones.slice(0,5);
 
 const contenedor = document.getElementById("ultimas-calificaciones");
 contenedor.innerHTML = '';
@@ -232,6 +235,8 @@ ultimas5.forEach(c=>{
 // Nombre de la materia
   const nombre = document.createElement('span');
   nombre.textContent = c.materia;
+  nombre.style.flexGrow = "1"; // hace que el nombre ocupe el resto del espacio y quede a la derecha del círculo
+  nombre.style.textAlign = "left"; // asegura que el texto quede alineado a la izquierda
 
   // Primero nota, luego nombre
   div.appendChild(circle);
