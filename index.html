@@ -1,204 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio Escolar</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #334455;
-      color: white;
-    }
-
-    /* Barra de navegación */
-    nav {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px;
-  background-color: #0b2c56;
-  position: sticky;
-  top: 0;
-}
-
-nav a {
-  text-decoration: none;
-  background: #0d4a8c;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 10px;
-  font-size: 14px;
-  display: inline-block;
-}
-
-nav a:hover {
-  background: #1565c0;
-}
-
-
-    /* Contenedor principal */
-    .container {
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    .card {
-      background: #0d3d77;
-      border-radius: 15px;
-      padding: 15px;
-    }
-
-    .card h3 {
-      margin: 0 0 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 18px;
-    }
-
-    /* Agenda */
-    .agenda-item {
-      background: #1657a2;
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 8px;
-    }
-
-    /* Calificaciones */
-    .grade {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #1657a2;
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 8px;
-    }
-
-    .circle {
-      width: 25px;
-      height: 25px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: bold;
-      color: white;
-    }
-
-    .green { background: green; }
-    .yellow { background: orange; }
-    .red { background: red; }
-
-    /* Notas */
-    .notes {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-      gap: 10px;
-    }
-
-    .note {
-      background: #1657a2;
-      padding: 15px;
-      text-align: center;
-      border-radius: 10px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inicio Escolar</title>
+<style>
+  body { margin:0; font-family: Arial, sans-serif; background-color:#334455; color:white; }
+  nav { display:flex; justify-content:center; gap:10px; padding:10px; background-color:#0b2c56; position:sticky; top:0; }
+  nav a { text-decoration:none; color:white; background-color:#0d4a8c; padding:10px 15px; border-radius:10px; font-size:14px; display:inline-block; }
+  nav a:hover { background-color:#1565c0; }
+  .container { padding:15px; display:flex; flex-direction:column; gap:15px; }
+  .card { background:#0d3d77; border-radius:15px; padding:15px; }
+  .card h3 { margin:0 0 10px; display:flex; align-items:center; gap:8px; font-size:18px; }
+  .grade { display:flex; align-items:center; gap:5px; background:#1657a2; padding:10px; border-radius:10px; margin-bottom:8px; }
+  .circle { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; color:white; }
+  .green { background:green; }
+  .yellow { background:orange; }
+  .red { background:red; }
+  span.materia { flex-grow:1; text-align:left; margin-left:2px; }
+</style>
 </head>
 <body>
-  <!-- Menú -->
-  <nav>
-    <a href="index.html">🏠 Inicio</a>
-    <a href="agenda.html">📒 Agenda</a>
-    <a href="calificacion.html">⭐ Calificación</a>
-    <a href="asignaturas.html">🎓 Asignaturas</a>
-    <a href="malla-curricular.html">📑 Malla Curricular</a>
-  </nav>
 
-  <div class="container">
-    <!-- Próximos eventos -->
-    <div class="card">
-      <h3>📒 Próximos eventos</h3>
-      <div id="upcomingEvents"></div>
-    </div>
+<nav>
+  <a href="index.html">🏠 Inicio</a>
+  <a href="agenda.html">📒 Agenda</a>
+  <a href="calificacion.html">⭐ Calificación</a>
+  <a href="asignaturas.html">🎓 Asignaturas</a>
+  <a href="malla-curricular.html">📑 Malla Curricular</a>
+</nav>
 
-    <!-- Calificaciones -->
-    <div class="card">
-  <h3>⭐ Últimas calificaciones <span id="promedio" style="margin-left:auto;">Promedio: 0,00</span></h3>
-  <div id="ultimas-calificaciones"></div>
-</div>
+<div class="container">
 
-    <!-- Notas -->
-    <div class="card">
-      <h3>📝 Notas</h3>
-      <div class="notes">
-        <div class="note">11/05</div>
-        <div class="note">11/05</div>
-        <div class="note">10/05</div>
-        <div class="note">09/04</div>
-        <div class="note">09/04</div>
-        <div class="note">09/04</div>
-        <div class="note">08/04</div>
-      </div>
-    </div>
+  <div class="card">
+    <h3>⭐ Últimas calificaciones <span id="promedio" style="margin-left:auto;">Promedio: 0,00</span></h3>
+    <div id="ultimas-calificaciones"></div>
   </div>
 
-  <script>
-    const months = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
-    const upcomingEvents = document.getElementById('upcomingEvents');
+</div>
 
-    function renderUpcomingEvents() {
-      upcomingEvents.innerHTML = '';
-      const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
-
-      // Ordenar de más reciente a más viejo
-      const sortedEvents = events.sort((a,b) => new Date(b.date) - new Date(a.date));
-
-      // Tomar solo los primeros 3
-      const firstThree = sortedEvents.slice(0, 3);
-
-      if(firstThree.length === 0){
-        upcomingEvents.innerHTML = '<div class="agenda-item">No hay eventos próximos</div>';
-        return;
-      }
-
-      const today = new Date();
-      const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
-
-      firstThree.forEach(event => {
-        const item = document.createElement('div');
-        item.classList.add('agenda-item');
-
-        if(event.date) event.date = new Date(event.date);
-
-        let dateLabel = '';
-        if(event.date.toDateString() === today.toDateString()) dateLabel = 'Hoy';
-        else if(event.date.toDateString() === tomorrow.toDateString()) dateLabel = 'Mañana';
-        else dateLabel = `${event.date.getDate()} de ${months[event.date.getMonth()]}`;
-
-        item.innerHTML = `
-          ${dateLabel} - ${event.subject} - 
-          <a href="${event.zoomLink}" target="_blank" style="color:#f0c300; text-decoration:underline;">Zoom</a>
-        `;
-        upcomingEvents.appendChild(item);
-      });
-    }
-
-    // Ejecuta al cargar la página
-    renderUpcomingEvents();
-
-    // Actualiza automáticamente si cambia localStorage desde otra pestaña o ventana
-    window.addEventListener('storage', (e) => {
-      if(e.key === 'schoolEvents') renderUpcomingEvents();
-    });
-
-// Función para obtener color según la nota (copiada de calificacion.html)
+<script>
+// Función para color de nota
 function colorNota(nota,sistema,minAprobado){
   nota = nota.toString().trim(); minAprobado = parseFloat(minAprobado);
   if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "red"; if(nota>=minAprobado-2 && nota<minAprobado) return "yellow"; return "green"; }
@@ -211,20 +53,17 @@ function colorNota(nota,sistema,minAprobado){
 // Cargar calificaciones desde localStorage
 let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
 
-// Ordenar por fecha descendente (más recientes primero)
+// Ordenar por fecha descendente
 calificaciones.sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
 
-// Tomar las últimas 5 más recientes
+// Tomar últimas 5
 let ultimas5 = calificaciones.slice(0,5);
 
 const contenedor = document.getElementById("ultimas-calificaciones");
 contenedor.innerHTML = '';
 
-let sumaNotas = 0;
-    
+// Mostrar últimas 5 calificaciones
 ultimas5.forEach(c=>{
-  sumaNotas += parseFloat(c.nota) || 0;
-
   const div = document.createElement('div');
   div.classList.add('grade');
 
@@ -232,23 +71,22 @@ ultimas5.forEach(c=>{
   circle.classList.add('circle', colorNota(c.nota,c.sistema,c.minAprobado));
   circle.textContent = c.nota;
 
-// Nombre de la materia
   const nombre = document.createElement('span');
+  nombre.classList.add('materia');
   nombre.textContent = c.materia;
-  nombre.style.flexGrow = "1"; // hace que el nombre ocupe el resto del espacio y quede a la derecha del círculo
-  nombre.style.textAlign = "left"; // asegura que el texto quede alineado a la izquierda
 
-  // Primero nota, luego nombre
   div.appendChild(circle);
   div.appendChild(nombre);
 
   contenedor.appendChild(div);
 });
 
-// Calcular promedio
-const promedio = ultimas5.length ? (sumaNotas/ultimas5.length).toFixed(2) : '0,00';
-document.getElementById("promedio").textContent = `Promedio: ${promedio}`;
-    
-  </script>
+// Calcular promedio total
+let sumaNotas = 0;
+calificaciones.forEach(c=> sumaNotas += parseFloat(c.nota) || 0);
+const promedioTotal = calificaciones.length ? (sumaNotas / calificaciones.length).toFixed(2) : '0,00';
+document.getElementById("promedio").textContent = `Promedio: ${promedioTotal}`;
+</script>
+
 </body>
 </html>
