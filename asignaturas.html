@@ -13,31 +13,30 @@
   }
 
   nav {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px;
-  background-color: #0b2c56;
-  position: sticky;
-  top: 0;
-}
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #0b2c56;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
 
-nav a {
-  text-decoration: none;
-  background: #0d4a8c;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 10px;
-  font-size: 14px;
-  display: inline-block;
-}
+  nav a {
+    text-decoration: none;
+    background: #0d4a8c;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    display: inline-block;
+  }
 
-nav a:hover {
-  background: #1565c0;
-}
+  nav a:hover { background: #1565c0; }
 
   .materia-container {
-    background-color: #0d3d77;
+    background-color: #223c63;
     border-radius: 12px;
     padding: 20px;
     margin: 20px auto;
@@ -47,7 +46,7 @@ nav a:hover {
   .header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px; }
 
   .section {
-    background-color: #1657a2;
+    background-color: #2f61a3;
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 15px;
@@ -114,12 +113,12 @@ nav a:hover {
 <body>
 
 <nav>
-    <a href="index.html">🏠 Inicio</a>
-    <a href="agenda.html">📒 Agenda</a>
-    <a href="calificacion.html">⭐ Calificación</a>
-    <a href="asignaturas.html">🎓 Asignaturas</a>
-    <a href="malla-curricular.html">📑 Malla Curricular</a>
-  </nav>
+  <a href="index.html">🏠 Inicio</a>
+  <a href="agenda.html">📒 Agenda</a>
+  <a href="calificacion.html">⭐ Calificación</a>
+  <a href="asignaturas.html">🎓 Asignaturas</a>
+  <a href="malla-curricular.html">📑 Malla Curricular</a>
+</nav>
 
 <div id="materias-container"></div>
 
@@ -147,7 +146,6 @@ const materias = [
 function saveData(key, data){ localStorage.setItem(key, JSON.stringify(data)); }
 function loadData(key){ return JSON.parse(localStorage.getItem(key)) || []; }
 
-// Modal
 let currentMateria = null;
 let currentUnidad = null;
 
@@ -273,14 +271,15 @@ function handleFileUpload(event){
 function renderArchivos(){
   const clases = loadData('clases-'+currentMateria);
   const archivos = clases[currentUnidad].archivos;
-  document.getElementById('archivos-list').innerHTML = '';
+  const container = document.getElementById('archivos-list');
+  container.innerHTML = '';
   archivos.forEach((a,i)=>{
     const blob = b64toBlob(a.data.split(',')[1], a.type);
     const url = URL.createObjectURL(blob);
     const div = document.createElement('div');
     div.className = 'archivo';
     div.innerHTML = `<a href="${url}" target="_blank">${a.nombre}</a> <button onclick="deleteArchivo(${i})">x</button>`;
-    document.getElementById('archivos-list').appendChild(div);
+    container.appendChild(div);
   });
 }
 
