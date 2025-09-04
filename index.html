@@ -229,8 +229,13 @@ ultimas5.forEach(c=>{
   circle.classList.add('circle', colorNota(c.nota,c.sistema,c.minAprobado));
   circle.textContent = c.nota;
 
+// Nombre de la materia
+  const nombre = document.createElement('span');
+  nombre.textContent = c.materia;
+
+  // Primero nota, luego nombre
   div.appendChild(circle);
-  div.appendChild(document.createTextNode(` ${c.materia}`));
+  div.appendChild(nombre);
 
   contenedor.appendChild(div);
 });
