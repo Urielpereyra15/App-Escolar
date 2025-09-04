@@ -1,308 +1,250 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Materia</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #223c63;
-      color: white;
-      margin: 0;
-      padding: 20px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Materias</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #334455; /* Fondo general */
+    color: white;
+  }
 
-    h2 {
-      margin: 0;
-    }
+  nav {
+    background-color: #111;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
 
-    .section {
-      background-color: #2f61a3;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 10px;
-    }
+  nav a:hover { text-decoration: underline; }
 
-    .section h3 {
-      margin-top: 0;
-    }
+  .materia-container {
+    background-color: #223c63; /* Rectángulo de la materia */
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px auto; /* Espacio entre materias */
+    max-width: 700px;
+  }
 
-    .list-item {
-      margin-left: 15px;
-      cursor: pointer;
-    }
+  .header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px; }
 
-    .plus-btn {
-      display: inline-block;
-      background: #1657a2;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 3px 8px;
-      margin-left: 8px;
-      cursor: pointer;
-    }
+  .section {
+    background-color: #2f61a3; /* Rectángulo de cada sección */
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 15px;
+  }
 
-    .delete-btn {
-      margin-left: 10px;
-      color: #ff6666;
-      cursor: pointer;
-      font-weight: bold;
-    }
+  .section-title { display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin-bottom: 8px; }
 
-    /* Ventana emergente */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-    }
+  .add-btn {
+    background: #fff;
+    color: #1e56a0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+  }
 
-    .modal-content {
-      background: #2f61a3;
-      padding: 20px;
-      border-radius: 10px;
-      width: 400px;
-      color: white;
-    }
+  .profesor, .unidad, .archivo { margin-left: 15px; margin-bottom: 5px; cursor: pointer; }
 
-    .close {
-      float: right;
-      cursor: pointer;
-      font-weight: bold;
-    }
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+  }
 
-    img {
-      max-width: 100%;
-      margin-top: 10px;
-      border-radius: 8px;
-    }
-  </style>
+  .modal-content {
+    background: #fff;
+    color: black;
+    padding: 20px;
+    border-radius: 12px;
+    width: 400px;
+    margin: 100px auto;
+  }
+
+  .close { float: right; cursor: pointer; font-weight: bold; font-size: 20px; }
+
+  img { max-width: 100%; margin-top: 10px; border-radius: 10px; }
+</style>
 </head>
 <body>
-  <div class="header">
-    <h2>Materia</h2>
-    <span>Promedio: 0,00</span>
-  </div>
 
-  <!-- Profesores -->
-  <div class="section">
-    <h3>Profesores:</h3>
-    <ul id="profesores-list"></ul>
-    <button class="plus-btn" onclick="agregarProfesor()">+</button>
-  </div>
+<nav>
+  <a href="index.html">Inicio</a>
+  <a href="agenda.html">Agenda</a>
+  <a href="calificaciones.html">Calificaciones</a>
+  <a href="asignaturas.html">Asignaturas</a>
+</nav>
 
-  <!-- Clases -->
-  <div class="section">
-    <h3>Clases:</h3>
-    <ul id="clases-list"></ul>
-    <button class="plus-btn" onclick="agregarClase()">+</button>
-  </div>
+<div id="materias-container"></div>
 
-  <!-- Condiciones para aprobar -->
-  <div class="section">
-    <h3>Condiciones para aprobar</h3>
-    <input type="file" accept="image/*" onchange="mostrarImagen(event, 'condiciones-img', 'condiciones')">
-    <img id="condiciones-img" alt="">
+<!-- Modal para Archivos de Unidad -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3 id="modal-title"></h3>
+    <div id="archivos-list"></div>
+    <button onclick="addArchivo()">+ Agregar archivo</button>
   </div>
+</div>
 
-  <!-- Cronograma -->
-  <div class="section">
-    <h3>Cronograma</h3>
-    <input type="file" accept="image/*" onchange="mostrarImagen(event, 'cronograma-img', 'cronograma')">
-    <img id="cronograma-img" alt="">
-  </div>
+<script>
+const materias = [
+  "Contabilidad","Administración","Historia de la Cultura","Matemática 1","Derecho Público","Introducción a la Economía",
+  "Metodología de la Investigación","Derecho Privado","Contabilidad Superior","Teoría de la Organización","Estadística","Historia Económica","Microeconómia","Filosofía","Matemática 2",
+  "Costos 1","Derecho Tributario","Administración Pública","Dirección General","Estados Contables","Derecho Comercial","Derecho Laboral","Macroeconómia","Matemática Financiera y Actuarial","Sistema de Información Administrativa","Teología","Sociología","Costo para la Toma de Decisiones","Remuneración y Beneficios",
+  "Auditoria 1","Ética y Deontologia Profesional","Interpretación de Estados Contables","Sociedades","Teoría y Técnica Impositiva 1","Auditoria y Control de Sistema de Información","Gestión Financiera","Derecho Concursal","Auditoria 2","Teoría y Técnica Impositiva 2","Contabilidad Gerencial","Práctica Profesional Supervisada"
+];
 
-  <!-- Modal -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="cerrarModal()">&times;</span>
-      <h3 id="modal-title"></h3>
-      <ul id="archivos-list"></ul>
-      <button class="plus-btn" onclick="agregarArchivo()">+</button>
+// Guardar y cargar localStorage
+function saveData(key, data){ localStorage.setItem(key, JSON.stringify(data)); }
+function loadData(key){ return JSON.parse(localStorage.getItem(key)) || []; }
+
+// Modal
+let currentUnidad = null;
+
+function openModal(index, materia) {
+  currentUnidad = index;
+  const clases = loadData('clases-' + materia);
+  document.getElementById("modal-title").textContent = clases[index].titulo;
+  renderArchivos(materia);
+  document.getElementById("modal").style.display = "block";
+}
+
+function closeModal() { document.getElementById("modal").style.display = "none"; }
+
+function renderArchivos(materia) {
+  const clases = loadData('clases-' + materia);
+  const archivos = clases[currentUnidad].archivos;
+  document.getElementById("archivos-list").innerHTML =
+    archivos.map(a => `<div class="archivo">${a}</div>`).join('');
+}
+
+function addArchivo() {
+  const nombre = prompt("Nombre del archivo:");
+  if(nombre){
+    const clases = loadData('clases-' + currentMateria);
+    clases[currentUnidad].archivos.push(nombre);
+    saveData('clases-' + currentMateria, clases);
+    renderArchivos(currentMateria);
+  }
+}
+
+// Render materias
+const container = document.getElementById('materias-container');
+materias.forEach(materia => {
+  const div = document.createElement('div');
+  div.className = 'materia-container';
+  div.innerHTML = `
+    <div class="header">
+      <div>${materia}</div>
+      <div>Promedio: 0,00</div>
     </div>
-  </div>
+    <div class="section">
+      <div class="section-title">
+        Profesores:
+        <button class="add-btn" onclick="addProfesor('${materia}')">+</button>
+      </div>
+      <div id="profesores-${materia}"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">
+        Clases:
+        <button class="add-btn" onclick="addUnidad('${materia}')">+</button>
+      </div>
+      <div id="clases-${materia}"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Condiciones para aprobar</div>
+      <input type="file" accept="image/*" onchange="uploadImage(event,'condiciones-${materia}')">
+      <div id="condiciones-${materia}"></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Cronograma</div>
+      <input type="file" accept="image/*" onchange="uploadImage(event,'cronograma-${materia}')">
+      <div id="cronograma-${materia}"></div>
+    </div>
+  `;
+  container.appendChild(div);
+});
 
-  <script>
-    let profesores = [];
-    let clases = [];
-    let archivos = {};
-    let claseActual = "";
+// Funciones Profesores y Unidades
+function renderProfesores(materia){
+  const profesores = loadData('profesores-'+materia);
+  document.getElementById('profesores-'+materia).innerHTML =
+    profesores.map(p=>`<div class="profesor">${p}</div>`).join('');
+}
 
-    // Guardar todo en localStorage
-    function guardarDatos() {
-      localStorage.setItem("profesores", JSON.stringify(profesores));
-      localStorage.setItem("clases", JSON.stringify(clases));
-      localStorage.setItem("archivos", JSON.stringify(archivos));
+function addProfesor(materia){
+  const nombre = prompt("Nombre del profesor:");
+  if(nombre){
+    const profesores = loadData('profesores-'+materia);
+    profesores.push(nombre);
+    saveData('profesores-'+materia, profesores);
+    renderProfesores(materia);
+  }
+}
+
+function renderClases(materia){
+  const clases = loadData('clases-'+materia);
+  document.getElementById('clases-'+materia).innerHTML =
+    clases.map((u,i)=>`<div class="unidad" onclick="openModal(${i}, '${materia}')">${u.titulo}</div>`).join('');
+}
+
+function addUnidad(materia){
+  const titulo = prompt("Título de la unidad:");
+  if(titulo){
+    const clases = loadData('clases-'+materia);
+    clases.push({titulo, archivos: []});
+    saveData('clases-'+materia, clases);
+    renderClases(materia);
+  }
+}
+
+// Función subir imágenes
+function uploadImage(event, containerId){
+  const file = event.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      localStorage.setItem(containerId, e.target.result);
+      document.getElementById(containerId).innerHTML = `<img src="${e.target.result}">`;
     }
+    reader.readAsDataURL(file);
+  }
+}
 
-    // Cargar todo desde localStorage
-    function cargarDatos() {
-      const profGuardados = JSON.parse(localStorage.getItem("profesores"));
-      const clasesGuardadas = JSON.parse(localStorage.getItem("clases"));
-      const archivosGuardados = JSON.parse(localStorage.getItem("archivos"));
+// Cargar imágenes al iniciar
+function loadImages(){
+  materias.forEach(materia=>{
+    ['condiciones-'+materia,'cronograma-'+materia].forEach(id=>{
+      const data = localStorage.getItem(id);
+      if(data) document.getElementById(id).innerHTML = `<img src="${data}">`;
+    });
+  });
+}
 
-      if (profGuardados) {
-        profesores = profGuardados;
-        profesores.forEach(nombre => mostrarProfesor(nombre));
-      }
-
-      if (clasesGuardadas) {
-        clases = clasesGuardadas;
-        clases.forEach(c => mostrarClase(c));
-      }
-
-      if (archivosGuardados) {
-        archivos = archivosGuardados;
-      }
-
-      // Restaurar imágenes
-      const condiciones = localStorage.getItem("condiciones");
-      if (condiciones) document.getElementById("condiciones-img").src = condiciones;
-
-      const cronograma = localStorage.getItem("cronograma");
-      if (cronograma) document.getElementById("cronograma-img").src = cronograma;
-    }
-
-    // Profesores
-    function agregarProfesor() {
-      const nombre = prompt("Ingrese el nombre del profesor:");
-      if (nombre) {
-        profesores.push(nombre);
-        mostrarProfesor(nombre);
-        guardarDatos();
-      }
-    }
-
-    function mostrarProfesor(nombre) {
-      const li = document.createElement("li");
-      li.textContent = nombre;
-
-      const btn = document.createElement("span");
-      btn.textContent = "❌";
-      btn.className = "delete-btn";
-      btn.onclick = () => eliminarProfesor(nombre, li);
-
-      li.appendChild(btn);
-      document.getElementById("profesores-list").appendChild(li);
-    }
-
-    function eliminarProfesor(nombre, li) {
-      profesores = profesores.filter(p => p !== nombre);
-      li.remove();
-      guardarDatos();
-    }
-
-    // Clases
-    function agregarClase() {
-      const titulo = prompt("Ingrese el título de la clase:");
-      if (titulo) {
-        clases.push(titulo);
-        archivos[titulo] = [];
-        mostrarClase(titulo);
-        guardarDatos();
-      }
-    }
-
-    function mostrarClase(titulo) {
-      const li = document.createElement("li");
-      li.textContent = titulo;
-      li.className = "list-item";
-      li.onclick = e => {
-        if (e.target.tagName !== "SPAN") abrirModal(titulo);
-      };
-
-      const btn = document.createElement("span");
-      btn.textContent = "❌";
-      btn.className = "delete-btn";
-      btn.onclick = e => {
-        e.stopPropagation();
-        eliminarClase(titulo, li);
-      };
-
-      li.appendChild(btn);
-      document.getElementById("clases-list").appendChild(li);
-    }
-
-    function eliminarClase(titulo, li) {
-      clases = clases.filter(c => c !== titulo);
-      delete archivos[titulo];
-      li.remove();
-      guardarDatos();
-    }
-
-    // Modal de archivos
-    function abrirModal(clase) {
-      claseActual = clase;
-      document.getElementById("modal-title").textContent = clase;
-      mostrarArchivos();
-      document.getElementById("modal").style.display = "flex";
-    }
-
-    function cerrarModal() {
-      document.getElementById("modal").style.display = "none";
-    }
-
-    function mostrarArchivos() {
-      const lista = document.getElementById("archivos-list");
-      lista.innerHTML = "";
-      archivos[claseActual].forEach(a => {
-        const li = document.createElement("li");
-        li.textContent = a;
-
-        const btn = document.createElement("span");
-        btn.textContent = "❌";
-        btn.className = "delete-btn";
-        btn.onclick = () => eliminarArchivo(a, li);
-
-        li.appendChild(btn);
-        lista.appendChild(li);
-      });
-    }
-
-    function agregarArchivo() {
-      const nombre = prompt("Ingrese el nombre del archivo:");
-      if (nombre) {
-        archivos[claseActual].push(nombre);
-        mostrarArchivos();
-        guardarDatos();
-      }
-    }
-
-    function eliminarArchivo(nombre, li) {
-      archivos[claseActual] = archivos[claseActual].filter(a => a !== nombre);
-      li.remove();
-      guardarDatos();
-    }
-
-    // Subir y mostrar imagen con persistencia en localStorage
-    function mostrarImagen(event, imgId, key) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          const dataUrl = e.target.result;
-          document.getElementById(imgId).src = dataUrl;
-          localStorage.setItem(key, dataUrl); // Guardar en localStorage
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    // Inicializar datos
-    window.onload = cargarDatos;
-  </script>
+loadImages();
+</script>
 </body>
 </html>
