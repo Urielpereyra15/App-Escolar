@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Asignaturas</title>
+<title>Materias</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -13,28 +13,18 @@
   }
 
   nav {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px;
-  background-color: #0b2c56;
-  position: sticky;
-  top: 0;
-}
+    background-color: #111;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
 
-nav a {
-  text-decoration: none;
-  background: #0d4a8c;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 10px;
-  font-size: 14px;
-  display: inline-block;
-}
-
-nav a:hover {
-  background: #1565c0;
-}
+  nav a { color: white; text-decoration: none; font-weight: bold; }
+  nav a:hover { text-decoration: underline; }
 
   .materia-container {
     background-color: #223c63;
@@ -67,15 +57,23 @@ nav a:hover {
     text-align: center;
   }
 
-  .profesor, .unidad, .archivo { margin-left: 15px; margin-bottom: 5px; cursor: pointer; }
+  .profesor, .unidad, .archivo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 15px;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
 
   .profesor button, .unidad button, .archivo button {
-    margin-left: 10px;
-    cursor: pointer;
-    border: none;
     background: transparent;
+    border: none;
     color: white;
     font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0;
   }
 
   .modal {
@@ -99,16 +97,17 @@ nav a:hover {
   .close { float: right; cursor: pointer; font-weight: bold; font-size: 20px; }
 
   img { max-width: 100%; margin-top: 10px; border-radius: 10px; }
+
+  a { color: white; text-decoration: underline; }
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="index.html">🏠 Inicio</a>
-  <a href="agenda.html">📒 Agenda</a>
-  <a href="calificaciones.html">⭐ Calificaciones</a>
-  <a href="asignaturas.html">🎓 Asignaturas</a>
-  <a href="malla-curricular.html">📑 Malla Curricular</a>
+  <a href="index.html">Inicio</a>
+  <a href="agenda.html">Agenda</a>
+  <a href="calificaciones.html">Calificaciones</a>
+  <a href="asignaturas.html">Asignaturas</a>
 </nav>
 
 <div id="materias-container"></div>
@@ -183,7 +182,7 @@ materias.forEach(materia => {
 function renderProfesores(materia){
   const profesores = loadData('profesores-'+materia);
   document.getElementById('profesores-'+materia).innerHTML =
-    profesores.map((p,i)=>`<div class="profesor">${p} <button onclick="deleteProfesor('${materia}',${i})">🗑️</button></div>`).join('');
+    profesores.map((p,i)=>`<div class="profesor">${p} <button onclick="deleteProfesor('${materia}',${i})">x</button></div>`).join('');
 }
 
 function addProfesor(materia){
@@ -207,7 +206,7 @@ function deleteProfesor(materia,index){
 function renderClases(materia){
   const clases = loadData('clases-'+materia);
   document.getElementById('clases-'+materia).innerHTML =
-    clases.map((u,i)=>`<div class="unidad"><span onclick="openModal(${i},'${materia}')">${u.titulo}</span> <button onclick="deleteUnidad('${materia}',${i})">🗑️</button></div>`).join('');
+    clases.map((u,i)=>`<div class="unidad"><span onclick="openModal(${i},'${materia}')">${u.titulo}</span> <button onclick="deleteUnidad('${materia}',${i})">x</button></div>`).join('');
 }
 
 function addUnidad(materia){
@@ -258,7 +257,12 @@ function renderArchivos(){
   const clases = loadData('clases-'+currentMateria);
   const archivos = clases[currentUnidad].archivos;
   document.getElementById('archivos-list').innerHTML =
-    archivos.map((a,i)=>`<div class="archivo">${a.nombre} <button onclick="deleteArchivo(${i})">🗑️</button></div>`).join('');
+    archivos.map((a,i)=>`
+      <div class="archivo">
+        <a href="${a.data}" target="_blank">${a.nombre}</a>
+        <button onclick="deleteArchivo(${i})">x</button>
+      </div>
+    `).join('');
 }
 
 function deleteArchivo(index){
