@@ -232,6 +232,12 @@ ultimas5.forEach(c=>{
   circle.classList.add('circle', colorNota(c.nota,c.sistema,c.minAprobado));
   circle.textContent = c.nota;
 
+  span.materia { 
+  flex-grow: 1;      /* hace que el nombre ocupe el resto del espacio a la derecha del círculo */
+  text-align: left;  /* asegura que el texto quede alineado a la izquierda */
+  margin-left: 10px;  /* <--- esto mueve el nombre un poquito hacia la izquierda */
+}
+
 // Nombre de la materia
   const nombre = document.createElement('span');
   nombre.textContent = c.materia;
