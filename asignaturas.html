@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Materias</title>
+<title>Asignaturas</title>
 <style>
   body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background-color: #334455; /* Fondo general */
+    background-color: #334455;
     color: white;
   }
 
@@ -23,26 +23,21 @@
     z-index: 10;
   }
 
-  nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-  }
-
+  nav a { color: white; text-decoration: none; font-weight: bold; }
   nav a:hover { text-decoration: underline; }
 
   .materia-container {
-    background-color: #223c63; /* Rectángulo de la materia */
+    background-color: #223c63;
     border-radius: 12px;
     padding: 20px;
-    margin: 20px auto; /* Espacio entre materias */
+    margin: 20px auto;
     max-width: 700px;
   }
 
   .header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px; }
 
   .section {
-    background-color: #2f61a3; /* Rectángulo de cada sección */
+    background-color: #2f61a3;
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 15px;
@@ -63,6 +58,15 @@
   }
 
   .profesor, .unidad, .archivo { margin-left: 15px; margin-bottom: 5px; cursor: pointer; }
+
+  .profesor button, .unidad button, .archivo button {
+    margin-left: 10px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: white;
+    font-weight: bold;
+  }
 
   .modal {
     display: none;
@@ -90,25 +94,28 @@
 <body>
 
 <nav>
-  <a href="index.html">Inicio</a>
-  <a href="agenda.html">Agenda</a>
-  <a href="calificaciones.html">Calificaciones</a>
-  <a href="asignaturas.html">Asignaturas</a>
+  <a href="index.html">🏠 Inicio</a>
+  <a href="agenda.html">📒 Agenda</a>
+  <a href="calificaciones.html">⭐ Calificaciones</a>
+  <a href="asignaturas.html">🎓 Asignaturas</a>
+  <a href="malla-curricular.html">📑 Malla Curricular</a>
 </nav>
 
 <div id="materias-container"></div>
 
-<!-- Modal para Archivos de Unidad -->
+<!-- Modal Archivos -->
 <div id="modal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal()">&times;</span>
     <h3 id="modal-title"></h3>
     <div id="archivos-list"></div>
-    <button onclick="addArchivo()">+ Agregar archivo</button>
+    <button onclick="triggerFileInput()">+ Agregar archivo</button>
+    <input type="file" id="fileInput" style="display:none;" onchange="handleFileUpload(event)">
   </div>
 </div>
 
 <script>
+// Lista de materias
 const materias = [
   "Contabilidad","Administración","Historia de la Cultura","Matemática 1","Derecho Público","Introducción a la Economía",
   "Metodología de la Investigación","Derecho Privado","Contabilidad Superior","Teoría de la Organización","Estadística","Historia Económica","Microeconómia","Filosofía","Matemática 2",
@@ -116,41 +123,15 @@ const materias = [
   "Auditoria 1","Ética y Deontologia Profesional","Interpretación de Estados Contables","Sociedades","Teoría y Técnica Impositiva 1","Auditoria y Control de Sistema de Información","Gestión Financiera","Derecho Concursal","Auditoria 2","Teoría y Técnica Impositiva 2","Contabilidad Gerencial","Práctica Profesional Supervisada"
 ];
 
-// Guardar y cargar localStorage
+// LocalStorage
 function saveData(key, data){ localStorage.setItem(key, JSON.stringify(data)); }
 function loadData(key){ return JSON.parse(localStorage.getItem(key)) || []; }
 
 // Modal
+let currentMateria = null;
 let currentUnidad = null;
 
-function openModal(index, materia) {
-  currentUnidad = index;
-  const clases = loadData('clases-' + materia);
-  document.getElementById("modal-title").textContent = clases[index].titulo;
-  renderArchivos(materia);
-  document.getElementById("modal").style.display = "block";
-}
-
-function closeModal() { document.getElementById("modal").style.display = "none"; }
-
-function renderArchivos(materia) {
-  const clases = loadData('clases-' + materia);
-  const archivos = clases[currentUnidad].archivos;
-  document.getElementById("archivos-list").innerHTML =
-    archivos.map(a => `<div class="archivo">${a}</div>`).join('');
-}
-
-function addArchivo() {
-  const nombre = prompt("Nombre del archivo:");
-  if(nombre){
-    const clases = loadData('clases-' + currentMateria);
-    clases[currentUnidad].archivos.push(nombre);
-    saveData('clases-' + currentMateria, clases);
-    renderArchivos(currentMateria);
-  }
-}
-
-// Render materias
+// Generar materias
 const container = document.getElementById('materias-container');
 materias.forEach(materia => {
   const div = document.createElement('div');
@@ -188,11 +169,11 @@ materias.forEach(materia => {
   container.appendChild(div);
 });
 
-// Funciones Profesores y Unidades
+// Profesores
 function renderProfesores(materia){
   const profesores = loadData('profesores-'+materia);
   document.getElementById('profesores-'+materia).innerHTML =
-    profesores.map(p=>`<div class="profesor">${p}</div>`).join('');
+    profesores.map((p,i)=>`<div class="profesor">${p} <button onclick="deleteProfesor('${materia}',${i})">🗑️</button></div>`).join('');
 }
 
 function addProfesor(materia){
@@ -205,10 +186,18 @@ function addProfesor(materia){
   }
 }
 
+function deleteProfesor(materia,index){
+  const profesores = loadData('profesores-'+materia);
+  profesores.splice(index,1);
+  saveData('profesores-'+materia, profesores);
+  renderProfesores(materia);
+}
+
+// Unidades
 function renderClases(materia){
   const clases = loadData('clases-'+materia);
   document.getElementById('clases-'+materia).innerHTML =
-    clases.map((u,i)=>`<div class="unidad" onclick="openModal(${i}, '${materia}')">${u.titulo}</div>`).join('');
+    clases.map((u,i)=>`<div class="unidad"><span onclick="openModal(${i},'${materia}')">${u.titulo}</span> <button onclick="deleteUnidad('${materia}',${i})">🗑️</button></div>`).join('');
 }
 
 function addUnidad(materia){
@@ -221,30 +210,76 @@ function addUnidad(materia){
   }
 }
 
-// Función subir imágenes
-function uploadImage(event, containerId){
+function deleteUnidad(materia,index){
+  const clases = loadData('clases-'+materia);
+  clases.splice(index,1);
+  saveData('clases-'+materia, clases);
+  renderClases(materia);
+}
+
+// Modal Archivos
+function openModal(index,materia){
+  currentUnidad = index;
+  currentMateria = materia;
+  const clases = loadData('clases-'+materia);
+  document.getElementById('modal-title').textContent = clases[index].titulo;
+  renderArchivos();
+  document.getElementById('modal').style.display='block';
+}
+
+function closeModal(){ document.getElementById('modal').style.display='none'; }
+function triggerFileInput(){ document.getElementById('fileInput').click(); }
+
+function handleFileUpload(event){
   const file = event.target.files[0];
   if(file){
     const reader = new FileReader();
     reader.onload = function(e){
-      localStorage.setItem(containerId, e.target.result);
-      document.getElementById(containerId).innerHTML = `<img src="${e.target.result}">`;
+      const clases = loadData('clases-'+currentMateria);
+      clases[currentUnidad].archivos.push({nombre:file.name, data:e.target.result});
+      saveData('clases-'+currentMateria, clases);
+      renderArchivos();
     }
     reader.readAsDataURL(file);
   }
 }
 
-// Cargar imágenes al iniciar
-function loadImages(){
-  materias.forEach(materia=>{
-    ['condiciones-'+materia,'cronograma-'+materia].forEach(id=>{
-      const data = localStorage.getItem(id);
-      if(data) document.getElementById(id).innerHTML = `<img src="${data}">`;
-    });
-  });
+function renderArchivos(){
+  const clases = loadData('clases-'+currentMateria);
+  const archivos = clases[currentUnidad].archivos;
+  document.getElementById('archivos-list').innerHTML =
+    archivos.map((a,i)=>`<div class="archivo">${a.nombre} <button onclick="deleteArchivo(${i})">🗑️</button></div>`).join('');
 }
 
-loadImages();
+function deleteArchivo(index){
+  const clases = loadData('clases-'+currentMateria);
+  clases[currentUnidad].archivos.splice(index,1);
+  saveData('clases-'+currentMateria, clases);
+  renderArchivos();
+}
+
+// Imágenes
+function uploadImage(event,containerId){
+  const file = event.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      localStorage.setItem(containerId,e.target.result);
+      document.getElementById(containerId).innerHTML=`<img src="${e.target.result}">`;
+    }
+    reader.readAsDataURL(file);
+  }
+}
+
+// Inicializar
+materias.forEach(materia=>{
+  renderProfesores(materia);
+  renderClases(materia);
+  ['condiciones-'+materia,'cronograma-'+materia].forEach(id=>{
+    const data = localStorage.getItem(id);
+    if(data) document.getElementById(id).innerHTML=`<img src="${data}">`;
+  });
+});
 </script>
 </body>
 </html>
