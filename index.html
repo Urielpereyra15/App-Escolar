@@ -129,13 +129,9 @@ nav a:hover {
 
     <!-- Calificaciones -->
     <div class="card">
-      <h3>⭐ Últimas calificaciones <span style="margin-left:auto;">Promedio: 0,00</span></h3>
-      <div class="grade"><div class="circle green">10</div> Contabilidad</div>
-      <div class="grade"><div class="circle yellow">6</div> Administración</div>
-      <div class="grade"><div class="circle yellow">6</div> Administración</div>
-      <div class="grade"><div class="circle green">10</div> Contabilidad</div>
-      <div class="grade"><div class="circle red">4</div> Historia de la Cultura</div>
-    </div>
+  <h3>⭐ Últimas calificaciones <span id="promedio" style="margin-left:auto;">Promedio: 0,00</span></h3>
+  <div id="ultimas-calificaciones"></div>
+</div>
 
     <!-- Notas -->
     <div class="card">
@@ -201,6 +197,45 @@ nav a:hover {
     window.addEventListener('storage', (e) => {
       if(e.key === 'schoolEvents') renderUpcomingEvents();
     });
+
+    // Función para obtener color según la nota
+function getColor(nota,sistema,minAprobado){
+  nota = nota.toString().trim(); minAprobado = parseFloat(minAprobado);
+  if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "rojo"; if(nota>=minAprobado-2 && nota<minAprobado) return "amarillo"; return "verde"; }
+  if(sistema==="0-100"){ nota=parseFloat(nota); if(nota<minAprobado-10) return "rojo"; if(nota>=minAprobado-10 && nota<minAprobado) return "amarillo"; return "verde"; }
+  if(sistema==="0-1") return nota==="0"?"rojo":"verde";
+  if(sistema==="si-no") return nota.toLowerCase()==="no"?"rojo":"verde";
+  return "";
+}
+
+// Cargar últimas 5 calificaciones
+let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
+let ultimas5 = calificaciones.slice(-5).reverse();
+
+const contenedor = document.getElementById("ultimas-calificaciones");
+contenedor.innerHTML = '';
+
+let sumaNotas = 0;
+ultimas5.forEach(c=>{
+  sumaNotas += parseFloat(c.nota) || 0;
+
+  const div = document.createElement('div');
+  div.classList.add('grade');
+
+  const circle = document.createElement('div');
+  circle.classList.add('circle', getColor(c.nota,c.sistema,c.minAprobado));
+  circle.textContent = c.nota;
+
+  div.appendChild(circle);
+  div.appendChild(document.createTextNode(` ${c.materia}`));
+
+  contenedor.appendChild(div);
+});
+
+// Calcular promedio
+const promedio = ultimas5.length ? (sumaNotas/ultimas5.length).toFixed(2) : '0,00';
+document.getElementById("promedio").textContent = `Promedio: ${promedio}`;
+    
   </script>
 </body>
 </html>
