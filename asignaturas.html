@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Materias</title>
+<title>Asignaturas</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -13,18 +13,28 @@
   }
 
   nav {
-    background-color: #111;
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #0b2c56;
+  position: sticky;
+  top: 0;
+}
 
-  nav a { color: white; text-decoration: none; font-weight: bold; }
-  nav a:hover { text-decoration: underline; }
+nav a {
+  text-decoration: none;
+  background: #0d4a8c;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-size: 14px;
+  display: inline-block;
+}
+
+nav a:hover {
+  background: #1565c0;
+}
 
   .materia-container {
     background-color: #223c63;
@@ -104,11 +114,12 @@
 <body>
 
 <nav>
-  <a href="index.html">Inicio</a>
-  <a href="agenda.html">Agenda</a>
-  <a href="calificaciones.html">Calificaciones</a>
-  <a href="asignaturas.html">Asignaturas</a>
-</nav>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="agenda.html">📒 Agenda</a>
+    <a href="calificacion.html">⭐ Calificación</a>
+    <a href="asignaturas.html">🎓 Asignaturas</a>
+    <a href="malla-curricular.html">📑 Malla Curricular</a>
+  </nav>
 
 <div id="materias-container"></div>
 
@@ -239,13 +250,18 @@ function openModal(index,materia){
 function closeModal(){ document.getElementById('modal').style.display='none'; }
 function triggerFileInput(){ document.getElementById('fileInput').click(); }
 
+// Subir archivos
 function handleFileUpload(event){
   const file = event.target.files[0];
   if(file){
     const reader = new FileReader();
     reader.onload = function(e){
       const clases = loadData('clases-'+currentMateria);
-      clases[currentUnidad].archivos.push({nombre:file.name, data:e.target.result});
+      clases[currentUnidad].archivos.push({
+        nombre: file.name,
+        type: file.type,
+        data: e.target.result
+      });
       saveData('clases-'+currentMateria, clases);
       renderArchivos();
     }
@@ -253,16 +269,19 @@ function handleFileUpload(event){
   }
 }
 
+// Render archivos con Blob para abrir en nueva pestaña
 function renderArchivos(){
   const clases = loadData('clases-'+currentMateria);
   const archivos = clases[currentUnidad].archivos;
-  document.getElementById('archivos-list').innerHTML =
-    archivos.map((a,i)=>`
-      <div class="archivo">
-        <a href="${a.data}" target="_blank">${a.nombre}</a>
-        <button onclick="deleteArchivo(${i})">x</button>
-      </div>
-    `).join('');
+  document.getElementById('archivos-list').innerHTML = '';
+  archivos.forEach((a,i)=>{
+    const blob = b64toBlob(a.data.split(',')[1], a.type);
+    const url = URL.createObjectURL(blob);
+    const div = document.createElement('div');
+    div.className = 'archivo';
+    div.innerHTML = `<a href="${url}" target="_blank">${a.nombre}</a> <button onclick="deleteArchivo(${i})">x</button>`;
+    document.getElementById('archivos-list').appendChild(div);
+  });
 }
 
 function deleteArchivo(index){
@@ -270,6 +289,21 @@ function deleteArchivo(index){
   clases[currentUnidad].archivos.splice(index,1);
   saveData('clases-'+currentMateria, clases);
   renderArchivos();
+}
+
+// Convertir base64 a Blob
+function b64toBlob(b64Data, contentType='application/octet-stream'){
+  const byteCharacters = atob(b64Data);
+  const byteArrays = [];
+  const sliceSize = 512;
+  for(let offset=0; offset<byteCharacters.length; offset+=sliceSize){
+    const slice = byteCharacters.slice(offset, offset+sliceSize);
+    const byteNumbers = new Array(slice.length);
+    for(let i=0;i<slice.length;i++) byteNumbers[i]=slice.charCodeAt(i);
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+  return new Blob(byteArrays,{type: contentType});
 }
 
 // Imágenes
