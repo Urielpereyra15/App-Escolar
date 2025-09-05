@@ -1,260 +1,324 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inicio Escolar</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #2c3e50;
-    color: white;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio Escolar</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #334455;
+      color: white;
+    }
 
-  nav {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px;
-    background-color: #1a252f;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    flex-wrap: wrap;
-  }
-  nav a {
-    text-decoration: none;
-    background: #34495e;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 10px;
-    font-size: 14px;
-    transition: 0.2s;
-  }
-  nav a:hover { background: #1abc9c; }
+    /* Barra de navegación */
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      background-color: #0b2c56;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      flex-wrap: wrap;
+    }
 
-  .container {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+    nav a {
+      text-decoration: none;
+      background: #0d4a8c;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: inline-block;
+    }
 
-  .card {
-    background: #34495e;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  }
+    nav a:hover {
+      background: #1565c0;
+    }
 
-  .card h3 {
-    margin: 0 0 15px;
-    font-size: 22px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+    /* Menú hamburguesa */
+    .menu-icon {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+    }
 
-  .agenda-item {
-    background: #3a5f9f;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    font-size: 14px;
-  }
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-  .grade {
-    display: flex;
-    align-items: center;
-    background: #3a5f9f;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    font-size: 16px;
-  }
-  .circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    color: white;
-    margin-right: 12px;
-    font-size: 16px;
-  }
-  .green { background: #27ae60; }
-  .yellow { background: #f39c12; }
-  .red { background: #c0392b; }
-
-  .promedio-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  .promedio-container > div {
-    flex: 1 1 45%;
-    background: #34495e;
-    border-radius: 15px;
-    padding: 15px;
-  }
-  #top3 .top-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #3a5f9f;
-    padding: 12px;
-    border-radius: 10px;
-    font-size: 16px;
-  }
-
-  @media(max-width: 768px){
-    .promedio-container {
+    /* Contenedor principal */
+    .container {
+      padding: 15px;
+      display: flex;
       flex-direction: column;
+      gap: 15px;
     }
-    .promedio-container > div {
-      flex: 1 1 100%;
+
+    .card {
+      background: #0d3d77;
+      border-radius: 15px;
+      padding: 15px;
     }
+
+    .card h3 {
+      margin: 0 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+    }
+
+    /* Agenda */
+    .agenda-item {
+      background: #1657a2;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    /* Calificaciones */
+    .grade {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #1657a2;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
     .circle {
       width: 35px;
       height: 35px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 14px;
+      font-weight: bold;
+      color: white;
     }
-    nav a {
-      flex: 1 1 45%;
-      text-align: center;
-      margin-bottom: 5px;
+
+    .green { background: green; }
+    .yellow { background: orange; }
+    .red { background: red; }
+
+    /* Sección Promedio */
+    .promedio-container {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
     }
-  }
-</style>
+
+    .chart-card, .top3-card {
+      background: #0d3d77;
+      border-radius: 15px;
+      padding: 15px;
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .top3-card div {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        justify-content: space-between;
+      }
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+      }
+      .menu-icon {
+        display: block;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<nav>
-  <a href="index.html">🏠 Inicio</a>
-  <a href="agenda.html">📒 Agenda</a>
-  <a href="calificacion.html">⭐ Calificación</a>
-  <a href="asignaturas.html">🎓 Asignaturas</a>
-  <a href="malla-curricular.html">📑 Malla Curricular</a>
-</nav>
-
-<div class="container">
-
-  <div class="card">
-    <h3>📒 Próximos eventos</h3>
-    <div id="upcomingEvents"></div>
-  </div>
-
-  <div class="card">
-    <h3>⭐ Últimas calificaciones <span id="promedio" style="margin-left:auto;">Promedio: 0,00</span></h3>
-    <div id="ultimas-calificaciones"></div>
-  </div>
-
-  <div class="card promedio-container">
-    <div>
-      <h3>📈 Promedio histórico</h3>
-      <canvas id="graficoPromedio" height="120"></canvas>
+  <!-- Menú -->
+  <nav>
+    <span class="menu-icon" onclick="toggleMenu()">☰</span>
+    <div class="nav-links">
+      <a href="index.html">🏠 Inicio</a>
+      <a href="agenda.html">📒 Agenda</a>
+      <a href="calificacion.html">⭐ Calificación</a>
+      <a href="asignaturas.html">🎓 Asignaturas</a>
+      <a href="malla-curricular.html">📑 Malla Curricular</a>
     </div>
-    <div>
-      <h3>🏅 Top 3 materias</h3>
-      <div id="top3"></div>
+  </nav>
+
+  <div class="container">
+    <!-- Próximos eventos -->
+    <div class="card">
+      <h3>📒 Próximos eventos</h3>
+      <div id="upcomingEvents"></div>
+    </div>
+
+    <!-- Últimas calificaciones -->
+    <div class="card">
+      <h3>⭐ Últimas calificaciones</h3>
+      <div id="ultimas-calificaciones"></div>
+    </div>
+
+    <!-- Promedio -->
+    <div class="card">
+      <h3>🎖️ Promedio</h3>
+      <div class="promedio-container">
+        <div class="chart-card">
+          <canvas id="promedioChart"></canvas>
+        </div>
+        <div class="top3-card" id="top3Materias">
+          <!-- Top 3 se genera con JS -->
+        </div>
+      </div>
     </div>
   </div>
 
-</div>
-
-<script>
-// --- Próximos eventos ---
-const upcomingEvents = document.getElementById('upcomingEvents');
-function renderUpcomingEvents() {
-  upcomingEvents.innerHTML = '';
-  const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
-  const sorted = events.sort((a,b)=> new Date(a.date) - new Date(b.date)).slice(0,3);
-  if(!sorted.length) { upcomingEvents.innerHTML = '<div class="agenda-item">No hay eventos próximos</div>'; return; }
-  const today = new Date(), tomorrow = new Date(); tomorrow.setDate(today.getDate()+1);
-  sorted.forEach(e=>{
-    const div = document.createElement('div');
-    div.classList.add('agenda-item');
-    const date = new Date(e.date);
-    let label = date.toDateString() === today.toDateString() ? 'Hoy' : date.toDateString() === tomorrow.toDateString() ? 'Mañana' : `${date.getDate()}/${date.getMonth()+1}`;
-    div.innerHTML = `${label} - ${e.subject} - <a href="${e.zoomLink}" target="_blank" style="color:#f0c300;">Zoom</a>`;
-    upcomingEvents.appendChild(div);
-  });
-}
-renderUpcomingEvents();
-window.addEventListener('storage', e => { if(e.key==='schoolEvents') renderUpcomingEvents(); });
-
-// --- Últimas calificaciones ---
-function colorNota(nota){ nota=parseFloat(nota); if(nota>=7) return 'green'; if(nota>=4) return 'yellow'; return 'red'; }
-const ultimasCalifCont = document.getElementById('ultimas-calificaciones');
-let calificaciones = JSON.parse(localStorage.getItem('calificaciones')||"[]");
-calificaciones.sort((a,b)=> new Date(b.fecha)-new Date(a.fecha));
-const ultimas5 = calificaciones.slice(0,5);
-ultimasCalifCont.innerHTML='';
-let suma = 0;
-ultimas5.forEach(c=>{
-  suma+=parseFloat(c.nota)||0;
-  const div = document.createElement('div'); div.classList.add('grade');
-  const circle = document.createElement('div'); circle.className='circle '+colorNota(c.nota); circle.textContent=c.nota;
-  const nombre = document.createElement('span'); nombre.textContent=c.materia;
-  div.appendChild(circle); div.appendChild(nombre);
-  ultimasCalifCont.appendChild(div);
-});
-document.getElementById('promedio').textContent = calificaciones.length ? 'Promedio: '+(calificaciones.reduce((a,b)=>a+parseFloat(b.nota||0),0)/calificaciones.length).toFixed(2) : 'Promedio: 0,00';
-
-// --- Promedio histórico gráfico ---
-const ctx = document.getElementById('graficoPromedio').getContext('2d');
-let meses = {};
-calificaciones.forEach(c=>{
-  const d = new Date(c.fecha);
-  const key = `${d.getMonth()+1}/${d.getFullYear()}`;
-  if(!meses[key]) meses[key]=[]; meses[key].push(parseFloat(c.nota)||0);
-});
-const labels = Object.keys(meses);
-const data = labels.map(l=> (meses[l].reduce((a,b)=>a+b,0)/meses[l].length).toFixed(2));
-new Chart(ctx, {
-  type:'line',
-  data:{
-    labels,
-    datasets:[{
-      label:'Promedio',
-      data,
-      borderColor:'#f1c40f',
-      backgroundColor:'rgba(241,196,15,0.2)',
-      tension:0.3,
-      fill:true,
-      pointBackgroundColor:'#f1c40f'
-    }]
-  },
-  options:{
-    plugins:{ legend:{ labels:{ color:'white' } } },
-    scales:{
-      x:{ ticks:{ color:'white' } },
-      y:{ ticks:{ color:'white' } }
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Toggle menu hamburguesa
+    function toggleMenu() {
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
     }
-  }
-});
 
-// --- Top 3 materias ---
-const top3Cont = document.getElementById('top3');
-let promedios = {};
-calificaciones.forEach(c=>{
-  if(!promedios[c.materia]) promedios[c.materia]=[]; promedios[c.materia].push(parseFloat(c.nota)||0);
-});
-let sorted = Object.entries(promedios).map(([m,notas])=>({materia:m,prom: (notas.reduce((a,b)=>a+b,0)/notas.length).toFixed(2)}));
-sorted.sort((a,b)=>b.prom-a.prom);
-top3Cont.innerHTML='';
-['🥇','🥈','🥉'].forEach((emoji,i)=>{
-  if(sorted[i]){
-    const div = document.createElement('div'); div.classList.add('top-item');
-    div.innerHTML=`${emoji} ${sorted[i].materia} - ${sorted[i].prom}`;
-    top3Cont.appendChild(div);
-  }
-});
-</script>
+    // Render próximos eventos (igual que antes)
+    const months = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
+    const upcomingEvents = document.getElementById('upcomingEvents');
 
+    function renderUpcomingEvents() {
+      upcomingEvents.innerHTML = '';
+      const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
+      const sortedEvents = events.sort((a,b)=> new Date(a.date) - new Date(b.date)).slice(0,3);
+
+      if(sortedEvents.length===0){
+        upcomingEvents.innerHTML = '<div class="agenda-item">No hay eventos próximos</div>';
+        return;
+      }
+
+      const today = new Date();
+      const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
+
+      sortedEvents.forEach(event => {
+        const item = document.createElement('div');
+        item.classList.add('agenda-item');
+        if(event.date) event.date = new Date(event.date);
+        let dateLabel = '';
+        if(event.date.toDateString() === today.toDateString()) dateLabel='Hoy';
+        else if(event.date.toDateString() === tomorrow.toDateString()) dateLabel='Mañana';
+        else dateLabel = `${event.date.getDate()} de ${months[event.date.getMonth()]}`;
+        item.innerHTML = `${dateLabel} - ${event.subject} - <a href="${event.zoomLink}" target="_blank" style="color:#f0c300; text-decoration:underline;">Zoom</a>`;
+        upcomingEvents.appendChild(item);
+      });
+    }
+    renderUpcomingEvents();
+    window.addEventListener('storage',(e)=>{if(e.key==='schoolEvents') renderUpcomingEvents()});
+
+    // Últimas calificaciones
+    function colorNota(nota,sistema,minAprobado){
+      nota = nota.toString().trim(); minAprobado = parseFloat(minAprobado);
+      if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "red"; if(nota>=minAprobado-2 && nota<minAprobado) return "yellow"; return "green"; }
+      if(sistema==="0-100"){ nota=parseFloat(nota); if(nota<minAprobado-10) return "red"; if(nota>=minAprobado-10 && nota<minAprobado) return "yellow"; return "green"; }
+      if(sistema==="0-1") return nota==="0"?"red":"green";
+      if(sistema==="si-no") return nota.toLowerCase()==="no"?"red":"green";
+      return "";
+    }
+
+    const contenedor = document.getElementById("ultimas-calificaciones");
+    const calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
+    calificaciones.sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
+    const ultimas5 = calificaciones.slice(0,5);
+    contenedor.innerHTML='';
+
+    ultimas5.forEach(c=>{
+      const div = document.createElement('div');
+      div.classList.add('grade');
+      const circle = document.createElement('div');
+      circle.classList.add('circle', colorNota(c.nota,c.sistema,c.minAprobado));
+      circle.textContent = c.nota;
+      const nombre = document.createElement('span');
+      nombre.textContent = c.materia;
+      nombre.style.flexGrow="1"; nombre.style.textAlign="left";
+      div.appendChild(circle);
+      div.appendChild(nombre);
+      contenedor.appendChild(div);
+    });
+
+    // Promedio histórico
+    const promediosPorMes = {};
+    calificaciones.forEach(c=>{
+      const d = new Date(c.fecha);
+      const key = `${months[d.getMonth()]} ${d.getFullYear()}`;
+      if(!promediosPorMes[key]) promediosPorMes[key] = [];
+      promediosPorMes[key].push(parseFloat(c.nota)||0);
+    });
+
+    const labels = Object.keys(promediosPorMes);
+    const dataPromedios = labels.map(l=>{
+      const arr = promediosPorMes[l];
+      const suma = arr.reduce((a,b)=>a+b,0);
+      return (suma/arr.length).toFixed(2);
+    });
+
+    // Top 3 materias
+    const materiasPromedio = {};
+    calificaciones.forEach(c=>{
+      if(!materiasPromedio[c.materia]) materiasPromedio[c.materia]=[];
+      materiasPromedio[c.materia].push(parseFloat(c.nota)||0);
+    });
+
+    const top3 = Object.entries(materiasPromedio).map(([m,nots])=>{
+      const suma = nots.reduce((a,b)=>a+b,0);
+      return {materia:m,promedio:(suma/nots.length).toFixed(2)};
+    }).sort((a,b)=>b.promedio-a.promedio).slice(0,3);
+
+    const top3Div = document.getElementById('top3Materias');
+    top3Div.innerHTML='';
+    const medallas = ['🥇','🥈','🥉'];
+    top3.forEach((t,i)=>{
+      const d = document.createElement('div');
+      d.textContent = `${medallas[i]} ${t.materia} - ${t.promedio}`;
+      top3Div.appendChild(d);
+    });
+
+    // Chart
+    const ctx = document.getElementById('promedioChart').getContext('2d');
+    new Chart(ctx,{
+      type:'line',
+      data:{
+        labels: labels,
+        datasets:[{
+          label:'Promedio mensual',
+          data:dataPromedios,
+          borderColor:'white',
+          backgroundColor:'rgba(255,255,255,0.1)',
+          tension:0.3
+        }]
+      },
+      options:{
+        responsive:true,
+        plugins:{legend:{labels:{color:'white'}}},
+        scales:{
+          x:{ticks:{color:'white'}},
+          y:{ticks:{color:'white'}}
+        }
+      }
+    });
+  </script>
 </body>
 </html>
