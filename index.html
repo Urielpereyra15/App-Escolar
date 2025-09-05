@@ -11,34 +11,52 @@
     background-color: #334455;
     color: white;
   }
+
+  /* Barra de navegación */
   nav {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 10px;
     background-color: #0b2c56;
     position: sticky;
     top: 0;
     z-index: 1000;
   }
-  nav a {
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+  }
+  .logo {
+    font-weight: bold;
+    font-size: 16px;
+  }
+  .nav-links a {
     text-decoration: none;
     background: #0d4a8c;
     color: white;
     padding: 10px 15px;
     border-radius: 10px;
     font-size: 14px;
-    display: inline-block;
+    margin-left: 10px;
   }
-  nav a:hover {
+  .nav-links a:hover {
     background: #1565c0;
   }
+  .hamburger {
+    display: none;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+  }
+
+  /* Contenedor principal */
   .container {
     padding: 15px;
     display: flex;
     flex-direction: column;
     gap: 15px;
   }
+
+  /* Tarjetas */
   .card {
     background: #0d3d77;
     border-radius: 15px;
@@ -51,6 +69,8 @@
     gap: 8px;
     font-size: 18px;
   }
+
+  /* Calificaciones */
   .grade {
     display: flex;
     align-items: center;
@@ -74,6 +94,7 @@
   .green { background: green; }
   .yellow { background: orange; }
   .red { background: red; }
+
   /* Promedio y Top3 */
   .promedio-section {
     display: flex;
@@ -94,7 +115,8 @@
     margin-bottom:8px;
     font-size:16px;
   }
-  /* Estilo para los bloques de eventos */
+
+  /* Bloques de eventos */
   .agenda-item {
     background: #1657a2;
     padding: 10px;
@@ -102,16 +124,44 @@
     margin-bottom: 8px;
     color: white;
   }
+
+  /* Responsive: menú hamburguesa */
+  @media(max-width:600px){
+    .nav-links {
+      display: none; /* ocultamos los enlaces */
+      flex-direction: column;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .nav-links a {
+      margin: 5px 0;
+      width: 100%;
+      text-align: center;
+    }
+    .hamburger {
+      display: block;
+    }
+    .nav-links.active {
+      display: flex;
+    }
+  }
+
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="index.html">🏠 Inicio</a>
-  <a href="agenda.html">📒 Agenda</a>
-  <a href="calificacion.html">⭐ Calificación</a>
-  <a href="asignaturas.html">🎓 Asignaturas</a>
-  <a href="malla-curricular.html">📑 Malla Curricular</a>
+  <div class="nav-container">
+    <div class="logo">🏠 Inicio Escolar</div>
+    <div class="nav-links">
+      <a href="index.html">🏠 Inicio</a>
+      <a href="agenda.html">📒 Agenda</a>
+      <a href="calificacion.html">⭐ Calificación</a>
+      <a href="asignaturas.html">🎓 Asignaturas</a>
+      <a href="malla-curricular.html">📑 Malla Curricular</a>
+    </div>
+    <div class="hamburger" id="hamburger">&#9776;</div>
+  </div>
 </nav>
 
 <div class="container">
@@ -145,7 +195,7 @@
 const months = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
 const upcomingEvents = document.getElementById('upcomingEvents');
 
-// ====== Eventos de prueba (se crean si no existen) ======
+// ====== Eventos de prueba ======
 if(!localStorage.getItem('schoolEvents')){
   const pruebaEvents = [
     {subject:"Matemática", date:"2025-09-05", zoomLink:"https://zoom.us/matematica"},
@@ -159,7 +209,7 @@ if(!localStorage.getItem('schoolEvents')){
 function renderUpcomingEvents() {
   upcomingEvents.innerHTML = '';
   const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
-  const sortedEvents = events.sort((a,b) => new Date(a.date) - new Date(b.date)); // más próximo primero
+  const sortedEvents = events.sort((a,b) => new Date(a.date) - new Date(b.date));
   const firstThree = sortedEvents.slice(0,3);
   if(firstThree.length===0){
     upcomingEvents.innerHTML='<div class="agenda-item">No hay eventos próximos</div>';
@@ -192,17 +242,13 @@ function colorNota(nota,sistema,minAprobado){
   return "";
 }
 
-// ====== Calificaciones de prueba ======
+// ====== Calificaciones ======
 let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
-
-// Últimas 5
 calificaciones.sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
 let ultimas5 = calificaciones.slice(0,5);
 const contenedor = document.getElementById("ultimas-calificaciones");
 contenedor.innerHTML='';
-let sumaNotas=0;
 ultimas5.forEach(c=>{
-  sumaNotas+=parseFloat(c.nota)||0;
   const div=document.createElement('div');
   div.classList.add('grade');
   const circle=document.createElement('div');
@@ -274,6 +320,13 @@ top3.forEach((t,i)=>{
   div.classList.add('top3-item');
   div.innerHTML=`${emojis[i]} ${t.materia} - ${t.promedio.toFixed(2)}`;
   top3Container.appendChild(div);
+});
+
+// ====== Toggle menú hamburguesa ======
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.querySelector('.nav-links');
+hamburger.addEventListener('click', () => {
+  navLinks.classList.toggle('active');
 });
 </script>
 
