@@ -5,21 +5,95 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inicio Escolar</title>
 <style>
-  body { margin:0; font-family: Arial, sans-serif; background-color: #334455; color:white; }
-  nav { display:flex; justify-content:center; gap:10px; padding:10px; background-color:#0b2c56; position:sticky; top:0; flex-wrap:wrap;}
-  nav a { text-decoration:none; background:#0d4a8c; color:white; padding:10px 15px; border-radius:10px; font-size:14px; display:inline-block;}
-  nav a:hover{ background:#1565c0;}
-  .container{ padding:15px; display:flex; flex-direction:column; gap:15px;}
-  .card{ background:#0d3d77; border-radius:15px; padding:15px;}
-  .card h3{ margin:0 0 10px; display:flex; align-items:center; gap:8px; font-size:18px;}
-  .agenda-item{ background:#1657a2; padding:10px; border-radius:10px; margin-bottom:8px;}
-  .grade{ display:flex; align-items:center; justify-content:flex-start; background:#1657a2; padding:10px; border-radius:10px; margin-bottom:8px;}
-  .circle{ width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:bold; color:white; margin-right:10px;}
-  .green{background:green;} .yellow{background:orange;} .red{background:red;}
-  .promedio-section{ display:flex; flex-wrap:wrap; gap:15px;}
-  .promedio-block{ flex:1; min-width:250px; background:#0d3d77; border-radius:15px; padding:10px;}
-  .top3-item{ background:#1657a2; padding:10px; margin-bottom:8px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; font-size:16px;}
-  @media(max-width:700px){ .promedio-section{ flex-direction:column; }}
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #334455;
+    color: white;
+  }
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #0b2c56;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  nav a {
+    text-decoration: none;
+    background: #0d4a8c;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    display: inline-block;
+  }
+  nav a:hover {
+    background: #1565c0;
+  }
+  .container {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .card {
+    background: #0d3d77;
+    border-radius: 15px;
+    padding: 15px;
+  }
+  .card h3 {
+    margin: 0 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+  }
+  .grade {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #1657a2;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    flex-shrink: 0;
+  }
+  .green { background: green; }
+  .yellow { background: orange; }
+  .red { background: red; }
+  /* Promedio y Top3 */
+  .promedio-section {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .promedio-section > div {
+    flex:1;
+    min-width:250px;
+  }
+  #top3Container .top3-item {
+    display: flex;
+    align-items: center;
+    gap:10px;
+    background:#1657a2;
+    padding:10px;
+    border-radius:10px;
+    margin-bottom:8px;
+    font-size:16px;
+  }
 </style>
 </head>
 <body>
@@ -33,28 +107,29 @@
 </nav>
 
 <div class="container">
-
+  <!-- Próximos eventos -->
   <div class="card">
     <h3>📒 Próximos eventos</h3>
     <div id="upcomingEvents"></div>
   </div>
 
+  <!-- Últimas calificaciones -->
   <div class="card">
-    <h3>⭐ Últimas calificaciones</h3>
+    <h3>⭐ Últimas calificaciones <span id="promedio" style="margin-left:auto;">Promedio: 0,00</span></h3>
     <div id="ultimas-calificaciones"></div>
   </div>
 
-  <div class="promedio-section">
-    <div class="promedio-block">
-      <h3>📊 Promedio histórico</h3>
-      <canvas id="promedioChart" width="300" height="200"></canvas>
+  <!-- Promedio y Top3 -->
+  <div class="card promedio-section">
+    <div>
+      <h3>🎖️ Promedio histórico</h3>
+      <canvas id="historicalChart"></canvas>
     </div>
-    <div class="promedio-block">
+    <div>
       <h3>🏅 Top 3 materias</h3>
       <div id="top3Container"></div>
     </div>
   </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -62,92 +137,128 @@
 const months = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
 const upcomingEvents = document.getElementById('upcomingEvents');
 
-function renderUpcomingEvents(){
-  upcomingEvents.innerHTML='';
-  const events = JSON.parse(localStorage.getItem('schoolEvents'))||[];
-  const sorted = events.sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,3);
-  if(sorted.length===0){ upcomingEvents.innerHTML='<div class="agenda-item">No hay eventos próximos</div>'; return;}
-  const today=new Date();
-  const tomorrow=new Date(today); tomorrow.setDate(today.getDate()+1);
-  sorted.forEach(e=>{
-    const item=document.createElement('div'); item.classList.add('agenda-item');
-    let dateLabel=''; const d=new Date(e.date);
-    if(d.toDateString()===today.toDateString()) dateLabel='Hoy';
-    else if(d.toDateString()===tomorrow.toDateString()) dateLabel='Mañana';
-    else dateLabel=`${d.getDate()} de ${months[d.getMonth()]}`;
-    item.innerHTML=`${dateLabel} - ${e.subject} - <a href="${e.zoomLink}" target="_blank" style="color:#f0c300; text-decoration:underline;">Zoom</a>`;
+// Render eventos
+function renderUpcomingEvents() {
+  upcomingEvents.innerHTML = '';
+  const events = JSON.parse(localStorage.getItem('schoolEvents')) || [];
+  const sortedEvents = events.sort((a,b) => new Date(b.date) - new Date(a.date));
+  const firstThree = sortedEvents.slice(0,3);
+  if(firstThree.length===0){
+    upcomingEvents.innerHTML='<div class="agenda-item">No hay eventos próximos</div>';
+    return;
+  }
+  const today = new Date();
+  const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
+  firstThree.forEach(event=>{
+    if(event.date) event.date=new Date(event.date);
+    let dateLabel='';
+    if(event.date.toDateString()===today.toDateString()) dateLabel='Hoy';
+    else if(event.date.toDateString()===tomorrow.toDateString()) dateLabel='Mañana';
+    else dateLabel=`${event.date.getDate()} de ${months[event.date.getMonth()]}`;
+    const item=document.createElement('div');
+    item.classList.add('agenda-item');
+    item.innerHTML=`${dateLabel} - ${event.subject} - <a href="${event.zoomLink}" target="_blank" style="color:#f0c300;text-decoration:underline;">Zoom</a>`;
     upcomingEvents.appendChild(item);
   });
 }
 renderUpcomingEvents();
-window.addEventListener('storage',(e)=>{if(e.key==='schoolEvents') renderUpcomingEvents();});
+window.addEventListener('storage',e=>{if(e.key==='schoolEvents') renderUpcomingEvents();});
 
-// --- Calificaciones ---
+// Función color nota
 function colorNota(nota,sistema,minAprobado){
-  nota=nota.toString().trim(); minAprobado=parseFloat(minAprobado);
-  if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "red"; if(nota>=minAprobado-2&&nota<minAprobado) return "yellow"; return "green"; }
-  if(sistema==="0-100"){ nota=parseFloat(nota); if(nota<minAprobado-10) return "red"; if(nota>=minAprobado-10&&nota<minAprobado) return "yellow"; return "green"; }
+  nota = nota.toString().trim(); minAprobado=parseFloat(minAprobado);
+  if(sistema==="1-10"){ nota=parseFloat(nota); if(nota<minAprobado-2) return "red"; if(nota>=minAprobado-2 && nota<minAprobado) return "yellow"; return "green"; }
+  if(sistema==="0-100"){ nota=parseFloat(nota); if(nota<minAprobado-10) return "red"; if(nota>=minAprobado-10 && nota<minAprobado) return "yellow"; return "green"; }
   if(sistema==="0-1") return nota==="0"?"red":"green";
   if(sistema==="si-no") return nota.toLowerCase()==="no"?"red":"green";
   return "";
 }
 
+// Cargar calificaciones
 let calificaciones = JSON.parse(localStorage.getItem("calificaciones")||"[]");
-calificaciones.sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
-let ultimas5=calificaciones.slice(0,5);
-const contenedor=document.getElementById("ultimas-calificaciones");
+
+// Últimas 5
+calificaciones.sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
+let ultimas5 = calificaciones.slice(0,5);
+const contenedor = document.getElementById("ultimas-calificaciones");
 contenedor.innerHTML='';
+let sumaNotas=0;
 ultimas5.forEach(c=>{
-  const div=document.createElement('div'); div.classList.add('grade');
-  const circle=document.createElement('div'); circle.classList.add('circle',colorNota(c.nota,c.sistema,c.minAprobado)); circle.textContent=c.nota;
-  const nombre=document.createElement('span'); nombre.textContent=c.materia; nombre.style.flexGrow="1"; nombre.style.textAlign="left";
+  sumaNotas+=parseFloat(c.nota)||0;
+  const div=document.createElement('div');
+  div.classList.add('grade');
+  const circle=document.createElement('div');
+  circle.classList.add('circle', colorNota(c.nota,c.sistema,c.minAprobado));
+  circle.textContent=c.nota;
+  const nombre=document.createElement('span');
+  nombre.textContent=c.materia;
+  nombre.style.flexGrow="1";
+  nombre.style.textAlign="left";
   div.appendChild(circle); div.appendChild(nombre);
   contenedor.appendChild(div);
 });
+const promedioTotal = calificaciones.length ? (calificaciones.reduce((a,b)=>a+parseFloat(b.nota||0),0)/calificaciones.length).toFixed(2) : '0,00';
+document.getElementById("promedio").textContent=`Promedio: ${promedioTotal}`;
 
-// --- 🎖️ Promedio ---
-const promedioPorMes={};
+// Gráfico histórico
+const promediosHistoricos = {};
 calificaciones.forEach(c=>{
-  const f=new Date(c.fecha);
-  const mesAño=`${f.toLocaleString('es-AR',{month:'short'})} ${f.getFullYear()}`;
-  if(!promedioPorMes[mesAño]) promedioPorMes[mesAño]={suma:0,cant:0};
-  promedioPorMes[mesAño].suma+=parseFloat(c.nota)||0; promedioPorMes[mesAño].cant+=1;
+  if(!c.fecha) return;
+  const date = new Date(c.fecha);
+  const mesAnio = `${months[date.getMonth()]}/${date.getFullYear()}`;
+  if(!promediosHistoricos[mesAnio]) promediosHistoricos[mesAnio]=[];
+  promediosHistoricos[mesAnio].push(parseFloat(c.nota)||0);
 });
-const labels=Object.keys(promedioPorMes).sort((a,b)=>{
-  const [mesA,anoA]=a.split(' '); const [mesB,anoB]=b.split(' ');
-  return new Date(`${mesA} 1, ${anoA}`)-new Date(`${mesB} 1, ${anoB}`);
+const labelsHist=Object.keys(promediosHistoricos).sort((a,b)=>{
+  const [m1,y1]=a.split("/"); const [m2,y2]=b.split("/"); 
+  return new Date(y1,months.indexOf(m1)) - new Date(y2,months.indexOf(m2));
 });
-const dataPromedio=labels.map(l=>{ const p=promedioPorMes[l]; return (p.suma/p.cant).toFixed(2); });
-new Chart(document.getElementById('promedioChart'),{
+const dataHist=labelsHist.map(l=>{
+  const notas=promediosHistoricos[l];
+  const sum=notas.reduce((a,b)=>a+b,0);
+  return (sum/notas.length).toFixed(2);
+});
+const ctx=document.getElementById('historicalChart').getContext('2d');
+new Chart(ctx,{
   type:'line',
   data:{
-    labels,
-    datasets:[{label:'Promedio', data:dataPromedio, borderColor:'#f0c300', backgroundColor:'rgba(240,195,0,0.2)', tension:0.3}]
+    labels:labelsHist,
+    datasets:[{
+      label:'Promedio histórico',
+      data:dataHist,
+      borderColor:'white',
+      backgroundColor:'rgba(255,255,255,0.2)',
+      fill:true,
+      tension:0.3
+    }]
   },
   options:{
     responsive:true,
     plugins:{legend:{labels:{color:'white'}}},
-    scales:{x:{ticks:{color:'white'}},y:{ticks:{color:'white'}}}
+    scales:{x:{ticks:{color:'white'}}, y:{ticks:{color:'white'}}}
   }
 });
 
-// --- Top 3 materias ---
-const promedioPorMateria={};
+// Top 3 materias
+const materiasPromedios={};
 calificaciones.forEach(c=>{
-  if(!promedioPorMateria[c.materia]) promedioPorMateria[c.materia]={suma:0,cant:0};
-  promedioPorMateria[c.materia].suma+=parseFloat(c.nota)||0; promedioPorMateria[c.materia].cant+=1;
+  if(!materiasPromedios[c.materia]) materiasPromedios[c.materia]=[];
+  materiasPromedios[c.materia].push(parseFloat(c.nota)||0);
 });
-const top3=Object.keys(promedioPorMateria).map(m=>{
-  const p=promedioPorMateria[m]; return {materia:m,promedio:(p.suma/p.cant).toFixed(2)}; })
-  .sort((a,b)=>b.promedio-a.promedio).slice(0,3);
+const top3=Object.entries(materiasPromedios).map(([m,notas])=>{
+  const prom=notas.reduce((a,b)=>a+b,0)/notas.length;
+  return {materia:m,promedio:prom};
+}).sort((a,b)=>b.promedio-a.promedio).slice(0,3);
 const top3Container=document.getElementById("top3Container");
-const medallas=['🥇','🥈','🥉'];
+const emojis=["🥇","🥈","🥉"];
 top3.forEach((t,i)=>{
-  const div=document.createElement('div'); div.classList.add('top3-item');
-  div.innerHTML=`<span>${medallas[i]} ${t.materia}</span><span>${t.promedio}</span>`;
+  const div=document.createElement('div');
+  div.classList.add('top3-item');
+  div.innerHTML=`${emojis[i]} ${t.materia} - ${t.promedio.toFixed(2)}`;
   top3Container.appendChild(div);
 });
 </script>
 
 </body>
 </html>
+      
