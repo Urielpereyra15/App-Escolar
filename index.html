@@ -13,34 +13,36 @@
   }
 
   /* Barra de navegación */
-  nav {
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 0;
     background-color: #0b2c56;
     position: sticky;
     top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
     z-index: 1000;
-  }
-  .nav-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-  }
-  .logo {
-    font-weight: bold;
-    font-size: 16px;
-  }
-  .nav-links a {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3); /* sombra opcional */
+}
+
+nav a {
     text-decoration: none;
     background: #0d4a8c;
     color: white;
     padding: 10px 15px;
     border-radius: 10px;
     font-size: 14px;
-    margin-left: 10px;
-  }
-  .nav-links a:hover {
+    display: inline-block;
+}
+
+nav a:hover {
     background: #1565c0;
-  }
+}
+  
   .hamburger {
     display: none;
     font-size: 28px;
@@ -152,13 +154,11 @@
 
 <nav>
   <div class="nav-container">
-    <div class="nav-links">
       <a href="index.html">🏠 Inicio</a>
       <a href="agenda.html">📒 Agenda</a>
       <a href="calificacion.html">⭐ Calificación</a>
       <a href="asignaturas.html">🎓 Asignaturas</a>
       <a href="malla-curricular.html">📑 Malla Curricular</a>
-    </div>
     <div class="hamburger" id="hamburger">&#9776;</div>
   </div>
 </nav>
