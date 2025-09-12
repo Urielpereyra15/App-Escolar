@@ -99,14 +99,12 @@
     color: black;
     padding: 20px;
     border-radius: 12px;
-    width: 400px;
-    margin: 100px auto;
+    width: 420px;
+    max-width: 95%;
+    margin: 80px auto;
   }
 
-  .modal-content a {
-  color: black;
-  text-decoration: none;
-}
+  .modal-content a { color: black; text-decoration: none; }
 
   .close { float: right; cursor: pointer; font-weight: bold; font-size: 20px; }
 
@@ -133,13 +131,17 @@
     <span class="close" onclick="closeModal()">&times;</span>
     <h3 id="modal-title"></h3>
     <div id="archivos-list"></div>
-    <button onclick="triggerFileInput()">+ Agregar archivo</button>
-    <input type="file" id="fileInput" style="display:none;" onchange="handleFileUpload(event)">
+    <div style="margin-top:10px;">
+      <button onclick="triggerFileInput()">+ Agregar archivo (PDF)</button>
+      <small style="display:block;margin-top:6px;color:#333">Los archivos no se guardan en el almacenamiento, solo su info. Los PDFs estarán disponibles mientras la pestaña esté abierta.</small>
+    </div>
+    <!-- accept .pdf y multiple -->
+    <input type="file" id="fileInput" style="display:none;" onchange="handleFileUpload(event)" accept=".pdf" multiple>
   </div>
 </div>
 
 <script>
-// Lista de materias
+// --- Datos originales ---
 const materias = [
   "Contabilidad","Administración","Historia de la Cultura","Matemática 1","Derecho Público","Introducción a la Economía",
   "Metodología de la Investigación","Derecho Privado","Contabilidad Superior","Teoría de la Organización","Estadística","Historia Económica","Microeconómia","Filosofía","Matemática 2",
@@ -147,14 +149,17 @@ const materias = [
   "Auditoria 1","Ética y Deontologia Profesional","Interpretación de Estados Contables","Sociedades","Teoría y Técnica Impositiva 1","Auditoria y Control de Sistema de Información","Gestión Financiera","Derecho Concursal","Auditoria 2","Teoría y Técnica Impositiva 2","Contabilidad Gerencial","Práctica Profesional Supervisada"
 ];
 
-// LocalStorage
+// --- Helpers localStorage ---
 function saveData(key, data){ localStorage.setItem(key, JSON.stringify(data)); }
 function loadData(key){ return JSON.parse(localStorage.getItem(key)) || []; }
+
+// --- Map de object URLs en memoria (solo dura en esta sesión) ---
+const sessionFiles = {}; // sessionFiles[id] = objectURL
 
 let currentMateria = null;
 let currentUnidad = null;
 
-// Generar materias
+// Generar materias (sin cambios visuales)
 const container = document.getElementById('materias-container');
 materias.forEach(materia => {
   const div = document.createElement('div');
@@ -253,64 +258,93 @@ function openModal(index,materia){
 function closeModal(){ document.getElementById('modal').style.display='none'; }
 function triggerFileInput(){ document.getElementById('fileInput').click(); }
 
-// Subir archivos
+// Subir archivos: GUARDAMOS SÓLO METADATA y creamos objectURL en memoria para sesión actual
 function handleFileUpload(event){
-  const file = event.target.files[0];
-  if(file){
-    const reader = new FileReader();
-    reader.onload = function(e){
-      const clases = loadData('clases-'+currentMateria);
-      clases[currentUnidad].archivos.push({
-        nombre: file.name,
-        type: file.type,
-        data: e.target.result
-      });
-      saveData('clases-'+currentMateria, clases);
-      renderArchivos();
-    }
-    reader.readAsDataURL(file);
+  const files = Array.from(event.target.files || []);
+  if(!files.length) return;
+
+  const clases = loadData('clases-'+currentMateria);
+  if(!clases || !clases[currentUnidad]){
+    alert('Error: unidad no encontrada.');
+    event.target.value = '';
+    return;
   }
+
+  for(const file of files){
+    // Crear id único
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2,9)}`;
+    // Crear object URL para poder abrir el archivo en esta sesión
+    const url = URL.createObjectURL(file);
+    sessionFiles[id] = url;
+
+    // Guardar solo metadata en localStorage
+    const metadata = {
+      id,
+      nombre: file.name,
+      type: file.type,
+      size: file.size,
+      uploadedAt: new Date().toISOString()
+    };
+
+    // Añadir metadata a la unidad
+    const clasesNow = loadData('clases-'+currentMateria);
+    clasesNow[currentUnidad].archivos.push(metadata);
+    saveData('clases-'+currentMateria, clasesNow);
+  }
+
+  renderArchivos();
+  // reset input
+  event.target.value = '';
 }
 
-// Render archivos con Blob para abrir en nueva pestaña
+// Render archivos: los enlaces abren object URLs en memoria; si ya no existe el objectURL (p. ej. tras reload), avisamos.
 function renderArchivos(){
   const clases = loadData('clases-'+currentMateria);
-  const archivos = clases[currentUnidad].archivos;
+  if(!clases || !clases[currentUnidad]) return;
+  const archivos = clases[currentUnidad].archivos || [];
   const container = document.getElementById('archivos-list');
   container.innerHTML = '';
   archivos.forEach((a,i)=>{
-    const blob = b64toBlob(a.data.split(',')[1], a.type);
-    const url = URL.createObjectURL(blob);
+    // link que intenta abrir la URL en sessionFiles
     const div = document.createElement('div');
     div.className = 'archivo';
-    div.innerHTML = `<a href="${url}" target="_blank">${a.nombre}</a> <button onclick="deleteArchivo(${i})">x</button>`;
+    const available = !!sessionFiles[a.id];
+    const link = document.createElement('a');
+    link.href = available ? sessionFiles[a.id] : '#';
+    link.target = '_blank';
+    link.textContent = a.nombre + (available ? '' : ' (no disponible tras recargar)');
+    if(!available){
+      // si no está disponible, evitamos abrir y mostramos mensaje
+      link.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        alert('Este archivo no está disponible en esta sesión. Volvé a subirlo para abrirlo o usá IndexedDB/servidor para persistencia.');
+      });
+    }
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'x';
+    delBtn.style.background='transparent';
+    delBtn.style.border='none';
+    delBtn.style.color='black';
+    delBtn.style.cursor='pointer';
+    delBtn.onclick = ()=> deleteArchivo(i);
+    div.appendChild(link);
+    div.appendChild(delBtn);
     container.appendChild(div);
   });
 }
 
 function deleteArchivo(index){
   const clases = loadData('clases-'+currentMateria);
-  clases[currentUnidad].archivos.splice(index,1);
+  const [removed] = clases[currentUnidad].archivos.splice(index,1);
+  if(removed && removed.id && sessionFiles[removed.id]){
+    try{ URL.revokeObjectURL(sessionFiles[removed.id]); } catch(e){}
+    delete sessionFiles[removed.id];
+  }
   saveData('clases-'+currentMateria, clases);
   renderArchivos();
 }
 
-// Convertir base64 a Blob
-function b64toBlob(b64Data, contentType='application/octet-stream'){
-  const byteCharacters = atob(b64Data);
-  const byteArrays = [];
-  const sliceSize = 512;
-  for(let offset=0; offset<byteCharacters.length; offset+=sliceSize){
-    const slice = byteCharacters.slice(offset, offset+sliceSize);
-    const byteNumbers = new Array(slice.length);
-    for(let i=0;i<slice.length;i++) byteNumbers[i]=slice.charCodeAt(i);
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
-  }
-  return new Blob(byteArrays,{type: contentType});
-}
-
-// Imágenes
+// Imágenes (sin cambios)
 function uploadImage(event,containerId){
   const file = event.target.files[0];
   if(file){
@@ -323,7 +357,7 @@ function uploadImage(event,containerId){
   }
 }
 
-// Inicializar
+// Inicializar (renderizar profes y clases y cargar imágenes guardadas)
 materias.forEach(materia=>{
   renderProfesores(materia);
   renderClases(materia);
