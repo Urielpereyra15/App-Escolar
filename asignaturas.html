@@ -35,6 +35,19 @@
 
   nav a:hover { background: #1565c0; }
 
+  .search-container {
+    text-align: center;
+    margin: 15px;
+  }
+
+  .search-container input {
+    padding: 8px;
+    width: 250px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+  }
+
   .materia-container {
     background-color: #0d3d77;
     border-radius: 12px;
@@ -104,7 +117,7 @@
     margin: 80px auto;
   }
 
-  .modal-content a { color: black; text-decoration: none; }
+  .modal-content a { color: black; text-decoration: underline; }
 
   .close { float: right; cursor: pointer; font-weight: bold; font-size: 20px; }
 
@@ -123,6 +136,10 @@
   <a href="malla-curricular.html">📑 Malla Curricular</a>
 </nav>
 
+<div class="search-container">
+  <input type="text" id="search" placeholder="Buscar materia..." oninput="filterMaterias()">
+</div>
+
 <div id="materias-container"></div>
 
 <!-- Modal Archivos -->
@@ -133,15 +150,13 @@
     <div id="archivos-list"></div>
     <div style="margin-top:10px;">
       <button onclick="triggerFileInput()">+ Agregar archivo (PDF)</button>
-      <small style="display:block;margin-top:6px;color:#333">Los archivos no se guardan en el almacenamiento, solo su info. Los PDFs estarán disponibles mientras la pestaña esté abierta.</small>
     </div>
-    <!-- accept .pdf y multiple -->
     <input type="file" id="fileInput" style="display:none;" onchange="handleFileUpload(event)" accept=".pdf" multiple>
   </div>
 </div>
 
 <script>
-// --- Datos originales ---
+// --- Datos ---
 const materias = [
   "Contabilidad","Administración","Historia de la Cultura","Matemática 1","Derecho Público","Introducción a la Economía",
   "Metodología de la Investigación","Derecho Privado","Contabilidad Superior","Teoría de la Organización","Estadística","Historia Económica","Microeconómia","Filosofía","Matemática 2",
@@ -149,53 +164,67 @@ const materias = [
   "Auditoria 1","Ética y Deontologia Profesional","Interpretación de Estados Contables","Sociedades","Teoría y Técnica Impositiva 1","Auditoria y Control de Sistema de Información","Gestión Financiera","Derecho Concursal","Auditoria 2","Teoría y Técnica Impositiva 2","Contabilidad Gerencial","Práctica Profesional Supervisada"
 ];
 
-// --- Helpers localStorage ---
+// --- Helpers ---
 function saveData(key, data){ localStorage.setItem(key, JSON.stringify(data)); }
 function loadData(key){ return JSON.parse(localStorage.getItem(key)) || []; }
-
-// --- Map de object URLs en memoria (solo dura en esta sesión) ---
-const sessionFiles = {}; // sessionFiles[id] = objectURL
+const sessionFiles = {}; 
 
 let currentMateria = null;
 let currentUnidad = null;
 
-// Generar materias (sin cambios visuales)
 const container = document.getElementById('materias-container');
-materias.forEach(materia => {
-  const div = document.createElement('div');
-  div.className = 'materia-container';
-  div.innerHTML = `
-    <div class="header">
-      <div>${materia}</div>
-      <div>Promedio: 0,00</div>
-    </div>
-    <div class="section">
-      <div class="section-title">
-        Profesores:
-        <button class="add-btn" onclick="addProfesor('${materia}')">+</button>
+
+// Render materias con filtro
+function renderMaterias(filter=''){
+  container.innerHTML = '';
+  materias.filter(m => m.toLowerCase().includes(filter.toLowerCase())).forEach(materia => {
+    const div = document.createElement('div');
+    div.className = 'materia-container';
+    div.innerHTML = `
+      <div class="header">
+        <div>${materia}</div>
+        <div>Promedio: 0,00</div>
       </div>
-      <div id="profesores-${materia}"></div>
-    </div>
-    <div class="section">
-      <div class="section-title">
-        Clases:
-        <button class="add-btn" onclick="addUnidad('${materia}')">+</button>
+      <div class="section">
+        <div class="section-title">
+          Profesores:
+          <button class="add-btn" onclick="addProfesor('${materia}')">+</button>
+        </div>
+        <div id="profesores-${materia}"></div>
       </div>
-      <div id="clases-${materia}"></div>
-    </div>
-    <div class="section">
-      <div class="section-title">Condiciones para aprobar</div>
-      <input type="file" accept="image/*" onchange="uploadImage(event,'condiciones-${materia}')">
-      <div id="condiciones-${materia}"></div>
-    </div>
-    <div class="section">
-      <div class="section-title">Cronograma</div>
-      <input type="file" accept="image/*" onchange="uploadImage(event,'cronograma-${materia}')">
-      <div id="cronograma-${materia}"></div>
-    </div>
-  `;
-  container.appendChild(div);
-});
+      <div class="section">
+        <div class="section-title">
+          Clases:
+          <button class="add-btn" onclick="addUnidad('${materia}')">+</button>
+        </div>
+        <div id="clases-${materia}"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Condiciones para aprobar</div>
+        <input type="file" accept="image/*" onchange="uploadImage(event,'condiciones-${materia}')">
+        <div id="condiciones-${materia}"></div>
+      </div>
+      <div class="section">
+        <div class="section-title">Cronograma</div>
+        <input type="file" accept="image/*" onchange="uploadImage(event,'cronograma-${materia}')">
+        <div id="cronograma-${materia}"></div>
+      </div>
+    `;
+    container.appendChild(div);
+    renderProfesores(materia);
+    renderClases(materia);
+    ['condiciones-'+materia,'cronograma-'+materia].forEach(id=>{
+      const data = localStorage.getItem(id);
+      if(data) document.getElementById(id).innerHTML=`<img src="${data}">`;
+    });
+  });
+}
+renderMaterias();
+
+function filterMaterias(){
+  const value = document.getElementById('search').value;
+  renderMaterias(value);
+}
 
 // Profesores
 function renderProfesores(materia){
@@ -203,7 +232,6 @@ function renderProfesores(materia){
   document.getElementById('profesores-'+materia).innerHTML =
     profesores.map((p,i)=>`<div class="profesor">${p} <button onclick="deleteProfesor('${materia}',${i})">x</button></div>`).join('');
 }
-
 function addProfesor(materia){
   const nombre = prompt("Nombre del profesor:");
   if(nombre){
@@ -213,7 +241,6 @@ function addProfesor(materia){
     renderProfesores(materia);
   }
 }
-
 function deleteProfesor(materia,index){
   const profesores = loadData('profesores-'+materia);
   profesores.splice(index,1);
@@ -227,7 +254,6 @@ function renderClases(materia){
   document.getElementById('clases-'+materia).innerHTML =
     clases.map((u,i)=>`<div class="unidad"><span onclick="openModal(${i},'${materia}')">${u.titulo}</span> <button onclick="deleteUnidad('${materia}',${i})">x</button></div>`).join('');
 }
-
 function addUnidad(materia){
   const titulo = prompt("Título de la unidad:");
   if(titulo){
@@ -237,7 +263,6 @@ function addUnidad(materia){
     renderClases(materia);
   }
 }
-
 function deleteUnidad(materia,index){
   const clases = loadData('clases-'+materia);
   clases.splice(index,1);
@@ -245,7 +270,7 @@ function deleteUnidad(materia,index){
   renderClases(materia);
 }
 
-// Modal Archivos
+// Modal archivos
 function openModal(index,materia){
   currentUnidad = index;
   currentMateria = materia;
@@ -254,11 +279,8 @@ function openModal(index,materia){
   renderArchivos();
   document.getElementById('modal').style.display='block';
 }
-
 function closeModal(){ document.getElementById('modal').style.display='none'; }
 function triggerFileInput(){ document.getElementById('fileInput').click(); }
-
-// Subir archivos: GUARDAMOS SÓLO METADATA y creamos objectURL en memoria para sesión actual
 function handleFileUpload(event){
   const files = Array.from(event.target.files || []);
   if(!files.length) return;
@@ -271,33 +293,20 @@ function handleFileUpload(event){
   }
 
   for(const file of files){
-    // Crear id único
     const id = `${Date.now()}-${Math.random().toString(36).slice(2,9)}`;
-    // Crear object URL para poder abrir el archivo en esta sesión
     const url = URL.createObjectURL(file);
     sessionFiles[id] = url;
 
-    // Guardar solo metadata en localStorage
-    const metadata = {
-      id,
-      nombre: file.name,
-      type: file.type,
-      size: file.size,
-      uploadedAt: new Date().toISOString()
-    };
+    const metadata = { id, nombre: file.name, type: file.type, size: file.size, uploadedAt: new Date().toISOString() };
 
-    // Añadir metadata a la unidad
     const clasesNow = loadData('clases-'+currentMateria);
     clasesNow[currentUnidad].archivos.push(metadata);
     saveData('clases-'+currentMateria, clasesNow);
   }
 
   renderArchivos();
-  // reset input
   event.target.value = '';
 }
-
-// Render archivos: los enlaces abren object URLs en memoria; si ya no existe el objectURL (p. ej. tras reload), avisamos.
 function renderArchivos(){
   const clases = loadData('clases-'+currentMateria);
   if(!clases || !clases[currentUnidad]) return;
@@ -305,21 +314,14 @@ function renderArchivos(){
   const container = document.getElementById('archivos-list');
   container.innerHTML = '';
   archivos.forEach((a,i)=>{
-    // link que intenta abrir la URL en sessionFiles
     const div = document.createElement('div');
     div.className = 'archivo';
-    const available = !!sessionFiles[a.id];
     const link = document.createElement('a');
-    link.href = available ? sessionFiles[a.id] : '#';
+    link.href = sessionFiles[a.id] || '#';
     link.target = '_blank';
-    link.textContent = a.nombre + (available ? '' : ' (no disponible tras recargar)');
-    if(!available){
-      // si no está disponible, evitamos abrir y mostramos mensaje
-      link.addEventListener('click', (ev)=>{
-        ev.preventDefault();
-        alert('Este archivo no está disponible en esta sesión. Volvé a subirlo para abrirlo o usá IndexedDB/servidor para persistencia.');
-      });
-    }
+    link.textContent = a.nombre;
+    div.appendChild(link);
+
     const delBtn = document.createElement('button');
     delBtn.textContent = 'x';
     delBtn.style.background='transparent';
@@ -327,12 +329,11 @@ function renderArchivos(){
     delBtn.style.color='black';
     delBtn.style.cursor='pointer';
     delBtn.onclick = ()=> deleteArchivo(i);
-    div.appendChild(link);
     div.appendChild(delBtn);
+
     container.appendChild(div);
   });
 }
-
 function deleteArchivo(index){
   const clases = loadData('clases-'+currentMateria);
   const [removed] = clases[currentUnidad].archivos.splice(index,1);
@@ -344,7 +345,7 @@ function deleteArchivo(index){
   renderArchivos();
 }
 
-// Imágenes (sin cambios)
+// Imágenes
 function uploadImage(event,containerId){
   const file = event.target.files[0];
   if(file){
@@ -355,17 +356,8 @@ function uploadImage(event,containerId){
     }
     reader.readAsDataURL(file);
   }
+  event.target.value = '';
 }
-
-// Inicializar (renderizar profes y clases y cargar imágenes guardadas)
-materias.forEach(materia=>{
-  renderProfesores(materia);
-  renderClases(materia);
-  ['condiciones-'+materia,'cronograma-'+materia].forEach(id=>{
-    const data = localStorage.getItem(id);
-    if(data) document.getElementById(id).innerHTML=`<img src="${data}">`;
-  });
-});
 </script>
 </body>
 </html>
